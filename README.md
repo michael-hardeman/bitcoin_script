@@ -26,8 +26,7 @@ To compile from command line with specific options
 
 `gprbuild -P bitcoin_script.gpr -XWord_Size=32 -XSystem=windows -XTest=bitcoin_script_test.adb -XDebug=No`
 
-Or the Gnat Programming Studio IDE may be used (email is optional):
-Or the free IDE [Gnat Programming Studio](http://libre.adacore.com/download/) can open and compile gpr files 
+Or the free IDE [Gnat Programming Studio](http://libre.adacore.com/download/) can open and compile gpr files.
 
 ## Dependencies
 
