@@ -1,0 +1,77 @@
+project Bitcoin_Script is
+
+  -----------
+  -- Types --
+  -----------
+  type Word_Size_Option is ("32",   "64");
+  type System_Option    is ("unix", "windows");
+  type Boolean_Option   is ("Yes",  "No");
+  type Test_Option      is ("generic_stacks_test.adb",
+                            "bitcoin_script_test.adb",
+                            "openssl_create_keypair_test.adb");
+
+  -------------
+  -- Options --
+  -------------
+  Word_Size : Word_Size_Option := external ("Word_Size", "32");
+  System    : System_Option    := external ("System",    "windows");
+  Debug     : Boolean_Option   := external ("Debug",     "Yes");
+  Test      : Test_Option      := external ("Test",      "openssl_create_keypair_test.adb");
+
+  ---------------
+  -- Variables --
+  ---------------
+  Executable_Directory := "binaries\" & System & "\" & Word_Size;
+  Switch_Binder        := ("-E");                 -- Store traceback in exceptions
+  Switch_Linker        := ("-fprofile-generate"); -- Generate code coverage
+  Switch_Compiler      := ("-gnateE",             -- Put extra info in exception messages
+                           "-gnatW8");            -- Enable wide-character unicode identifiers
+
+  ---------------
+  -- Word_Size --
+  ---------------
+  case Word_Size is
+    when "32" => null;
+    when "64" => Switch_Compiler := Switch_Compiler & ("-m64"); -- Try 64 bit compilation
+  end case;
+
+  ------------
+  -- System --
+  ------------
+  case System is
+    when "unix" => Switch_Linker := Switch_Linker & ("libcrypto-1_1", "libssl-1_1");
+    when "windows" =>
+      Switch_Linker := Switch_Linker & ("-Wl,--enable-stdcall-fixup"); -- Suppress linker resolution warnings
+      case Word_Size is
+        when "32" => Switch_Linker := Switch_Linker & (Executable_Directory & "\libcrypto-1_1.dll",
+                                                       Executable_Directory & "\libssl-1_1.dll");
+        when "64" => Switch_Linker := Switch_Linker & (Executable_Directory & "\libcrypto-1_1-x64.dll",
+                                                       Executable_Directory & "\libssl-1_1-x64.dll");
+      end case;
+  end case;
+
+  -----------
+  -- Debug --
+  -----------
+  case DEBUG is
+    when "No"  => Switch_Compiler := Switch_Compiler & ("-gnatp", -- Surpress all checks
+                                                        "-O3");   -- Optimize as much as possible
+    when "Yes" => Switch_Compiler := Switch_Compiler & ("-gnato", -- Enable overflow checking for numerics
+                                                        "-gnatE", -- Enable dynamic generic elaboration checks
+                                                        "-gnata", -- Enable pre and post conditions
+                                                        "-gnatf", --
+                                                        "-O0",    -- Avoid any optimization
+                                                        "-g");    -- Create extended info in stack traces
+  end case;
+
+  for Source_Dirs use ("code", "tests");
+  for Object_Dir  use "objects";
+  for Exec_Dir    use Executable_Directory;
+  for Main        use (Test);
+
+  package Compiler is for Default_Switches ("Ada") use Switch_Compiler; end Compiler;
+  package Linker   is for Default_Switches ("Ada") use Switch_Linker;   end Linker;
+  package Binder   is for Default_Switches ("Ada") use Switch_Binder;   end Binder;
+
+end Bitcoin_Script;
+
