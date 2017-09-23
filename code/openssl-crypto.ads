@@ -15,16 +15,17 @@ package OpenSSL.Crypto is
   -----------
   -- Types --
   -----------
-  subtype EC_KEY   is Address;
-  subtype BIGNUM   is Address;
-  subtype BN_CTX   is Address;
-  subtype EC_Group is Address;
-  subtype EC_Point is Address;
+  subtype EC_KEY     is Address;
+  subtype BIGNUM     is Address;
+  subtype BN_CTX     is Address;
+  subtype EC_Group   is Address;
+  subtype EC_Point   is Address;
+  subtype BIO        is Address;
+  subtype BIO_METHOD is Address;
 
-  ------------
-  -- EC_KEY --
-  ------------
-
+  --------------------------
+  -- ELLIPTICAL_CURVE_KEY --
+  --------------------------
   function EC_KEY_new_by_curve_name (nid : in Interfaces.C.Int) return EC_KEY
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_new_by_curve_name";
 
@@ -59,9 +60,9 @@ package OpenSSL.Crypto is
   function i2d_ECPrivateKey(x : EC_KEY; output : Address) return Int
     with Import => True, Convention => StdCall, External_Name => "i2d_ECPrivateKey";
 
-  --------------
-  -- EC_POINT --
-  --------------
+  ----------------------------
+  -- ELLIPTICAL_CURVE_POINT --
+  ----------------------------
   function EC_POINT_new (group : in EC_GROUP) return EC_POINT
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_new";
 
@@ -81,9 +82,9 @@ package OpenSSL.Crypto is
   function EC_POINT_point2bn(group : EC_GROUP; p : EC_POINT; form : Int; bn : BIGNUM; ctx : BN_CTX) return BIGNUM
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_point2bn";
 
-  ------------
-  -- BN_CTX --
-  ------------
+  --------------------
+  -- BIGNUM_CONTEXT --
+  --------------------
   function BN_CTX_new return BN_CTX
     with Import => True, Convention => StdCall, External_Name => "BN_CTX_new";
 
@@ -96,9 +97,9 @@ package OpenSSL.Crypto is
   procedure BN_CTX_free (ctx : in BN_CTX)
     with Import => True, Convention => StdCall, External_Name => "BN_CTX_free";
 
-  --------
-  -- BN --
-  --------
+  ------------
+  -- BIGNUM --
+  ------------
   function BN_new return BIGNUM
     with Import => True, Convention => StdCall, External_Name => "BN_new";
 
@@ -120,8 +121,17 @@ package OpenSSL.Crypto is
   function ERR_get_error return Unsigned_Long
     with Import => True, Convention => StdCall, External_Name => "ERR_get_error";
 
-  procedure ERR_error_string(e : in Unsigned_Long; buf : in chars_ptr)
+  procedure ERR_error_string (e : in Unsigned_Long; buf : in chars_ptr)
     with Import => True, Convention => StdCall, External_Name => "ERR_error_string";
+
+  -------------------------
+  -- BINARY_INPUT_OUTPUT --
+  -------------------------
+  function BIO_new (kind : in BIO_METHOD) return BIO
+    with Import => True, Convention => StdCall, External_Name => "BIO_new";
+
+  procedure BIO_free_all (a : in BIO)
+    with Import => True, Convention => StdCall, External_Name => "BIO_free_all";
 
   Assertion_Failed : exception;
 end;
