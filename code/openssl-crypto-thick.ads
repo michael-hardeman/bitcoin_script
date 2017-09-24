@@ -1,6 +1,7 @@
 with Ada.Finalization;
 with Interfaces.C; use Interfaces.C;
 with Interfaces.C.Strings; use Interfaces.C.Strings;
+with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 
 package OpenSSL.Crypto.Thick is
@@ -23,6 +24,8 @@ package OpenSSL.Crypto.Thick is
     Ucompressed => POINT_CONVERSION_UNCOMPRESSED,
     Hybrid      => POINT_CONVERSION_HYBRID);
 
+  type Base64_BIO_Flag_Kind is (No_New_Line) with Size => Int'Size;
+  for Base64_BIO_Flag_Kind use (No_New_Line => BIO_FLAGS_BASE64_NO_NL);
 
   -----------------
   -- Subprograms --
@@ -75,6 +78,12 @@ private
   end record;
              procedure Initialize (Item : in out Elliptical_Curve_Point; Group : in EC_Group);
   overriding procedure Finalize   (Item : in out Elliptical_Curve_Point);
+
+  type Binary_IO_Type is new Ada.Finalization.Controlled with record
+    Ptr : BIO := Null_Address;
+  end record;
+             procedure Initialize (Item : in out Binary_IO_Type; Method : BIO_METHOD);
+  overriding procedure Finalize   (Item : in out Binary_IO_Type);
 
   procedure Assert (Result : in Int);
   procedure Ignore (Result : in Int);

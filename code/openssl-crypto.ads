@@ -12,6 +12,13 @@ package OpenSSL.Crypto is
   POINT_CONVERSION_UNCOMPRESSED : constant Int := 4; -- the point is encoded as z||x||y, where the octet z specifies
   POINT_CONVERSION_HYBRID       : constant Int := 6; -- which solution of the quadratic equation y is
 
+  BIO_FLAGS_BASE64_NO_NL        : constant Int := 16#100#;
+  BIO_CTRL_FLUSH                : constant Int := 11;
+  BIO_C_GET_BUF_MEM_PTR         : constant Int := 115;
+  BIO_CTRL_SET_CLOSE            : constant Int := 9;
+  BIO_NOCLOSE                   : constant Int := 16#00#;
+
+
   -----------
   -- Types --
   -----------
@@ -132,6 +139,33 @@ package OpenSSL.Crypto is
 
   procedure BIO_free_all (a : in BIO)
     with Import => True, Convention => StdCall, External_Name => "BIO_free_all";
+
+  function BIO_f_base64 return BIO_METHOD
+    with Import => True, Convention => StdCall, External_Name => "BIO_f_base64";
+
+  function BIO_s_mem return BIO_METHOD
+    with Import => True, Convention => StdCall, External_Name => "BIO_s_mem";
+
+  function BIO_push (b : in BIO; append : in BIO) return BIO
+    with Import => True, Convention => StdCall, External_Name => "BIO_push";
+
+  function BIO_pop (b : in BIO) return BIO
+    with Import => True, Convention => StdCall, External_Name => "BIO_pop";
+
+  procedure BIO_set_flags (b : in BIO; flags : in Int)
+    with Import => True, Convention => StdCall, External_Name => "BIO_set_flags";
+
+  function BIO_write (b : in BIO; data : in Address; len : in Int) return Int
+    with Import => True, Convention => StdCall, External_Name => "BIO_write";
+
+  function BIO_ctrl (b : in BIO; cmd : in Int; larg : in Long; parg : in Address) return Long
+    with Import => True, Convention => StdCall, External_Name => "BIO_ctrl";
+
+  function BIO_Flush (b : in BIO) return Int is (Int (BIO_ctrl (b, BIO_CTRL_FLUSH, 0, Null_Address)));
+
+  function BIO_get_mem_ptr (b : in BIO; pp : Address) return Int is (Int (BIO_ctrl (b, BIO_C_GET_BUF_MEM_PTR, 0, pp)));
+
+  function BIO_set_close (b : in BIO; c : in Int) return Int is (Int (BIO_ctrl (b, BIO_CTRL_SET_CLOSE, Long (c), Null_Address)));
 
   Assertion_Failed : exception;
 end;

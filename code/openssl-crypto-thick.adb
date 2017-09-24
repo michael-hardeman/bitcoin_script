@@ -1,7 +1,30 @@
 package body OpenSSL.Crypto.Thick is
 
+  -----------------
+  -- Conversions --
+  -----------------
   function To_Int is new Ada.Unchecked_Conversion (Source => Elliptical_Curve_Kind, Target => Int);
-  function To_Int is new Ada.Unchecked_Conversion (Source => Point_Format_Kind, Target => Int);
+  function To_Int is new Ada.Unchecked_Conversion (Source => Point_Format_Kind,     Target => Int);
+  function To_Int is new Ada.Unchecked_Conversion (Source => Base64_BIO_Flag_Kind,  Target => Int);
+
+  -----------------------------
+  -- Controlled Access Types --
+  -----------------------------
+  procedure Initialize (Item : in out Key_Pair_Type) is begin Item.Ptr := EC_KEY_new_by_curve_name (NID_secp256k1); end;
+  procedure Finalize   (Item : in out Key_Pair_Type) is begin EC_KEY_free (Item.Ptr); end;
+
+  procedure Initialize (Item : in out Big_Number_Type) is begin Item.Ptr := BN_new; end;
+  procedure Finalize   (Item : in out Big_Number_Type) is begin BN_clear_free (Item.Ptr); end;
+
+  procedure Initialize (Item : in out Big_Number_Context) is begin Item.Ptr := BN_CTX_new; BN_CTX_start (Item.Ptr); end;
+  procedure Finalize   (Item : in out Big_Number_Context) is begin BN_CTX_end (Item.Ptr); BN_CTX_free (Item.Ptr); end;
+
+  procedure Initialize (Item : in out Elliptical_Curve_Point; Group : in EC_Group) is begin Item.Ptr := EC_POINT_new (Group); end;
+  procedure Finalize   (Item : in out Elliptical_Curve_Point) is begin BN_CTX_end (Item.Ptr); end;
+
+  procedure Initialize (Item : in out Binary_IO_Type; Method : in BIO_METHOD) is begin Item.Ptr := BIO_new (Method); end;
+  procedure Finalize   (Item : in out Binary_IO_Type) is begin BIO_free_all (Item.Ptr); end;
+
 
   -----------------------
   -- Generate_Key_Pair --
@@ -74,26 +97,31 @@ package body OpenSSL.Crypto.Thick is
   -- Base_64_Encode --
   --------------------
   function Base_64_Encode (Decoded : in Byte_Array) return String is
+    b64, mem : Binary_IO_Type;
   begin
-  -- int Base64Encode(const unsigned char* buffer, size_t length, char** b64text) { //Encodes a binary safe base 64 string
-  --   BIO *bio, *b64;
-  --   BUF_MEM *bufferPtr;
+    Put_Line ("A");
+    Initialize (b64, BIO_f_base64);
+    Initialize (mem, BIO_s_mem);
+    Put_Line ("B");
+    mem.Ptr := BIO_push (b64.Ptr, mem.Ptr);
+    Put_Line ("C");
+    BIO_set_flags (mem.Ptr, To_Int (No_New_Line)); -- Ignore newlines - write everything in one line
+    Put_Line ("D");
+    Ignore (BIO_write (mem.Ptr, Decoded'Address, Int (Decoded'Length)));
+    Put_Line ("E");
+    Ignore (BIO_flush (mem.Ptr));
+    Put_Line ("F");
+    declare
+      C_Str : char_array (1 .. 255);
+    begin
+      Put_Line ("G");
+      Ignore (BIO_get_mem_ptr (mem.Ptr, C_Str'Address));
+      Put_Line ("H");
+      Ignore (BIO_set_close (mem.Ptr, BIO_NOCLOSE));
+      Put_Line ("I");
 
-  --   b64 = BIO_new(BIO_f_base64());
-  --   bio = BIO_new(BIO_s_mem());
-  --   bio = BIO_push(b64, bio);
-
-  --   BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL); //Ignore newlines - write everything in one line
-  --   BIO_write(bio, buffer, length);
-  --   BIO_flush(bio);
-  --   BIO_get_mem_ptr(bio, &bufferPtr);
-  --   BIO_set_close(bio, BIO_NOCLOSE);
-  --   BIO_free_all(bio);
-
-  --   *b64text=(*bufferPtr).data;
-
-  --   return (0); //success
-    return Positive'Image (Decoded'Length) & " bytes of Base64 goes here when I get around it";
+      return To_Ada (C_Str);
+    end;
   end;
 
   --------------------
@@ -129,21 +157,6 @@ package body OpenSSL.Crypto.Thick is
   --   return (0); //success
     return (1 => 16#00#);
   end;
-
-  -----------------------------
-  -- Controlled Access Types --
-  -----------------------------
-  procedure Initialize (Item : in out Key_Pair_Type) is begin Item.Ptr := EC_KEY_new_by_curve_name (NID_secp256k1); end;
-  procedure Finalize   (Item : in out Key_Pair_Type) is begin EC_KEY_free (Item.Ptr); end;
-
-  procedure Initialize (Item : in out Big_Number_Type) is begin Item.Ptr := BN_new; end;
-  procedure Finalize   (Item : in out Big_Number_Type) is begin BN_clear_free (Item.Ptr); end;
-
-  procedure Initialize (Item : in out Big_Number_Context) is begin Item.Ptr := BN_CTX_new; BN_CTX_start (Item.Ptr); end;
-  procedure Finalize   (Item : in out Big_Number_Context) is begin BN_CTX_end (Item.Ptr); BN_CTX_free (Item.Ptr); end;
-
-  procedure Initialize (Item : in out Elliptical_Curve_Point; Group : in EC_Group) is begin Item.Ptr := EC_POINT_new (Group); end;
-  procedure Finalize   (Item : in out Elliptical_Curve_Point) is begin BN_CTX_end (Item.Ptr); end;
 
   -------------------
   -- Ignore/Assert --
