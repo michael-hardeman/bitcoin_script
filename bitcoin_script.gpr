@@ -6,7 +6,8 @@ project Bitcoin_Script is
   type Word_Size_Option is ("32",   "64");
   type System_Option    is ("unix", "windows");
   type Boolean_Option   is ("Yes",  "No");
-  type Test_Option      is ("base64_test.adb",
+  type Test_Option      is ("base58_test.adb",
+                            "base64_test.adb",
                             "generic_stacks_test.adb",
                             "bitcoin_script_test.adb",
                             "openssl_create_keypair_test.adb");
