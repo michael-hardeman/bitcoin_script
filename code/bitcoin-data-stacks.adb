@@ -1,4 +1,4 @@
-package body Generic_Stacks is
+package body Bitcoin.Data.Stacks is
   use Stack_Indefinite_Vectors;
 
   ----------

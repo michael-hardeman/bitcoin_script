@@ -1,11 +1,10 @@
 
 with Ada.Text_IO; use Ada.Text_IO;
 with Bitcoin; use Bitcoin;
-with Bitcoin.Base64; use Bitcoin.Base64;
-with OpenSSL; use OpenSSL;
-with OpenSSL.Crypto.Thick; use OpenSSL.Crypto.Thick;
+with Bitcoin.Crypto; use Bitcoin.Crypto;
+with Bitcoin.Encoding.Base64; use Bitcoin.Encoding.Base64;
 
-procedure OpenSSL_Create_Keypair_Test is
+procedure Crypto_Test is
   INITIAL_PRIVATE_KEY : constant Byte_Array := (
     16#16#, 16#26#, 16#07#, 16#83#, 16#e4#, 16#0b#, 16#16#, 16#73#,
     16#16#, 16#73#, 16#62#, 16#2a#, 16#c8#, 16#a5#, 16#b0#, 16#45#,

@@ -1,9 +1,8 @@
-with Generic_Stacks;
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Text_IO; use Ada.Text_IO;
+with Bitcoin.Data.Stacks;
 
-procedure Generic_Stacks_Test is
-  package String_Stacks is new Generic_Stacks (Positive, String, "=");
+procedure Stacks_Test is
+  package String_Stacks is new Bitcoin.Data.Stacks (Positive, String, "=");
   use String_Stacks;
 
   Stack : Stack_Type;
