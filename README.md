@@ -1,14 +1,18 @@
 Ada Bitcoin Script Interpreter
 ==============================
 
-NOTE: THIS PROJECT IS MOSTLY INCOMPLETE
-
 This is the start of a bitcoin scirpt interpreter written in the highly reliable language Ada.
 
 Planned Features:
 
 - Evaluate all Bitcoin Script opcodes
-- Focused OpenSSL binding for cryptography
+- Base58 and Base64 Encoding
+- Focused OpenSSL binding for secp256k1 and ripemd160
+
+Differences to the standard:
+
+- Nested If/Else blocks are supported
+- OP_VERIF and OP_VERNOTIF will only invalidate if they are evaluated
 
 ## Compiling
 
@@ -24,9 +28,8 @@ To compile from command line with all the defaults (32, windows, No, bitcoin_scr
 
 To compile from command line with specific options
 
-`gprbuild -P bitcoin_script.gpr -XWord_Size=32 -XSystem=windows -XTest=bitcoin_script_test.adb -XDebug=No`
+`gprbuild -P bitcoin_script.gpr -XWord_Size=32 -XSystem=windows -XTest=script_test.adb -XDebug=Yes`
 
-Or the Gnat Programming Studio IDE may be used (email is optional):
 Or the free IDE [Gnat Programming Studio](http://libre.adacore.com/download/) can open and compile gpr files 
 
 ## Dependencies
@@ -41,12 +44,20 @@ Linux: You'll have to find your own. You can usually install libssl with your pa
 
 This project will use gitfow.
 
+To contribute, create a feature branch off develop. Example feature/ripemd160-support. 
+When you're ready, open a pull request to merge back into develop, I'll review the changes.
+
 Things to work on:
 
 - OpenSSL binding
-  - Base64 Encoding/Decoding
-  - Base58 Encoding/Decoding
+  - Proper initialization
+  - Proper finalization
   - RIPEMD160 binding
 - Opcodes
-  - All Constant and Flow Control Opcodes have been implemented.
-  - All the rest need implementation.
+  - Stack
+  - Splice
+  - Bitwise Logic
+  - Arithmetic
+  - Crypto
+  - Locktime
+  - Pseudo-words
