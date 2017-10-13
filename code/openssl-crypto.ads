@@ -12,20 +12,48 @@ package OpenSSL.Crypto is
   POINT_CONVERSION_UNCOMPRESSED : constant Int := 4; -- the point is encoded as z||x||y, where the octet z specifies
   POINT_CONVERSION_HYBRID       : constant Int := 6; -- which solution of the quadratic equation y is
 
+  BIO_FLAGS_BASE64_NO_NL        : constant Int := 16#100#;
+  BIO_CTRL_FLUSH                : constant Int := 11;
+  BIO_C_GET_BUF_MEM_PTR         : constant Int := 115;
+  BIO_CTRL_SET_CLOSE            : constant Int := 9;
+  BIO_NOCLOSE                   : constant Int := 16#00#;
+
+
   -----------
   -- Types --
   -----------
-  subtype EC_KEY   is Address;
-  subtype BIGNUM   is Address;
-  subtype BN_CTX   is Address;
-  subtype EC_Group is Address;
-  subtype EC_Point is Address;
+  subtype EC_KEY     is Address;
+  subtype BIGNUM     is Address;
+  subtype BN_CTX     is Address;
+  subtype EC_Group   is Address;
+  subtype EC_Point   is Address;
+  subtype BIO        is Address;
+  subtype BIO_METHOD is Address;
 
-  ------------
-  -- EC_KEY --
-  ------------
+  type OPENSSL_INIT_SETTINGS is record
+    null;
+  end record;
+  type OPENSSL_INIT_SETTINGS_Access is access all OPENSSL_INIT_SETTINGS;
 
-  function EC_KEY_new_by_curve_name (nid : in Interfaces.C.Int) return EC_KEY
+  --------------
+  -- OPEN_SSL --
+  --------------
+  function OPENSSL_init_crypto (opts : in Unsigned_Long; settings : in OPENSSL_INIT_SETTINGS_Access) return Int
+    with Import => True, Convention => StdCall, External_Name => "OPENSSL_init_crypto";
+
+  function OPENSSL_init_new return OPENSSL_INIT_SETTINGS_Access
+    with Import => True, Convention => StdCall, External_Name => "OPENSSL_init_new";
+
+  function OPENSSL_INIT_set_config_appname (init : in OPENSSL_INIT_SETTINGS_Access; Name : in Chars_Ptr) return Int
+    with Import => True, Convention => StdCall, External_Name => "OPENSSL_INIT_set_config_appname";
+
+   procedure OPENSSL_INIT_free (init : in OPENSSL_INIT_SETTINGS_Access)
+    with Import => True, Convention => StdCall, External_Name => "OPENSSL_INIT_free";
+
+  --------------------------
+  -- ELLIPTICAL_CURVE_KEY --
+  --------------------------
+  function EC_KEY_new_by_curve_name (nid : in Int) return EC_KEY
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_new_by_curve_name";
 
   function EC_KEY_generate_key (key : EC_KEY) return Int
@@ -59,9 +87,9 @@ package OpenSSL.Crypto is
   function i2d_ECPrivateKey(x : EC_KEY; output : Address) return Int
     with Import => True, Convention => StdCall, External_Name => "i2d_ECPrivateKey";
 
-  --------------
-  -- EC_POINT --
-  --------------
+  ----------------------------
+  -- ELLIPTICAL_CURVE_POINT --
+  ----------------------------
   function EC_POINT_new (group : in EC_GROUP) return EC_POINT
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_new";
 
@@ -81,9 +109,9 @@ package OpenSSL.Crypto is
   function EC_POINT_point2bn(group : EC_GROUP; p : EC_POINT; form : Int; bn : BIGNUM; ctx : BN_CTX) return BIGNUM
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_point2bn";
 
-  ------------
-  -- BN_CTX --
-  ------------
+  --------------------
+  -- BIGNUM_CONTEXT --
+  --------------------
   function BN_CTX_new return BN_CTX
     with Import => True, Convention => StdCall, External_Name => "BN_CTX_new";
 
@@ -96,9 +124,9 @@ package OpenSSL.Crypto is
   procedure BN_CTX_free (ctx : in BN_CTX)
     with Import => True, Convention => StdCall, External_Name => "BN_CTX_free";
 
-  --------
-  -- BN --
-  --------
+  ------------
+  -- BIGNUM --
+  ------------
   function BN_new return BIGNUM
     with Import => True, Convention => StdCall, External_Name => "BN_new";
 
@@ -120,8 +148,44 @@ package OpenSSL.Crypto is
   function ERR_get_error return Unsigned_Long
     with Import => True, Convention => StdCall, External_Name => "ERR_get_error";
 
-  procedure ERR_error_string(e : in Unsigned_Long; buf : in chars_ptr)
+  procedure ERR_error_string (e : in Unsigned_Long; buf : in chars_ptr)
     with Import => True, Convention => StdCall, External_Name => "ERR_error_string";
+
+  -------------------------
+  -- BINARY_INPUT_OUTPUT --
+  -------------------------
+  function BIO_new (kind : in BIO_METHOD) return BIO
+    with Import => True, Convention => StdCall, External_Name => "BIO_new";
+
+  procedure BIO_free_all (a : in BIO)
+    with Import => True, Convention => StdCall, External_Name => "BIO_free_all";
+
+  function BIO_f_base64 return BIO_METHOD
+    with Import => True, Convention => StdCall, External_Name => "BIO_f_base64";
+
+  function BIO_s_mem return BIO_METHOD
+    with Import => True, Convention => StdCall, External_Name => "BIO_s_mem";
+
+  function BIO_push (b : in BIO; append : in BIO) return BIO
+    with Import => True, Convention => StdCall, External_Name => "BIO_push";
+
+  function BIO_pop (b : in BIO) return BIO
+    with Import => True, Convention => StdCall, External_Name => "BIO_pop";
+
+  procedure BIO_set_flags (b : in BIO; flags : in Int)
+    with Import => True, Convention => StdCall, External_Name => "BIO_set_flags";
+
+  function BIO_write (b : in BIO; data : in Address; len : in Int) return Int
+    with Import => True, Convention => StdCall, External_Name => "BIO_write";
+
+  function BIO_ctrl (b : in BIO; cmd : in Int; larg : in Long; parg : in Address) return Long
+    with Import => True, Convention => StdCall, External_Name => "BIO_ctrl";
+
+  function BIO_Flush (b : in BIO) return Int is (Int (BIO_ctrl (b, BIO_CTRL_FLUSH, 0, Null_Address)));
+
+  function BIO_get_mem_ptr (b : in BIO; pp : Address) return Int is (Int (BIO_ctrl (b, BIO_C_GET_BUF_MEM_PTR, 0, pp)));
+
+  function BIO_set_close (b : in BIO; c : in Int) return Int is (Int (BIO_ctrl (b, BIO_CTRL_SET_CLOSE, Long (c), Null_Address)));
 
   Assertion_Failed : exception;
 end;
