@@ -85,7 +85,7 @@ package body Bitcoin.Script is
     procedure Push_Bytes_To_Stack (Stack : in out Stack_Type; Quantity : in Positive) is
       Accumulator : Byte_Array := (1 .. Quantity => 0);
     begin
-      for I in Accumulator'Range loop Accumulator (I) := Script_Parser.Next; end loop;
+      for I in Accumulator'Range loop Accumulator (I) := Next; end loop;
       Push (Stack, Accumulator);
     end;
 
