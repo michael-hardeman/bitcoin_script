@@ -38,10 +38,7 @@ package OpenSSL.Crypto.Thick is
 
   function  Length        (Big_Number : in Big_Number_Type) return Positive;
   procedure To_Byte_Array (Big_Number : in Big_Number_Type; Output : in out Byte_Array);
-
-  function Base_64_Encode (Decoded : in Byte_Array) return String;
-  function Base_64_Decode (Encoded : in String)     return Byte_Array;
-
+  
 -------
 private
 -------

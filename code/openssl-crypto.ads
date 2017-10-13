@@ -30,10 +30,30 @@ package OpenSSL.Crypto is
   subtype BIO        is Address;
   subtype BIO_METHOD is Address;
 
+  type OPENSSL_INIT_SETTINGS is record
+    null;
+  end record;
+  type OPENSSL_INIT_SETTINGS_Access is access all OPENSSL_INIT_SETTINGS;
+
+  --------------
+  -- OPEN_SSL --
+  --------------
+  function OPENSSL_init_crypto (opts : in Unsigned_Long; settings : in OPENSSL_INIT_SETTINGS_Access) return Int
+    with Import => True, Convention => StdCall, External_Name => "OPENSSL_init_crypto";
+
+  function OPENSSL_init_new return OPENSSL_INIT_SETTINGS_Access
+    with Import => True, Convention => StdCall, External_Name => "OPENSSL_init_new";
+
+  function OPENSSL_INIT_set_config_appname (init : in OPENSSL_INIT_SETTINGS_Access; Name : in Chars_Ptr) return Int
+    with Import => True, Convention => StdCall, External_Name => "OPENSSL_INIT_set_config_appname";
+
+   procedure OPENSSL_INIT_free (init : in OPENSSL_INIT_SETTINGS_Access)
+    with Import => True, Convention => StdCall, External_Name => "OPENSSL_INIT_free";
+
   --------------------------
   -- ELLIPTICAL_CURVE_KEY --
   --------------------------
-  function EC_KEY_new_by_curve_name (nid : in Interfaces.C.Int) return EC_KEY
+  function EC_KEY_new_by_curve_name (nid : in Int) return EC_KEY
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_new_by_curve_name";
 
   function EC_KEY_generate_key (key : EC_KEY) return Int

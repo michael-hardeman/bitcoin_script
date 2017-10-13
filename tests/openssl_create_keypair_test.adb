@@ -25,16 +25,16 @@ begin
   declare
     Priv : Byte_Array (1 .. Length (Private_Key)) := (others => 16#00#);
   begin
-    To_Byte_Array (Private_Key, Priv);
-    Put_Line (Base_64_Encode (Priv));
+    -- To_Byte_Array (Private_Key, Priv);
+    null;
   end;
   Put_Line ("-----END EC PRIVATE KEY-----");
   Put_Line ("-----BEGIN PUBLIC KEY-----");
   declare
     Pub : Byte_Array (1 .. Length (Public_Key)) := (others => 16#00#);
   begin
-    To_Byte_Array (Public_Key, Pub);
-    Put_Line (Base_64_Encode (Pub));
+    -- To_Byte_Array (Public_Key, Pub);
+    null;
   end;
   Put_Line ("-----END PUBLIC KEY-----");
 end;
