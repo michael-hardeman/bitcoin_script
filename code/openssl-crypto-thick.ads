@@ -1,4 +1,5 @@
 with Ada.Finalization;
+with Bitcoin; use Bitcoin;
 with Interfaces.C; use Interfaces.C;
 with Interfaces.C.Strings; use Interfaces.C.Strings;
 with Ada.Text_IO; use Ada.Text_IO;

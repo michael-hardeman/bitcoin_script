@@ -1,6 +1,8 @@
-package Bitcoin
+with Interfaces; use Interfaces;
 
-  subtype Byte is Interfaces.Unsigned_8;
+package Bitcoin is
+
+  subtype Byte is Unsigned_8;
   type Byte_Array is array (Positive range <>) of aliased Byte;
 
-is end;
+end;
