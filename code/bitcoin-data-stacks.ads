@@ -6,7 +6,7 @@ generic
   type Index_Type is range <>;
   type Element_Type (<>) is private;
   with function "=" (Left, Right : Element_Type) return Boolean is <>;
-package Generic_Stacks is
+package Bitcoin.Data.Stacks is
 
   package Stack_Indefinite_Vectors is new Ada.Containers.Indefinite_Vectors (
     Index_Type   => Index_Type,

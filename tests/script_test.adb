@@ -1,7 +1,8 @@
 with Ada.Text_IO; use Ada.Text_IO;
+with Bitcoin; use Bitcoin;
 with Bitcoin.Script; use Bitcoin.Script;
 
-procedure Bitcoin_Script_Test is
+procedure Script_Test is
   -- Example Typical Bitcoin Transaction picked at random
   -- https://blockchain.info/tx/9a88b001b405ea5b9d68b75f995184a85ac36c5b5bf6ab78f9311be75f829b91?show_adv=true
   -- TXID: 9a88b001b405ea5b9d68b75f995184a85ac36c5b5bf6ab78f9311be75f829b91

@@ -1,11 +1,12 @@
 with Ada.Finalization;
-with Bitcoin; use Bitcoin;
+with Ada.Unchecked_Conversion;
+with Ada.Text_IO; use Ada.Text_IO;
+with System; use System;
 with Interfaces.C; use Interfaces.C;
 with Interfaces.C.Strings; use Interfaces.C.Strings;
-with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Unchecked_Conversion;
+with Bitcoin.API.OpenSSL; use Bitcoin.API.OpenSSL;
 
-package OpenSSL.Crypto.Thick is
+package Bitcoin.Crypto is
 
   -----------
   -- Types --

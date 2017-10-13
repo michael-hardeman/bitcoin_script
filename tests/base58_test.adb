@@ -2,7 +2,8 @@ with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Interfaces; use Interfaces;
 with Bitcoin; use Bitcoin;
-with Bitcoin.Base58; use Bitcoin.Base58;
+with Bitcoin.Encoding.Base58; use Bitcoin.Encoding.Base58;
+
 procedure Base58_Test is
 
   ---------------

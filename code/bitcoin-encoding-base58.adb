@@ -1,4 +1,4 @@
-package body Bitcoin.Base58 is
+package body Bitcoin.Encoding.Base58 is
 
   subtype Code_Type is Unsigned_8 range 0 .. 57;
   type Code_Type_Array is array (Positive range <>) of Code_Type;
@@ -156,7 +156,7 @@ package body Bitcoin.Base58 is
         for I in reverse Bytes'Range loop
           exit when (Carry = 0 and Bytes_Visited >= Bytes_Length);
           Carry := Carry + (58 * Unsigned_16 (Bytes (I)));
-          Bytes (I) := Unsigned_8 (Carry rem 256);
+          Bytes (I) := Byte (Carry rem 256);
           Carry := Carry / 256;
           Bytes_Visited := Natural'Succ (Bytes_Visited);
         end loop;
