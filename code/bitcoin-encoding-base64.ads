@@ -2,7 +2,7 @@ with Interfaces; use Interfaces;
 with Ada.Strings; use Ada.Strings;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 
-package Bitcoin.Base64 is
+package Bitcoin.Encoding.Base64 is
 
   type Encoded_Character is (
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',

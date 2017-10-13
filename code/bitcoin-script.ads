@@ -2,7 +2,7 @@ with Interfaces; use Interfaces;
 with Ada.Unchecked_Conversion;
 with Ada.Finalization;
 with Ada.Containers;
-with Generic_Stacks;
+with Bitcoin.Data.Stacks;
 
 package Bitcoin.Script is
 
@@ -203,7 +203,7 @@ package Bitcoin.Script is
   -----------
   -- Types --
   -----------
-  subtype Data_Count_Range is Unsigned_8 range 16#01# .. 16#4B#;
+  subtype Data_Count_Range is Byte range 16#01# .. 16#4B#;
   type Opcode_Kind_Array is array (Positive range <>) of Opcode_Kind;
 
   -----------------
@@ -225,7 +225,7 @@ package Bitcoin.Script is
 -------
 private
 -------
-  package Byte_Array_Stacks is new Generic_Stacks (Positive, Byte_Array, "=");
+  package Byte_Array_Stacks is new Bitcoin.Data.Stacks (Positive, Byte_Array, "=");
 
   generic
     Script : Byte_Array;

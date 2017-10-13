@@ -1,4 +1,4 @@
-package body Bitcoin.Base64 is
+package body Bitcoin.Encoding.Base64 is
 
   ------------------
   -- To_Character --

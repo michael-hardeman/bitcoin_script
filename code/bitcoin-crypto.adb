@@ -1,4 +1,4 @@
-package body OpenSSL.Crypto.Thick is
+package body Bitcoin.Crypto is
 
   -----------------
   -- Conversions --

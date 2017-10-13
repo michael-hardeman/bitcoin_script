@@ -2,7 +2,7 @@ with System; use System;
 with Interfaces.C; use Interfaces.C;
 with Interfaces.C.Strings; use Interfaces.C.Strings;
 
-package OpenSSL.Crypto is
+package Bitcoin.API.OpenSSL is
   ---------------
   -- Constants --
   ---------------

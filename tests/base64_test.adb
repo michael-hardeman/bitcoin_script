@@ -1,8 +1,8 @@
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-with Interfaces; use Interfaces;
 with Bitcoin; use Bitcoin;
-with Bitcoin.Base64; use Bitcoin.Base64;
+with Bitcoin.Encoding.Base64; use Bitcoin.Encoding.Base64;
+
 procedure Base64_Test is
 
   ---------------
@@ -13,9 +13,9 @@ procedure Base64_Test is
   begin
     Append (Output, "(");
     for I in Items'First .. Items'Last - 1 loop
-      Append (Output, Unsigned_8'Image (Items (I))); Append (Output, ",");
+      Append (Output, Byte'Image (Items (I))); Append (Output, ",");
     end loop;
-    Append (Output, Unsigned_8'Image (Items (Items'Last))); Append (Output, " )");
+    Append (Output, Byte'Image (Items (Items'Last))); Append (Output, " )");
     return To_String (Output);
   end;
 
@@ -25,7 +25,7 @@ procedure Base64_Test is
   function To_Byte_Array (Item : in String) return Byte_Array is
     Output : Byte_Array (Item'Range) := (others => 0);
   begin
-    for I in Item'Range loop Output (I) := Unsigned_8 (Character'Pos (Item (I))); end loop;
+    for I in Item'Range loop Output (I) := Byte (Character'Pos (Item (I))); end loop;
     return Output;
   end;
 
