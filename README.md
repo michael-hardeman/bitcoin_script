@@ -1,7 +1,7 @@
 Ada Bitcoin Script Interpreter
 ==============================
 
-This is the start of a bitcoin scirpt interpreter written in the highly reliable language Ada.
+This is the start of a bitcoin script interpreter written in the highly reliable language Ada.
 
 Planned Features:
 
