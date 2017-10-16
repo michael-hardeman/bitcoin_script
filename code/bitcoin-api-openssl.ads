@@ -6,17 +6,47 @@ package Bitcoin.API.OpenSSL is
   ---------------
   -- Constants --
   ---------------
-  NID_secp256k1                 : constant Int := 714;
+  NID_secp112r1 : constant Int := 704;
+  NID_secp112r2 : constant Int := 705;
+  NID_secp128r1 : constant Int := 706;
+  NID_secp128r2 : constant Int := 707;
+  NID_secp160k1 : constant Int := 708;
+  NID_secp160r1 : constant Int := 709;
+  NID_secp160r2 : constant Int := 710;
+  NID_secp192k1 : constant Int := 711;
+  NID_secp224k1 : constant Int := 712;
+  NID_secp224r1 : constant Int := 713;
+  NID_secp256k1 : constant Int := 714;
+  NID_secp384r1 : constant Int := 715;
+  NID_secp521r1 : constant Int := 716;
+  NID_sect113r1 : constant Int := 717;
+  NID_sect113r2 : constant Int := 718;
+  NID_sect131r1 : constant Int := 719;
+  NID_sect131r2 : constant Int := 720;
+  NID_sect163k1 : constant Int := 721;
+  NID_sect163r1 : constant Int := 722;
+  NID_sect163r2 : constant Int := 723;
+  NID_sect193r1 : constant Int := 724;
+  NID_sect193r2 : constant Int := 725;
+  NID_sect233k1 : constant Int := 726;
+  NID_sect233r1 : constant Int := 727;
+  NID_sect239k1 : constant Int := 728;
+  NID_sect283k1 : constant Int := 729;
+  NID_sect283r1 : constant Int := 730;
+  NID_sect409k1 : constant Int := 731;
+  NID_sect409r1 : constant Int := 732;
+  NID_sect571k1 : constant Int := 733;
+  NID_sect571r1 : constant Int := 734;
 
   POINT_CONVERSION_COMPRESSED   : constant Int := 2; -- the point is encoded as z||x||y, where z is the octet 0x04
   POINT_CONVERSION_UNCOMPRESSED : constant Int := 4; -- the point is encoded as z||x||y, where the octet z specifies
   POINT_CONVERSION_HYBRID       : constant Int := 6; -- which solution of the quadratic equation y is
 
-  BIO_FLAGS_BASE64_NO_NL        : constant Int := 16#100#;
-  BIO_CTRL_FLUSH                : constant Int := 11;
-  BIO_C_GET_BUF_MEM_PTR         : constant Int := 115;
-  BIO_CTRL_SET_CLOSE            : constant Int := 9;
-  BIO_NOCLOSE                   : constant Int := 16#00#;
+  BIO_FLAGS_BASE64_NO_NL : constant Int := 16#100#;
+  BIO_CTRL_FLUSH         : constant Int := 11;
+  BIO_C_GET_BUF_MEM_PTR  : constant Int := 115;
+  BIO_CTRL_SET_CLOSE     : constant Int := 9;
+  BIO_NOCLOSE            : constant Int := 16#00#;
 
 
   -----------
@@ -27,8 +57,6 @@ package Bitcoin.API.OpenSSL is
   subtype BN_CTX     is Address;
   subtype EC_Group   is Address;
   subtype EC_Point   is Address;
-  subtype BIO        is Address;
-  subtype BIO_METHOD is Address;
 
   type OPENSSL_INIT_SETTINGS is record
     null;
@@ -151,41 +179,6 @@ package Bitcoin.API.OpenSSL is
   procedure ERR_error_string (e : in Unsigned_Long; buf : in chars_ptr)
     with Import => True, Convention => StdCall, External_Name => "ERR_error_string";
 
-  -------------------------
-  -- BINARY_INPUT_OUTPUT --
-  -------------------------
-  function BIO_new (kind : in BIO_METHOD) return BIO
-    with Import => True, Convention => StdCall, External_Name => "BIO_new";
-
-  procedure BIO_free_all (a : in BIO)
-    with Import => True, Convention => StdCall, External_Name => "BIO_free_all";
-
-  function BIO_f_base64 return BIO_METHOD
-    with Import => True, Convention => StdCall, External_Name => "BIO_f_base64";
-
-  function BIO_s_mem return BIO_METHOD
-    with Import => True, Convention => StdCall, External_Name => "BIO_s_mem";
-
-  function BIO_push (b : in BIO; append : in BIO) return BIO
-    with Import => True, Convention => StdCall, External_Name => "BIO_push";
-
-  function BIO_pop (b : in BIO) return BIO
-    with Import => True, Convention => StdCall, External_Name => "BIO_pop";
-
-  procedure BIO_set_flags (b : in BIO; flags : in Int)
-    with Import => True, Convention => StdCall, External_Name => "BIO_set_flags";
-
-  function BIO_write (b : in BIO; data : in Address; len : in Int) return Int
-    with Import => True, Convention => StdCall, External_Name => "BIO_write";
-
-  function BIO_ctrl (b : in BIO; cmd : in Int; larg : in Long; parg : in Address) return Long
-    with Import => True, Convention => StdCall, External_Name => "BIO_ctrl";
-
-  function BIO_Flush (b : in BIO) return Int is (Int (BIO_ctrl (b, BIO_CTRL_FLUSH, 0, Null_Address)));
-
-  function BIO_get_mem_ptr (b : in BIO; pp : Address) return Int is (Int (BIO_ctrl (b, BIO_C_GET_BUF_MEM_PTR, 0, pp)));
-
-  function BIO_set_close (b : in BIO; c : in Int) return Int is (Int (BIO_ctrl (b, BIO_CTRL_SET_CLOSE, Long (c), Null_Address)));
 
   Assertion_Failed : exception;
 end;
