@@ -52,11 +52,12 @@ package Bitcoin.API.OpenSSL is
   -----------
   -- Types --
   -----------
-  subtype EC_KEY     is Address;
-  subtype BIGNUM     is Address;
-  subtype BN_CTX     is Address;
-  subtype EC_Group   is Address;
-  subtype EC_Point   is Address;
+  subtype EC_KEY    is Address;
+  subtype BIGNUM    is Address;
+  subtype BN_CTX    is Address;
+  subtype EC_METHOD is Address;
+  subtype EC_GROUP  is Address;
+  subtype EC_POINT  is Address;
 
   type OPENSSL_INIT_SETTINGS is record
     null;
@@ -90,6 +91,10 @@ package Bitcoin.API.OpenSSL is
   function EC_KEY_get0_group (key : in EC_KEY) return EC_GROUP
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_get0_group";
 
+  -- return 1 on success and 0 if an error occurred
+  function EC_KEY_set_group (key : in EC_KEY; group : in EC_GROUP) return Int
+    with Import => True, Convention => StdCall, External_Name => "EC_KEY_set_group";
+
   function EC_KEY_get0_private_key(key : in EC_KEY) return BIGNUM
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_get0_private_key";
 
@@ -105,15 +110,25 @@ package Bitcoin.API.OpenSSL is
   procedure EC_KEY_free (a : in EC_KEY)
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_free";
 
-  -- RETURNS LENGTH OF output param
-  -- Output must be the address of a Interfaces.C.Chars_Ptr
-  function i2d_ECPKParameters(x : EC_GROUP; output : Address) return Int
-    with Import => True, Convention => StdCall, External_Name => "i2d_ECPKParameters";
 
-  -- RETURNS LENGTH OF output param
-  -- Output must be the address of a Interfaces.C.Chars_Ptr
-  function i2d_ECPrivateKey(x : EC_KEY; output : Address) return Int
-    with Import => True, Convention => StdCall, External_Name => "i2d_ECPrivateKey";
+  ----------------------------
+  -- ELLIPTICAL_CURVE_GROUP --
+  ----------------------------
+
+  function EC_GROUP_dup (src : in EC_GROUP) return EC_GROUP
+    with Import => True, Convention => StdCall, External_Name => "EC_GROUP_dup";
+
+  function EC_GROUP_new (meth : in EC_METHOD) return EC_GROUP
+    with Import => True, Convention => StdCall, External_Name => "EC_GROUP_new";
+
+  function EC_GROUP_new_by_curve_name (nid : in Int) return EC_GROUP
+    with Import => True, Convention => StdCall, External_Name => "EC_GROUP_new_by_curve_name";
+
+  procedure EC_GROUP_free (group : in EC_GROUP)
+    with Import => True, Convention => StdCall, External_Name => "EC_GROUP_free";
+
+  procedure EC_GROUP_clear_free (group : in EC_GROUP)
+    with Import => True, Convention => StdCall, External_Name => "EC_GROUP_clear_free";
 
   ----------------------------
   -- ELLIPTICAL_CURVE_POINT --
