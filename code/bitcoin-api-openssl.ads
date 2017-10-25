@@ -55,6 +55,8 @@ package Bitcoin.API.OpenSSL is
   PCT_nistp521 : constant Unsigned := 3;
   PCT_nistz256 : constant Unsigned := 4;
   PCT_ec       : constant Unsigned := 5;
+  
+  BN_CTX_POOL_SIZE : constant Positive := 16;
 
   -----------
   -- Types --
@@ -65,7 +67,7 @@ package Bitcoin.API.OpenSSL is
   type BN_ULONG_Array is array (Positive range <>) of BN_ULONG;
 
   type EC_METHOD;
-  type ENGINE
+  type ENGINE;
   type EC_POINT;
   type EC_GROUP;
   type EC_KEY;
@@ -75,9 +77,10 @@ package Bitcoin.API.OpenSSL is
   type OPENSSL_STACK;
   type BN_POOL_ITEM;
 
-  type EC_METHOD            is access all EC_METHOD;
+  type EC_METHOD_Access     is access all EC_METHOD;
   type ENGINE_Access        is access all ENGINE;
   type EC_POINT_Access      is access all EC_POINT;
+  type EC_GROUP_Access      is access all EC_GROUP;
   type EC_KEY_Access        is access all EC_KEY;
   type BIGNUM_Access        is access all BIGNUM;
   type BN_CTX_Access        is access all BN_CTX;
@@ -89,50 +92,50 @@ package Bitcoin.API.OpenSSL is
   type group_finish_procedure            is access procedure (Group : EC_GROUP_Access) with Convention => C;
   type group_clear_finish_procedure      is access procedure (Group : EC_GROUP_Access) with Convention => C;
   type group_copy_function               is access function  (Group : EC_GROUP_Access; Target : EC_GROUP_Access) return Int;
-  type group_set_curve_function          is access function  (Group : EC_GROUP_Access; P : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) with Convention => C;
-  type group_get_curve_function          is access function  (Group : EC_GROUP_Access; P : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) with Convention => C;
+  type group_set_curve_function          is access function  (Group : EC_GROUP_Access; P : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type group_get_curve_function          is access function  (Group : EC_GROUP_Access; P : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
   type group_get_degree_function         is access function  (Group : EC_GROUP_Access) return Int with Convention => C;
   type group_order_bits_function         is access function  (Group : EC_GROUP_Access) return Int with Convention => C;
-  type group_check_discriminant_function is access function  (Group : EC_GROUP_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
+  type group_check_discriminant_function is access function  (Group : EC_GROUP_Access; Context : BN_CTX_Access) return Int with Convention => C;
 
   type point_init_function          is access function  (Point : EC_POINT_Access) return Int with Convention => C;
   type point_finish_procedure       is access procedure (Point : EC_POINT_Access) with Convention => C;
   type point_clear_finish_procedure is access procedure (Point : EC_POINT_Access) with Convention => C;
-  type point_copy                   is access function  (Point : EC_POINT_Access; Target : EC_POINT_Access) return Int with Convention => C;
+  type point_copy_function          is access function  (Point : EC_POINT_Access; Target : EC_POINT_Access) return Int with Convention => C;
 
   type point_set_to_infinity_function                 is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access) return Int with Convention => C;
-  type point_set_Jprojective_coordinates_GFp_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y : BIGNUM_Access; Z : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type point_get_Jprojective_coordinates_GFp_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y : BIGNUM_Access; Z : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type point_set_affine_coordinates_function          is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type point_get_affine_coordinates_function          is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type point_set_compressed_coordinates_function      is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y_Bit : Int; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
+  type point_set_Jprojective_coordinates_GFp_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y : BIGNUM_Access; Z : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type point_get_Jprojective_coordinates_GFp_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y : BIGNUM_Access; Z : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type point_set_affine_coordinates_function          is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type point_get_affine_coordinates_function          is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type point_set_compressed_coordinates_function      is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; X : BIGNUM_Access; Y_Bit : Int; Context : BN_CTX_Access) return Int with Convention => C;
 
-  type point2oct_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; Form : Unsigned; Buf : Chars_Ptr; Len : Size_T; Context : BIGNUM_CONTEXT_Access) return Size_T with Convention => C;
-  type oct2point_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; Buf : Chars_Ptr; Len : Size_T; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
+  type point2oct_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; Form : Unsigned; Buf : Chars_Ptr; Len : Size_T; Context : BN_CTX_Access) return Size_T with Convention => C;
+  type oct2point_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; Buf : Chars_Ptr; Len : Size_T; Context : BN_CTX_Access) return Int with Convention => C;
 
-  type add_function    is access function (Group : EC_GROUP_Access; R : EC_POINT_Access; A : EC_POINT_Access; B : EC_POINT_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type dbl_function    is access function (Group : EC_GROUP_Access; R : EC_POINT_Access; A : EC_POINT_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type invert_function is access function (Group : EC_GROUP_Access; A : EC_POINT_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
+  type add_function    is access function (Group : EC_GROUP_Access; R : EC_POINT_Access; A : EC_POINT_Access; B : EC_POINT_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type dbl_function    is access function (Group : EC_GROUP_Access; R : EC_POINT_Access; A : EC_POINT_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type invert_function is access function (Group : EC_GROUP_Access; A : EC_POINT_Access; Context : BN_CTX_Access) return Int with Convention => C;
 
-  type is_at_infinity_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access) with Convention => C;
-  type is_on_curve_function    is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type point_cmp_function      is access function (Group : EC_GROUP_Access; A : EC_POINT_Access; B : EC_POINT_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
+  type is_at_infinity_function is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access) return Int with Convention => C;
+  type is_on_curve_function    is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type point_cmp_function      is access function (Group : EC_GROUP_Access; A : EC_POINT_Access; B : EC_POINT_Access; Context : BN_CTX_Access) return Int with Convention => C;
 
-  type make_affine_function        is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type points_make_affine_function is access function (Group : EC_GROUP_Access; Num : Size_T; Points : EC_Point_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
+  type make_affine_function        is access function (Group : EC_GROUP_Access; Point : EC_POINT_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type points_make_affine_function is access function (Group : EC_GROUP_Access; Num : Size_T; Points : EC_Point_Access; Context : BN_CTX_Access) return Int with Convention => C;
 
-  type mul_function             is access function (Group : EC_GROUP_Access; R : EC_POINT_Access; Scalar : BIGNUM_Access; Num : Size_T; Points : EC_POINT_Access; scalars : BIGNUM_CONTEXT_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type precompute_mult_function is access function (Group : EC_GROUP_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type have_precompute_mult     is access function (Group : EC_GROUP_Access) return Int with Convention => C;
+  type mul_function                  is access function (Group : EC_GROUP_Access; R : EC_POINT_Access; Scalar : BIGNUM_Access; Num : Size_T; Points : EC_POINT_Access; scalars : BN_CTX_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type precompute_mult_function      is access function (Group : EC_GROUP_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type have_precompute_mult_function is access function (Group : EC_GROUP_Access) return Int with Convention => C;
 
-  type field_mul_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type field_sqr_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type field_div_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C; 
+  type field_mul_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type field_sqr_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type field_div_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C; 
 
-  type field_encode_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
+  type field_encode_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
 
-  type field_decode_function     is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
-  type field_set_to_one_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
+  type field_decode_function     is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; A : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
+  type field_set_to_one_function is access function (Group : EC_GROUP_Access; R : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
 
   type priv2oct_function    is access function  (Eckey : EC_KEY_Access; Buf : Chars_Ptr; Len : Size_T) return Size_T with Convention => C;
   type oct2priv_function    is access function  (Eckey : EC_KEY_Access; Buf : Chars_Ptr; Len : Size_T) return Int with Convention => C;
@@ -141,9 +144,9 @@ package Bitcoin.API.OpenSSL is
   type keycheck_function    is access function  (Eckey : EC_KEY_Access) return Int with Convention => C;
   type keygenpub_function   is access function  (Eckey : EC_KEY_Access) return Int with Convention => C;
   type keycopy_function     is access function  (Dst : EC_KEY_Access; Src : EC_KEY_Access) return Int with Convention => C;
-  type keyfinish_procedure  is access procedure (Eckey : EC_KEY_Access) return Int with Convention => C;
+  type keyfinish_procedure  is access procedure (Eckey : EC_KEY_Access) with Convention => C;
 
-  type ecdh_compute_key_function is access function (Pout : Chars_Ptr_Ptr; Pout_Len : Size_T; Pub_Key : EC_POINT_Access; ECDSA : EC_KEY_Access) return Int with Convention => C;
+  type ecdh_compute_key_function is access function (Pout : chars_ptr; Pout_Len : Size_T; Pub_Key : EC_POINT_Access; ECDSA : EC_KEY_Access) return Int with Convention => C;
 
   type EC_POINT is record
     meth     : EC_METHOD_Access; -- const EC_METHOD *meth;
@@ -178,7 +181,7 @@ package Bitcoin.API.OpenSSL is
     group_order_bits : group_order_bits_function; -- int (*group_order_bits) (const EC_GROUP *);
 
     -- used by EC_GROUP_check:
-    group_check_discriminant : ; -- int (*group_check_discriminant) (const EC_GROUP *, BN_CTX *);
+    group_check_discriminant : group_check_discriminant_function; -- int (*group_check_discriminant) (const EC_GROUP *, BN_CTX *);
 
     -- used by EC_POINT_new, EC_POINT_free, EC_POINT_clear_free, EC_POINT_copy:
     point_init         : point_init_function;          -- int (*point_init) (EC_POINT *);
@@ -260,6 +263,15 @@ package Bitcoin.API.OpenSSL is
     prev : ENGINE_Access; -- struct engine_st *
     next : ENGINE_Access; -- struct engine_st *
   end record with Convention => C;
+  
+  type BIGNUM is record
+    d     : Address; -- BN_ULONG Pointer to an array of 'BN_BITS2' bit chunks.
+    top   : Int;     -- int      Index of last used d +1. The next are internal book keeping for bn_expand.
+    dmax  : Int;     -- int      Size of the d array.
+    neg   : Int;     -- int      one if the number is negative.
+    flags : Int;     -- int
+  end record with Convention => C;
+  type BIGNUM_Array is array (Positive range <>) of BIGNUM;
 
   type BN_POOL_ITEM is record
     vals : BIGNUM_Array (1 .. BN_CTX_POOL_SIZE); -- BIGNUM vals[BN_CTX_POOL_SIZE] The bignum values
@@ -291,16 +303,16 @@ package Bitcoin.API.OpenSSL is
   end record with Convention => C;
 
   type BN_MONT_CTX is record
-    ri    : Int;                    -- int          number of bits in R
-    RR    : BIGNUM;                 -- BIGNUM       used to convert to montgomery form
-    N     : BIGNUM;                 -- BIGNUM       The modulus
-    Ni    : BIGNUM;                 -- BIGNUM       R*(1/R mod N) - N*Ni = 1 (Ni is only stored for bignum algorithm) */
-    n0    : BN_ULONG_Array (1. . 2) -- BN_ULONG[2] least significant word(s) of Ni; (type changed with 0.9.9, was "BN_ULONG n0; before)
-    flags : Int;                    -- int
+    ri    : Int;                     -- int          number of bits in R
+    RR    : BIGNUM;                  -- BIGNUM       used to convert to montgomery form
+    N     : BIGNUM;                  -- BIGNUM       The modulus
+    Ni    : BIGNUM;                  -- BIGNUM       R*(1/R mod N) - N*Ni = 1 (Ni is only stored for bignum algorithm) */
+    n0    : BN_ULONG_Array (1 .. 2); -- BN_ULONG[2] least significant word(s) of Ni; (type changed with 0.9.9, was "BN_ULONG n0; before)
+    flags : Int;                     -- int
   end record with Convention => C;
  
   -- int (*field_mod_func) (BIGNUM *, const BIGNUM *, const BIGNUM *, BN_CTX *);
-  type field_mod_func_function is access function (R : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BIGNUM_CONTEXT_Access) return Int with Convention => C;
+  type field_mod_func_function is access function (R : BIGNUM_Access; A : BIGNUM_Access; B : BIGNUM_Access; Context : BN_CTX_Access) return Int with Convention => C;
   
   type EC_GROUP is record
     meth       : EC_METHOD_Access; -- const EC_METHOD *
@@ -340,7 +352,7 @@ package Bitcoin.API.OpenSSL is
     field_mod_func : field_mod_func_function; -- int (*field_mod_func) (BIGNUM *, const BIGNUM *, const BIGNUM *, BN_CTX *);
     
     -- data for ECDSA inverse
-    mont_data : BN_MONT_CTX_Access -- BN_MONT_CTX *
+    mont_data : BN_MONT_CTX_Access; -- BN_MONT_CTX *
 
     -- Precomputed values for speed. The PCT_xxx names match the pre_comp.xxx union names; see the SETPRECOMP and HAVEPRECOMP macros, below.
     -- enum { PCT_none, PCT_nistp224, PCT_nistp256, PCT_nistp521, PCT_nistz256, PCT_ec } pre_comp_type;
@@ -354,14 +366,6 @@ package Bitcoin.API.OpenSSL is
     --   NISTZ256_PRE_COMP *nistz256;
     --   EC_PRE_COMP *ec;
     -- } pre_comp;
-  end record with Convention => C;
-  
-  type BIGNUM is record
-    d     : Address; -- BN_ULONG Pointer to an array of 'BN_BITS2' bit chunks.
-    top   : Int;     -- int      Index of last used d +1. The next are internal book keeping for bn_expand.
-    dmax  : Int;     -- int      Size of the d array.
-    neg   : Int;     -- int      one if the number is negative.
-    flags : Int;     -- int
   end record with Convention => C;
 
   -- int (*OPENSSL_sk_compfunc)(const void *, const void *);
@@ -413,7 +417,7 @@ package Bitcoin.API.OpenSSL is
   function EC_KEY_get0_private_key (key : in EC_KEY_Access) return BIGNUM_Access
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_get0_private_key";
 
-  function EC_KEY_set_private_key (key : in out EC_KEY_Access; prv : in BIGNUM_Access) return Int
+  function EC_KEY_set_private_key (key : in out EC_KEY_Access; prv : in out BIGNUM_Access) return Int
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_set_private_key";
 
   function EC_KEY_get0_public_key (key : in EC_KEY_Access) return EC_POINT_Access
@@ -463,7 +467,7 @@ package Bitcoin.API.OpenSSL is
   procedure EC_POINT_free (point : in out EC_POINT_Access)
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_free";
 
-  function EC_POINT_point2bn(group  in EC_GROUP_Access; p : in EC_POINT_Access; form : in Int; bn : in out BIGNUM_Access; ctx : in BN_CTX_Access) return BIGNUM_Access
+  function EC_POINT_point2bn(group : in EC_GROUP_Access; p : in EC_POINT_Access; form : in Int; bn : in out BIGNUM_Access; ctx : in BN_CTX_Access) return BIGNUM_Access
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_point2bn";
 
   --------------------
@@ -493,10 +497,10 @@ package Bitcoin.API.OpenSSL is
   function BN_num_bytes (a : in BIGNUM_Access) return Int is ((BN_num_bits (a)+7)/8);
 
   -- RETURNS LENGTH OF to param
-  function BN_bn2bin (a : in BIGNUM_Access; to : in out Byte_Array_Access) return Int
+  function BN_bn2bin (a : in BIGNUM_Access; to : in Byte_Access) return Int
     with Import => True, Convention => StdCall, External_Name => "BN_bn2bin";
 
-  function BN_bin2bn (s : in Byte_Array_Access; len : in Int; ret : in out BIGNUM_Access) return BIGNUM_Access
+  function BN_bin2bn (s : in Byte_Access; len : in Int; ret : in BIGNUM_Access) return BIGNUM_Access
     with Import => True, Convention => StdCall, External_Name => "BN_bin2bn";
 
   procedure BN_clear_free (a : in out BIGNUM_Access)

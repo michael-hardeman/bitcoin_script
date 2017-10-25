@@ -43,7 +43,7 @@ package Bitcoin.Crypto is
   -- Subprograms --
   -----------------
   procedure Generate_Key_Pair (Key_Pair : in out Key_Pair_Type);
-  procedure Derive_Public_Key (Key_Pair : in out Key_Pair_Type; Private_Key : in Byte_Array);
+  procedure Derive_Public_Key (Key_Pair : in out Key_Pair_Type; Private_Key : in out Byte_Array);
 
   function Get_Private_Key (Key_Pair : in Key_Pair_Type) return Byte_Array;
   function Get_Public_Key  (Key_Pair : in Key_Pair_Type; Format : in Point_Format_Kind) return Byte_Array;
@@ -54,16 +54,9 @@ private
 -------
   -- I'm wrapping all these C allocated access types to prevent memory leaks
   type Key_Pair_Type is new Ada.Finalization.Controlled with record
-    Ptr : EC_KEY := Null_Address;
+    Ptr : EC_KEY_Access := null;
   end record;
-  overriding procedure Finalize   (Item : in out Key_Pair_Type);
-
-  type Big_Number_Type is new Ada.Finalization.Controlled with record
-    Ptr    : BIGNUM   := Null_Address;
-    Length : Positive := 1;
-  end record;
-  overriding procedure Initialize (Item : in out Big_Number_Type);
-  overriding procedure Finalize   (Item : in out Big_Number_Type);
+  overriding procedure Finalize (Item : in out Key_Pair_Type);
 
   -- Declaring this variable automatically calls BN_CTX_start
   -- When the variable goes out of scope it automatically calls BN_CTX_end
@@ -73,7 +66,7 @@ private
   -- BIGNUMs in functions that are called from inside a loop.
   -- https://wiki.openssl.org/index.php/Manual:BN_CTX_start(3)
   type Big_Number_Context is new Ada.Finalization.Controlled with record
-    Ptr : BN_CTX := Null_Address;
+    Ptr : BN_CTX_Access := null;
   end record;
   overriding procedure Initialize (Item : in out Big_Number_Context);
   overriding procedure Finalize   (Item : in out Big_Number_Context);

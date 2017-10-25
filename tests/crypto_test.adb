@@ -6,7 +6,7 @@ with Bitcoin.Encoding.Base64; use Bitcoin.Encoding.Base64;
 with Bitcoin.API.OpenSSL; use Bitcoin.API.OpenSSL;
 
 procedure Crypto_Test is
-  INITIAL_PRIVATE_KEY : constant Byte_Array := (
+  INITIAL_PRIVATE_KEY : Byte_Array := (
     16#16#, 16#26#, 16#07#, 16#83#, 16#e4#, 16#0b#, 16#16#, 16#73#,
     16#16#, 16#73#, 16#62#, 16#2a#, 16#c8#, 16#a5#, 16#b0#, 16#45#,
     16#fc#, 16#3e#, 16#a4#, 16#af#, 16#70#, 16#f7#, 16#27#, 16#f3#,
