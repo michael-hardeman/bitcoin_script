@@ -11,7 +11,7 @@ package Bitcoin.Crypto is
   -----------
   -- Types --
   -----------
-  type Key_Pair_Type   is new Ada.Finalization.Controlled with private;
+  type Key_Pair_Type is new Ada.Finalization.Controlled with private;
 
   ------------------
   -- Enumerations --
@@ -48,7 +48,6 @@ package Bitcoin.Crypto is
   function Get_Private_Key (Key_Pair : in Key_Pair_Type) return Byte_Array;
   function Get_Public_Key  (Key_Pair : in Key_Pair_Type; Format : in Point_Format_Kind) return Byte_Array;
 
-  
   procedure Initialize (Item : in out Key_Pair_Type; Curve : in Curve_Kind);
 -------
 private
@@ -63,10 +62,8 @@ private
     Ptr    : BIGNUM   := Null_Address;
     Length : Positive := 1;
   end record;
-  overriding procedure Initialize    (Item : in out Big_Number_Type);
-  overriding procedure Finalize      (Item : in out Big_Number_Type);
-             function  Length        (Item : in     Big_Number_Type) return Positive;
-             function  To_Byte_Array (Item : in     Big_Number_Type) return Byte_Array;
+  overriding procedure Initialize (Item : in out Big_Number_Type);
+  overriding procedure Finalize   (Item : in out Big_Number_Type);
 
   -- Declaring this variable automatically calls BN_CTX_start
   -- When the variable goes out of scope it automatically calls BN_CTX_end
@@ -80,16 +77,4 @@ private
   end record;
   overriding procedure Initialize (Item : in out Big_Number_Context);
   overriding procedure Finalize   (Item : in out Big_Number_Context);
-   
-  type Point_Type is new Ada.Finalization.Controlled with record
-    Ptr : EC_Point := Null_Address;
-  end record;
-             procedure Initialize (Item : in out Point_Type; Key_Pair : in Key_Pair_Type'Class);
-  overriding procedure Finalize   (Item : in out Point_Type);
-  
-  
-
-  procedure Assert (Result : in Int);
-  procedure Ignore (Result : in Int);
-
 end;
