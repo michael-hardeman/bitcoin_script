@@ -1,3 +1,4 @@
+with Ada.Unchecked_Deallocation;
 with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Interfaces; use Interfaces;
@@ -136,6 +137,21 @@ procedure Base58_Test is
       Run_Test (Test.all);
     end loop;
   end;
+  
+  procedure Free_Test is new Ada.Unchecked_Deallocation (Test_State, Test_State_Access);
+  
+  ----------------
+  -- Free_Tests --
+  ----------------
+  procedure Free_Tests (Tests : in Test_State_Access_Array) is
+  begin
+    for I in Tests'Range loop
+      declare Test : Test_State_Access := Tests (I); begin
+        Free_Test (Test);
+      end;
+    end loop;
+  end;
 begin
   Run_Tests (TESTS);
+  Free_Tests (TESTS);
 end;
