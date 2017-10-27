@@ -17,10 +17,11 @@ Differences to the standard:
 ## Compiling
 
 There are 4 building Options available:
-  Word_Size : 32 or 64
-  System    : windows or unix
-  Debug     : Yes or No
-  Test      : any file from the tests folder
+
+- Word_Size : 32 or 64
+- System : windows or unix
+- Debug : Yes or No
+- Test : any file from the tests folder
 
 To compile from command line with all the defaults (32, windows, No, bitcoin_script.adb):
 
@@ -50,8 +51,6 @@ When you're ready, open a pull request to merge back into develop, I'll review t
 Things to work on:
 
 - OpenSSL binding
-  - Proper initialization
-  - Proper finalization
   - RIPEMD160 binding
 - Opcodes
   - Stack
