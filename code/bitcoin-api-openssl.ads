@@ -53,14 +53,15 @@ package Bitcoin.API.OpenSSL is
   -- Types --
   -----------
   -- I tried to import the internal structure of these, but it caused lots of
-  -- issues. The C types are designed to be opaque pointers so the must be here
-  -- as well.
-  subtype EC_POINT  is Address;
-  subtype EC_METHOD is Address;
-  subtype EC_GROUP  is Address;
-  subtype EC_KEY    is Address;
-  subtype BIGNUM    is Address;
-  subtype BN_CTX    is Address;
+  -- issues. The C types are designed to be opaque pointers so they should be
+  -- the same here as well.
+  subtype EC_POINT     is Address;
+  subtype EC_METHOD    is Address;
+  subtype EC_GROUP     is Address;
+  subtype EC_KEY       is Address;
+  subtype BIGNUM       is Address;
+  subtype BN_CTX       is Address;
+  subtype ECPARAMETERS is Address;
 
   --------------------------
   -- ELLIPTICAL_CURVE_KEY --
@@ -113,6 +114,8 @@ package Bitcoin.API.OpenSSL is
   procedure EC_GROUP_clear_free (group : in EC_GROUP)
     with Import => True, Convention => StdCall, External_Name => "EC_GROUP_clear_free";
 
+  -- ECPARAMETERS *EC_GROUP_get_ecparameters(const EC_GROUP *group, ECPARAMETERS *params)
+
   ----------------------------
   -- ELLIPTICAL_CURVE_POINT --
   ----------------------------
@@ -122,19 +125,19 @@ package Bitcoin.API.OpenSSL is
   function EC_POINT_mul (
     group : in     EC_GROUP;
     r     : in EC_POINT;
-    n     : in     BIGNUM;
-    q     : in     EC_POINT;
-    m     : in     BIGNUM;
-    ctx   : in     BN_CTX)
+    n     : in BIGNUM;
+    q     : in EC_POINT;
+    m     : in BIGNUM;
+    ctx   : in BN_CTX)
     return Int
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_mul";
 
   function EC_POINT_point2bn(
-    group : in     EC_GROUP;
-    p     : in     EC_POINT;
-    form  : in     Unsigned;
+    group : in EC_GROUP;
+    p     : in EC_POINT;
+    form  : in Unsigned;
     bn    : in BIGNUM;
-    ctx   : in     BN_CTX)
+    ctx   : in BN_CTX)
     return BIGNUM
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_point2bn";
 
