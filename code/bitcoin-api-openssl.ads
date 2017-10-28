@@ -55,13 +55,13 @@ package Bitcoin.API.OpenSSL is
   -- I tried to import the internal structure of these, but it caused lots of
   -- issues. The C types are designed to be opaque pointers so they should be
   -- the same here as well.
-  subtype EC_POINT     is Address;
-  subtype EC_METHOD    is Address;
-  subtype EC_GROUP     is Address;
-  subtype EC_KEY       is Address;
-  subtype BIGNUM       is Address;
-  subtype BN_CTX       is Address;
-  subtype ECPARAMETERS is Address;
+  subtype EC_POINT       is Address;
+  subtype EC_METHOD      is Address;
+  subtype EC_GROUP       is Address;
+  subtype EC_KEY         is Address;
+  subtype BIGNUM         is Address;
+  subtype BN_CTX         is Address;
+  subtype ECDSA_SIG      is Address;
 
   --------------------------
   -- ELLIPTICAL_CURVE_KEY --
@@ -114,8 +114,6 @@ package Bitcoin.API.OpenSSL is
   procedure EC_GROUP_clear_free (group : in EC_GROUP)
     with Import => True, Convention => StdCall, External_Name => "EC_GROUP_clear_free";
 
-  -- ECPARAMETERS *EC_GROUP_get_ecparameters(const EC_GROUP *group, ECPARAMETERS *params)
-
   ----------------------------
   -- ELLIPTICAL_CURVE_POINT --
   ----------------------------
@@ -123,7 +121,7 @@ package Bitcoin.API.OpenSSL is
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_new";
 
   function EC_POINT_mul (
-    group : in     EC_GROUP;
+    group : in EC_GROUP;
     r     : in EC_POINT;
     n     : in BIGNUM;
     q     : in EC_POINT;
@@ -181,6 +179,30 @@ package Bitcoin.API.OpenSSL is
 
   procedure BN_clear_free (a : in BIGNUM)
     with Import => True, Convention => StdCall, External_Name => "BN_clear_free";
+
+  --------------------------------------------------
+  -- ELLIPTICAL CURVE DIGITAL SIGNATURE ALGORITHM --
+  --------------------------------------------------
+  function ECDSA_do_sign (dgst : in Byte_Access; dgst_len : in Positive; eckey : in EC_KEY) return ECDSA_SIG
+    with Import => True, Convention => StdCall, External_Name => "ECDSA_do_sign";
+
+  function ECDSA_do_verify (dgst : in Byte_Access; dgst_len : in Positive; sig : in ECDSA_SIG; eckey : in EC_KEY) return Int
+    with Import => True, Convention => StdCall, External_Name => "ECDSA_do_verify";
+
+  -- return numbers of bytes required for the DER encoded signature
+  function ECDSA_size (eckey : in EC_KEY) return Positive
+    with Import => True, Convention => StdCall, External_Name => "ECDSA_size";
+
+  -- returns the number of bytes written in the pp parameter
+  function i2d_ECDSA_SIG (sig : ECDSA_SIG; pp : in Byte_Access) return Positive
+    with Import => True, Convention => StdCall, External_Name => "i2d_ECDSA_SIG";
+
+  -- sig : ECDSA_SIG **
+  function d2i_ECDSA_SIG (sig : in Address; pp : in Byte_Access; len : in Positive) return ECDSA_SIG
+    with Import => True, Convention => StdCall, External_Name => "d2i_ECDSA_SIG";
+
+  procedure ECDSA_SIG_free (sig : in ECDSA_SIG)
+    with Import => True, Convention => StdCall, External_Name => "ECDSA_SIG_free";
 
   -----------
   -- Error --

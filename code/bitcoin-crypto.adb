@@ -26,9 +26,9 @@ package body Bitcoin.Crypto is
   procedure Free (Item : in Allocation_State) is
   begin
     case Item.Kind is
-      when EC_GROUP_Kind  => EC_GROUP_clear_free (Item.Ptr);
-      when EC_POINT_Kind  => EC_POINT_clear_free (Item.Ptr);
-      when BIGNUM_Kind    => BN_clear_free (Item.Ptr);
+      when BIGNUM_Kind   => BN_clear_free       (Item.Ptr);
+      when EC_POINT_Kind => EC_POINT_clear_free (Item.Ptr);
+      when EC_GROUP_Kind => EC_GROUP_clear_free (Item.Ptr);
     end case;
   end;
 
@@ -80,6 +80,16 @@ package body Bitcoin.Crypto is
     return Output;
   end;
 
+  -------------------
+  -- To_Byte_Array --
+  -------------------
+  function To_Byte_Array (Key_Pair : in Key_Pair_Type; Item : in ECDSA_SIG) return Byte_ARRAY is
+    Output : Byte_Array (1 .. Positive (ECDSA_size (Key_Pair.Ptr))) := (others => 0);
+    Length : Positive := i2d_ECDSA_SIG (Item, Output (Output'First)'Unchecked_Access);
+  begin
+    return Output (1 .. Length);
+  end;
+
   ---------------
   -- To_BIGNUM --
   ---------------
@@ -127,6 +137,30 @@ package body Bitcoin.Crypto is
   begin
     BN_clear_free (Public_BIGNUM);
     return Output;
+  end;
+
+  ------------------
+  -- Sign_Message --
+  ------------------
+  -- Does not require the Key_Pair public key to be set.
+  function Sign_Message (Key_Pair : in Key_Pair_Type; Message : in out Byte_Array) return Byte_Array is
+    Signature : ECDSA_SIG  := ECDSA_do_sign (Message (Message'First)'Unchecked_Access, Message'Length, Key_Pair.Ptr);
+    Output    : Byte_Array := To_Byte_Array (Key_Pair, Signature);
+  begin
+    ECDSA_SIG_free (Signature);
+    return Output;
+  end;
+
+  ---------------------------
+  -- Verify_Signed_Message --
+  ---------------------------
+  -- Does not require the Key_Pair private key to be set.
+  function Verify_Signed_Message (Key_Pair : in Key_Pair_Type; Signature : in out Byte_Array; Message : in out Byte_Array) return Boolean is
+    Signature_C : ECDSA_SIG := d2i_ECDSA_SIG (NULL_ADDRESS, Signature (Signature'First)'Unchecked_Access, Signature'Length);
+    Output      : Int       := ECDSA_do_verify (Message (Message'First)'Unchecked_Access, Message'Length, Signature_C, Key_Pair.Ptr);
+  begin
+    ECDSA_SIG_free (Signature_C);
+    return (1 = Output);
   end;
 
 end;

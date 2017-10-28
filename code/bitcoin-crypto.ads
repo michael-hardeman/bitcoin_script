@@ -1,11 +1,11 @@
-with System; use System;
-with Interfaces.C; use Interfaces.C;
-with Interfaces.C.Strings; use Interfaces.C.Strings;
+with System;                            use System;
+with Interfaces.C;                      use Interfaces.C;
+with Interfaces.C.Strings;              use Interfaces.C.Strings;
 with Ada.Finalization;
 with Ada.Unchecked_Conversion;
-with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Text_IO;                       use Ada.Text_IO;
 with Ada.Containers.Indefinite_Vectors; use Ada.Containers;
-with Bitcoin.API.OpenSSL; use Bitcoin.API.OpenSSL;
+with Bitcoin.API.OpenSSL;               use Bitcoin.API.OpenSSL;
 
 package Bitcoin.Crypto is
 
@@ -54,6 +54,9 @@ package Bitcoin.Crypto is
 
   function Get_Private_Key (Key_Pair : in Key_Pair_Type) return Byte_Array;
   function Get_Public_Key  (Key_Pair : in Key_Pair_Type; Format : in Point_Format_Kind) return Byte_Array;
+  
+  function Sign_Message          (Key_Pair : in Key_Pair_Type; Message : in out Byte_Array) return Byte_Array;
+  function Verify_Signed_Message (Key_Pair : in Key_Pair_Type; Signature : in out Byte_Array; Message : in out Byte_Array) return Boolean;
 
   Assertion_Failed : exception;
 
