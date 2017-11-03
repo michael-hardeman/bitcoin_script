@@ -3,7 +3,6 @@ with Interfaces.C;                      use Interfaces.C;
 with Interfaces.C.Strings;              use Interfaces.C.Strings;
 with Ada.Finalization;
 with Ada.Unchecked_Conversion;
-with Ada.Text_IO;                       use Ada.Text_IO;
 with Ada.Containers.Indefinite_Vectors; use Ada.Containers;
 with Bitcoin.API.OpenSSL;               use Bitcoin.API.OpenSSL;
 
@@ -36,9 +35,6 @@ package Bitcoin.Crypto is
     Ucompressed => POINT_CONVERSION_UNCOMPRESSED,
     Hybrid      => POINT_CONVERSION_HYBRID);
 
-  type Abstract_Syntax_Notation_Kind is  (Explicit_Curve, Named_Curve) with Size => Unsigned'Size;
-  for  Abstract_Syntax_Notation_Kind use (Explicit_Curve => EC_EXPLICIT_CURVE, Named_Curve => EC_NAMED_CURVE);
-
   -----------
   -- Types --
   -----------
@@ -47,18 +43,37 @@ package Bitcoin.Crypto is
   -----------------
   -- Subprograms --
   -----------------
-  procedure Initialize (Item : in out Key_Pair_Type; Curve : in Curve_Kind);
+  procedure Generate (
+    Key_Pair : in out Key_Pair_Type;
+    Curve    : in     Curve_Kind);
 
-  procedure Generate_Key_Pair (Key_Pair : in out Key_Pair_Type);
-  procedure Derive_Public_Key (Key_Pair : in out Key_Pair_Type; Private_Key : in out Byte_Array);
+  procedure From_Private_Key (
+    Key_Pair    : in out Key_Pair_Type;
+    Curve       : in     Curve_Kind;
+    Private_Key : in out Byte_Array);
 
-  function Get_Private_Key (Key_Pair : in Key_Pair_Type) return Byte_Array;
-  function Get_Public_Key  (Key_Pair : in Key_Pair_Type; Format : in Point_Format_Kind) return Byte_Array;
-  
-  function Sign_Message          (Key_Pair : in Key_Pair_Type; Message : in out Byte_Array) return Byte_Array;
-  function Verify_Signed_Message (Key_Pair : in Key_Pair_Type; Signature : in out Byte_Array; Message : in out Byte_Array) return Boolean;
+  function Get_Private_Key (
+    Key_Pair : in Key_Pair_Type)
+    return Byte_Array;
 
-  Assertion_Failed : exception;
+  function Get_Public_Key (
+    Key_Pair : in Key_Pair_Type;
+    Format   : in Point_Format_Kind)
+    return Byte_Array;
+
+  function Sign (
+    Key_Pair  : in     Key_Pair_Type;
+    Message   : in out Byte_Array)
+    return Byte_Array;
+
+  function Verify (
+    Key_Pair  : in     Key_Pair_Type;
+    Signature : in out Byte_Array;
+    Message   : in out Byte_Array)
+    return Boolean;
+
+  Assertion_Failed   : exception;
+  Verification_Error : exception;
 
 -------
 private
@@ -79,12 +94,14 @@ private
 
   -- I'm wrapping all these C allocated access types to prevent memory leaks
   type Key_Pair_Type is new Ada.Finalization.Controlled with record
-    Ptr       : EC_KEY := NULL_ADDRESS;
-    Allocated : Vector;
+    Low_Level_Ptr  : EC_KEY   := NULL_ADDRESS;
+    Abstracted_Ptr : EVP_PKEY := NULL_ADDRESS;
+    Allocated      : Vector;
   end record;
-  overriding procedure Finalize       (Item : in out Key_Pair_Type);
-             procedure Allocate       (Item : in out Key_Pair_Type; Kind : Allocation_Kind; Ptr : in Address);
-             procedure Free_Allocated (Item : in out Key_Pair_Type);
+
+  overriding procedure Finalize       (Key_Pair : in out Key_Pair_Type);
+             procedure Allocate       (Key_Pair : in out Key_Pair_Type; Kind : in Allocation_Kind; Ptr : in Address);
+             procedure Free_Allocated (Key_Pair : in out Key_Pair_Type);
 
   -- Declaring this variable automatically calls BN_CTX_start
   -- When the variable goes out of scope it automatically calls BN_CTX_end
@@ -96,6 +113,7 @@ private
   type Big_Number_Context is new Ada.Finalization.Controlled with record
     Ptr : BN_CTX := NULL_ADDRESS;
   end record;
+
   overriding procedure Initialize (Item : in out Big_Number_Context);
   overriding procedure Finalize   (Item : in out Big_Number_Context);
 end;
