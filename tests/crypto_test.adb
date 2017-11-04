@@ -94,8 +94,10 @@ procedure Crypto_Test is
 
     Put_Line ("Sign and verify");
     declare Signature : Byte_Array := Sign (Key_Pair, MESSAGE); begin
+      Put_Line ("Message Bytes     : " & Image (MESSAGE));
+      Put_Line ("Message Base64    : " & To_String (Encode (MESSAGE)));
       Put_Line ("Signature Bytes   : " & Image (Signature));
-      Put_Line ("Signature base64  : " & To_String (Encode (Signature)));
+      Put_Line ("Signature Base64  : " & To_String (Encode (Signature)));
       Put_Line ("Verfication Status: " & Boolean'Image (Verify (Key_Pair, Signature, Message)));
     end;
     Put_Line ("");

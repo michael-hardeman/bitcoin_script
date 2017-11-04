@@ -1,10 +1,10 @@
-package body Bitcoin.Crypto is
+ package body Bitcoin.Crypto is
 
   ------------------------
   -- C Success Wrappers --
   ------------------------
   procedure Raise_OpenSSL_Exception is begin
-    raise Assertion_Failed with Value (ERR_error_string (ERR_get_error, Null_Ptr));
+    raise OpenSSL_Exception with Value (ERR_error_string (ERR_get_error, Null_Ptr));
   end;
 
   procedure Ignore (Result : in Int) is begin null; end;
@@ -104,6 +104,7 @@ package body Bitcoin.Crypto is
     Curve    : in Curve_Kind) is
   begin
     Key_Pair.Low_Level_Ptr := EC_KEY_new_by_curve_name (To_Unsigned (Curve));
+    Key_Pair.Curve := Curve;
     Assert (EC_KEY_generate_key (Key_Pair.Low_Level_Ptr));
     Key_Pair.Abstracted_Ptr := EVP_PKEY_new;
     Assert (EVP_PKEY_assign_EC_KEY (Key_Pair.Abstracted_Ptr, Key_Pair.Low_Level_Ptr));
@@ -118,6 +119,7 @@ package body Bitcoin.Crypto is
     Private_Key : in out Byte_Array) is
   begin
     Key_Pair.Low_Level_Ptr := EC_KEY_new_by_curve_name (To_Unsigned (Curve));
+    Key_Pair.Curve := Curve;
     Derive_Public_Key (Key_Pair, Private_Key);
     Key_Pair.Abstracted_Ptr := EVP_PKEY_new;
     Assert (EVP_PKEY_assign_EC_KEY (Key_Pair.Abstracted_Ptr, Key_Pair.Low_Level_Ptr));
@@ -177,7 +179,6 @@ package body Bitcoin.Crypto is
   ----------
   -- Sign --
   ----------
-  -- Does not require the Key_Pair public key to be set.
   function Sign (
     Key_Pair    : in     Key_Pair_Type;
     Message     : in out Byte_Array)

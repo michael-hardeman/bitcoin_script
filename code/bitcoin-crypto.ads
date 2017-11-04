@@ -29,11 +29,11 @@ package Bitcoin.Crypto is
     sect239k1 => NID_sect239k1, sect283k1 => NID_sect283k1, sect283r1 => NID_sect283r1, sect409k1 => NID_sect409k1,
     sect409r1 => NID_sect409r1, sect571k1 => NID_sect571k1, sect571r1 => NID_sect571r1);
 
-  type Point_Format_Kind is (Compressed, Ucompressed, Hybrid) with Size => Unsigned'Size;
+  type Point_Format_Kind is (Compressed, Uncompressed, Hybrid) with Size => Unsigned'Size;
   for Point_Format_Kind use (
-    Compressed  => POINT_CONVERSION_COMPRESSED,
-    Ucompressed => POINT_CONVERSION_UNCOMPRESSED,
-    Hybrid      => POINT_CONVERSION_HYBRID);
+    Compressed   => POINT_CONVERSION_COMPRESSED,
+    Uncompressed => POINT_CONVERSION_UNCOMPRESSED,
+    Hybrid       => POINT_CONVERSION_HYBRID);
 
   -----------
   -- Types --
@@ -72,8 +72,7 @@ package Bitcoin.Crypto is
     Message   : in out Byte_Array)
     return Boolean;
 
-  Assertion_Failed   : exception;
-  Verification_Error : exception;
+  OpenSSL_Exception : exception;
 
 -------
 private
@@ -94,8 +93,9 @@ private
 
   -- I'm wrapping all these C allocated access types to prevent memory leaks
   type Key_Pair_Type is new Ada.Finalization.Controlled with record
-    Low_Level_Ptr  : EC_KEY   := NULL_ADDRESS;
-    Abstracted_Ptr : EVP_PKEY := NULL_ADDRESS;
+    Low_Level_Ptr  : EC_KEY     := NULL_ADDRESS;
+    Abstracted_Ptr : EVP_PKEY   := NULL_ADDRESS;
+    Curve          : Curve_Kind := Curve_Kind'First;
     Allocated      : Vector;
   end record;
 

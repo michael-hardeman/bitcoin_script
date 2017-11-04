@@ -51,6 +51,7 @@ package Bitcoin.API.OpenSSL is
 
   EVP_PKEY_EC : constant Unsigned := 408;
 
+  EVP_PKEY_CTRL_MD          : constant Int         := 1;
   EVP_PKEY_OP_UNDEFINED     : constant Unsigned_16 := 2#000000000000#; -- 0
   EVP_PKEY_OP_PARAMGEN      : constant Unsigned_16 := 2#000000000010#; -- (1<<1)
   EVP_PKEY_OP_KEYGEN        : constant Unsigned_16 := 2#000000000100#; -- (1<<2)
@@ -62,14 +63,26 @@ package Bitcoin.API.OpenSSL is
   EVP_PKEY_OP_ENCRYPT       : constant Unsigned_16 := 2#000100000000#; -- (1<<8)
   EVP_PKEY_OP_DECRYPT       : constant Unsigned_16 := 2#001000000000#; -- (1<<9)
   EVP_PKEY_OP_DERIVE        : constant Unsigned_16 := 2#010000000000#; -- (1<<10)
-  EVP_PKEY_OP_TYPE_SIG      : constant Int := Int (EVP_PKEY_OP_SIGN          or
-                                                   EVP_PKEY_OP_VERIFY        or 
-                                                   EVP_PKEY_OP_VERIFYRECOVER or
-                                                   EVP_PKEY_OP_SIGNCTX       or
-                                                   EVP_PKEY_OP_VERIFYCTX);
-  EVP_PKEY_CTRL_MD          : constant Int := 1;
-                                                    
-                
+  EVP_PKEY_OP_TYPE_SIG      : constant Int         := Int (EVP_PKEY_OP_SIGN          or
+                                                           EVP_PKEY_OP_VERIFY        or
+                                                           EVP_PKEY_OP_VERIFYRECOVER or
+                                                           EVP_PKEY_OP_SIGNCTX       or
+                                                           EVP_PKEY_OP_VERIFYCTX);
+  EVP_PKEY_OP_TYPE_VERIFY   : constant Int         := Int (EVP_PKEY_OP_PARAMGEN      or
+                                                           EVP_PKEY_OP_KEYGEN);
+
+  EVP_PKEY_ALG_CTRL                   : constant Int := 16#1000#;
+  EVP_PKEY_CTRL_EC_PARAMGEN_CURVE_NID : constant Int := (EVP_PKEY_ALG_CTRL + 1 );
+  EVP_PKEY_CTRL_EC_PARAM_ENC          : constant Int := (EVP_PKEY_ALG_CTRL + 2 );
+  EVP_PKEY_CTRL_EC_ECDH_COFACTOR      : constant Int := (EVP_PKEY_ALG_CTRL + 3 );
+  EVP_PKEY_CTRL_EC_KDF_TYPE           : constant Int := (EVP_PKEY_ALG_CTRL + 4 );
+  EVP_PKEY_CTRL_EC_KDF_MD             : constant Int := (EVP_PKEY_ALG_CTRL + 5 );
+  EVP_PKEY_CTRL_GET_EC_KDF_MD         : constant Int := (EVP_PKEY_ALG_CTRL + 6 );
+  EVP_PKEY_CTRL_EC_KDF_OUTLEN         : constant Int := (EVP_PKEY_ALG_CTRL + 7 );
+  EVP_PKEY_CTRL_GET_EC_KDF_OUTLEN     : constant Int := (EVP_PKEY_ALG_CTRL + 8 );
+  EVP_PKEY_CTRL_EC_KDF_UKM            : constant Int := (EVP_PKEY_ALG_CTRL + 9 );
+  EVP_PKEY_CTRL_GET_EC_KDF_UKM        : constant Int := (EVP_PKEY_ALG_CTRL + 10);
+
   -----------
   -- Types --
   -----------
@@ -202,7 +215,7 @@ package Bitcoin.API.OpenSSL is
   --------------------
   -- BIGNUM_CONTEXT --
   --------------------
-  function BN_CTX_secure_new 
+  function BN_CTX_secure_new
     return BN_CTX
     with Import => True, Convention => StdCall, External_Name => "BN_CTX_secure_new";
 
@@ -267,7 +280,7 @@ package Bitcoin.API.OpenSSL is
   --------------
   -- EVP_PKEY --
   --------------
-  function EVP_PKEY_new 
+  function EVP_PKEY_new
     return EVP_PKEY
     with Import => True, Convention => StdCall, External_Name => "EVP_PKEY_new";
 
@@ -276,7 +289,7 @@ package Bitcoin.API.OpenSSL is
     with Import => True, Convention => StdCall, External_Name => "EVP_PKEY_free";
 
   function EVP_PKEY_assign (
-    pkey : in EVP_PKEY; 
+    pkey : in EVP_PKEY;
     kind : in Unsigned; -- was type
     key  : in Address)
     return Int
@@ -286,7 +299,7 @@ package Bitcoin.API.OpenSSL is
     pkey  : in EVP_PKEY;
     eckey : in EC_KEY)
     return Int is (EVP_PKEY_assign (pkey, EVP_PKEY_EC, eckey));
-  
+
   function EVP_PKEY_CTX_ctrl (
     ctx     : in EVP_PKEY_CTX;
     keytype : in Int;
@@ -296,10 +309,26 @@ package Bitcoin.API.OpenSSL is
     p2      : in Address)
     return Int
     with Import => True, Convention => StdCall, External_Name => "EVP_PKEY_CTX_ctrl";
-  
+
+  function EVP_PKEY_paramgen_init (
+    ctx : in EVP_PKEY_CTX)
+    return Int
+    with Import => True, Convention => StdCall, External_Name => "EVP_PKEY_paramgen_init";
+
+  function EVP_PKEY_CTX_set_ec_paramgen_curve_nid (
+    ctx : in EVP_PKEY_CTX;
+    nid : in Unsigned)
+    return Int is (EVP_PKEY_CTX_ctrl (
+      ctx,
+      Int(EVP_PKEY_EC),
+      EVP_PKEY_OP_TYPE_VERIFY,
+      EVP_PKEY_CTRL_EC_PARAMGEN_CURVE_NID,
+      Int(nid),
+      NULL_ADDRESS));
+
   function EVP_PKEY_CTX_set_signature_md (
     ctx : in EVP_PKEY_CTX;
-    md  : in EVP_MD) 
+    md  : in EVP_MD)
     return Int is (EVP_PKEY_CTX_ctrl (ctx, -1, EVP_PKEY_OP_TYPE_SIG, EVP_PKEY_CTRL_MD, 0, md));
 
   function EVP_PKEY_get1_EC_KEY (
@@ -319,7 +348,7 @@ package Bitcoin.API.OpenSSL is
     tbslen : in Size_T)
     return Int
     with Import => True, Convention => StdCall, External_Name => "EVP_PKEY_sign";
-  
+
   function EVP_PKEY_verify_init (
     ctx : in EVP_PKEY_CTX) return Int
     with Import => True, Convention => StdCall, External_Name => "EVP_PKEY_verify_init";
@@ -335,7 +364,7 @@ package Bitcoin.API.OpenSSL is
 
   function EVP_PKEY_CTX_new (pkey : in EVP_PKEY; e : in ENGINE) return EVP_PKEY_CTX
     with Import => True, Convention => StdCall, External_Name => "EVP_PKEY_CTX_new";
-    
+
   procedure EVP_PKEY_CTX_free (
     ctx : in EVP_PKEY_CTX)
     with Import => True, Convention => StdCall, External_Name => "EVP_PKEY_CTX_free";
