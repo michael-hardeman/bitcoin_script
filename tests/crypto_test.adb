@@ -36,6 +36,16 @@ procedure Crypto_Test is
     return To_String (Output);
   end;
 
+  -------------------
+  -- To_Byte_Array --
+  -------------------
+  function To_Byte_Array (Item : in String) return Byte_Array is
+    Output : Byte_Array (Item'Range) := (others => 0);
+  begin
+    for I in Item'Range loop Output (I) := Byte (Character'Pos (Item (I))); end loop;
+    return Output;
+  end;
+
   ----------------------------
   -- Test_Generate_Key_Pair --
   ----------------------------
@@ -78,15 +88,7 @@ procedure Crypto_Test is
       16#fc#, 16#3e#, 16#a4#, 16#af#, 16#70#, 16#f7#, 16#27#, 16#f3#,
       16#f9#, 16#e9#, 16#2b#, 16#dd#, 16#3a#, 16#1d#, 16#dc#, 16#42#);
 
-    MESSAGE : Byte_Array := (
-      16#97#, 16#f6#, 16#35#, 16#93#, 16#af#, 16#3c#, 16#00#, 16#55#,
-      16#4d#, 16#ef#, 16#10#, 16#dc#, 16#f8#, 16#1d#, 16#b5#, 16#95#,
-      16#00#, 16#60#, 16#a2#, 16#ba#, 16#4d#, 16#4e#, 16#90#, 16#94#,
-      16#7f#, 16#cf#, 16#38#, 16#a0#, 16#44#, 16#3c#, 16#af#, 16#89#,
-      16#c4#, 16#7e#, 16#9a#, 16#fb#, 16#97#, 16#17#, 16#db#, 16#a1#,
-      16#1c#, 16#2a#, 16#fb#, 16#14#, 16#e9#, 16#69#, 16#4f#, 16#a4#,
-      16#f9#, 16#40#, 16#b2#, 16#0f#, 16#36#, 16#a5#, 16#40#, 16#01#,
-      16#d3#, 16#03#, 16#2c#, 16#c7#, 16#06#, 16#9b#, 16#17#, 16#e7#);
+    MESSAGE : Byte_Array := To_Byte_Array ("I approve this message.");
 
     Key_Pair : Key_Pair_Type;
   begin
