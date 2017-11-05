@@ -1,4 +1,4 @@
- package body Bitcoin.Crypto is
+package body Bitcoin.Crypto is
 
   ------------------------
   -- C Success Wrappers --
@@ -188,7 +188,8 @@
   begin
     Assert (EVP_PKEY_sign_init (Key_Context));
     Assert (EVP_PKEY_CTX_set_signature_md (Key_Context, EVP_sha256));
-    -- This is just to retrieve the signature size
+    -- This call is to retrieve the maximum possible size of the signature
+    -- Sometimes the signature will be 1 or 2 bytes smaller the return statement removes empty bytes
     Assert (
       EVP_PKEY_sign (
         Key_Context,
@@ -205,7 +206,7 @@
           Message (Message'First)'Unchecked_Access,
           Size_T (Message'Length)));
       EVP_PKEY_CTX_free (Key_Context);
-      return Output;
+      return Output (1 .. Positive(Signature_Length));
     end;
   end;
 
@@ -229,7 +230,6 @@
       Size_T (Signature'Length),
       Message (Message'First)'Unchecked_Access,
       Size_T (Message'Length));
-
     EVP_PKEY_CTX_free (Key_Context);
     Assert_Not_Negative (Output);
     return (1 = Output);
