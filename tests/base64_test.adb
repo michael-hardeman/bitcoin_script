@@ -6,10 +6,10 @@ with Bitcoin.Encoding.Base64; use Bitcoin.Encoding.Base64;
 
 procedure Base64_Test is
 
-  ---------------
-  -- Serialize --
-  ---------------
-  function Serialize (Items : Byte_Array) return String is
+  -----------
+  -- Image --
+  -----------
+  function Image (Items : Byte_Array) return String is
     Output : Unbounded_String;
   begin
     Append (Output, "(");
@@ -66,8 +66,8 @@ procedure Base64_Test is
     Put_Line ("--------------");
     Put_Line ("-- DECODING --");
     Put_Line ("--------------");
-    Put_Line ("Expected : " & Serialize (Expected_Decoded));
-    Put_Line ("Actual   : " & Serialize (Actual_Decoded));
+    Put_Line ("Expected : " & Image (Expected_Decoded));
+    Put_Line ("Actual   : " & Image (Actual_Decoded));
   end;
 
   ---------------
