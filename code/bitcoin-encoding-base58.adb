@@ -87,23 +87,22 @@ package body Bitcoin.Encoding.Base58 is
   -- To_Code_Type_Array --
   ------------------------
   function To_Code_Type_Array (Item : in Byte_Array) return Code_Type_Array is
-    Codes        : Code_Type_Array (1 .. Item'Length * 138 / 100 + 1) := (others => 0);
-    Codes_Length : Natural := 0;
+    Codes         : Code_Type_Array (1 .. Item'Length * 138 / 100 + 1) := (others => 0);
+    Codes_Length  : Natural     := 0;
+    Carry         : Unsigned_16 := 0;
+    Codes_Visited : Natural     := 0;
   begin
     for Byte of Item loop
-      declare
-        Carry         : Unsigned_16 := Unsigned_16 (Byte);
-        Codes_Visited : Natural     := 0;
-      begin
-        for I in reverse Codes'Range loop
-          exit when (Carry = 0 and Codes_Visited >= Codes_Length);
-          Carry := Carry + (256 * Unsigned_16 (Codes (I)));
-          Codes (I) := Code_Type (Carry rem 58);
-          Carry := Carry / 58;
-          Codes_Visited := Natural'Succ (Codes_Visited);
-        end loop;
-        Codes_Length := Codes_Visited;
-      end;
+      Carry         := Unsigned_16 (Byte);
+      Codes_Visited := 0;
+      for I in reverse Codes'Range loop
+        exit when (Carry = 0 and Codes_Visited >= Codes_Length);
+        Carry := Carry + (256 * Unsigned_16 (Codes (I)));
+        Codes (I) := Code_Type (Carry rem 58);
+        Carry := Carry / 58;
+        Codes_Visited := Natural'Succ (Codes_Visited);
+      end loop;
+      Codes_Length := Codes_Visited;
     end loop;
     return Trim_Leading_Zeros (Codes);
   end;
@@ -146,22 +145,22 @@ package body Bitcoin.Encoding.Base58 is
   function To_Byte_Array (Item : in Encoded_String) return Byte_Array is
     Bytes         : Byte_Array (1 .. Item'Length * 733 /1000 + 1) := (others => 0);
     Bytes_Length  : Natural := 0;
+    Bytes_Visited : Natural := 0;
+    Decoded       : Code_Type;
+    Carry         : Unsigned_16;
   begin
     for Encoded of Item loop
-      declare
-        Decoded       : Code_Type   := Encoded_Character'Pos (Encoded);
-        Carry         : Unsigned_16 := Unsigned_16 (Decoded);
-        Bytes_Visited : Natural     := 0;
-      begin
-        for I in reverse Bytes'Range loop
-          exit when (Carry = 0 and Bytes_Visited >= Bytes_Length);
-          Carry := Carry + (58 * Unsigned_16 (Bytes (I)));
-          Bytes (I) := Byte (Carry rem 256);
-          Carry := Carry / 256;
-          Bytes_Visited := Natural'Succ (Bytes_Visited);
-        end loop;
-        Bytes_Length := Bytes_Visited;
-      end;
+      Decoded       := Encoded_Character'Pos (Encoded);
+      Carry         := Unsigned_16 (Decoded);
+      Bytes_Visited := 0;
+      for I in reverse Bytes'Range loop
+        exit when (Carry = 0 and Bytes_Visited >= Bytes_Length);
+        Carry := Carry + (58 * Unsigned_16 (Bytes (I)));
+        Bytes (I) := Byte (Carry rem 256);
+        Carry := Carry / 256;
+        Bytes_Visited := Natural'Succ (Bytes_Visited);
+      end loop;
+      Bytes_Length := Bytes_Visited;
     end loop;
     return Trim_Leading_Zeros (Bytes);
   end;

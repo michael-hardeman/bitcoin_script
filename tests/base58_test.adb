@@ -8,20 +8,6 @@ with Bitcoin.Encoding.Base58; use Bitcoin.Encoding.Base58;
 procedure Base58_Test is
 
   -----------
-  -- Image --
-  -----------
-  function Image (Items : Byte_Array) return String is
-    Output : Unbounded_String;
-  begin
-    Append (Output, "(");
-    for I in Items'First .. Items'Last - 1 loop
-      Append (Output, Unsigned_8'Image (Items (I))); Append (Output, ",");
-    end loop;
-    Append (Output, Unsigned_8'Image (Items (Items'Last))); Append (Output, " )");
-    return To_String (Output);
-  end;
-
-  -----------
   -- Types --
   -----------
   type Test_State (Encoded_Length : Positive; Decoded_Length : Positive) is record

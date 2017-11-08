@@ -1,8 +1,8 @@
 package body Bitcoin.Crypto is
 
-  ------------------------
-  -- C Success Wrappers --
-  ------------------------
+  ----------------
+  -- C Wrappers --
+  ----------------
   procedure Raise_OpenSSL_Exception is begin
     raise OpenSSL_Exception with Value (ERR_error_string (ERR_get_error, Null_Ptr));
   end;
@@ -80,7 +80,8 @@ package body Bitcoin.Crypto is
   -----------------------
   procedure Derive_Public_Key (
     Key_Pair    : in out Key_Pair_Type;
-    Private_Key : in out Byte_Array) is
+    Private_Key : in out Byte_Array)
+  is
     Private_BIGNUM  : BIGNUM   := To_BIGNUM (Private_Key);
     Group           : EC_GROUP := EC_KEY_get0_group (Key_Pair.Low_Level_Ptr);
     Public_EC_POINT : EC_POINT := EC_POINT_new (Group);
