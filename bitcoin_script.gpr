@@ -10,7 +10,8 @@ project Bitcoin_Script is
                             "base64_test.adb",
                             "stacks_test.adb",
                             "script_test.adb",
-                            "crypto_test.adb");
+                            "crypto_test.adb",
+                            "ripemd160_test.adb");
 
   -------------
   -- Options --

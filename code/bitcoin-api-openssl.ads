@@ -89,16 +89,17 @@ package Bitcoin.API.OpenSSL is
   -- I tried to import the internal structure of these, but it caused lots of
   -- issues. The C types are designed to be opaque pointers so they should be
   -- the same here as well.
-  subtype EC_POINT     is Address;
-  subtype EC_METHOD    is Address;
-  subtype EC_GROUP     is Address;
-  subtype EC_KEY       is Address;
-  subtype BIGNUM       is Address;
-  subtype BN_CTX       is Address;
-  subtype EVP_MD       is Address;
-  subtype EVP_PKEY     is Address;
-  subtype ENGINE       is Address;
-  subtype EVP_PKEY_CTX is Address;
+  subtype EC_POINT      is Address;
+  subtype EC_METHOD     is Address;
+  subtype EC_GROUP      is Address;
+  subtype EC_KEY        is Address;
+  subtype BIGNUM        is Address;
+  subtype BN_CTX        is Address;
+  subtype EVP_MD        is Address;
+  subtype EVP_PKEY      is Address;
+  subtype ENGINE        is Address;
+  subtype EVP_PKEY_CTX  is Address;
+  subtype RIPEMD160_CTX is Address;
 
   --------------------------
   -- ELLIPTICAL_CURVE_KEY --
@@ -368,6 +369,39 @@ package Bitcoin.API.OpenSSL is
   procedure EVP_PKEY_CTX_free (
     ctx : in EVP_PKEY_CTX)
     with Import => True, Convention => StdCall, External_Name => "EVP_PKEY_CTX_free";
+    
+  --------------
+  -- RIPMD160 --
+  --------------
+  function RIPEMD160 (
+    d  : in Address;
+    n  : in Size_T;
+    md : in Address)
+    return Byte_Access
+    with Import => True, Convention => StdCall, External_Name => "RIPEMD160";
+  
+  function RIPEMD160_Init (
+    c : in RIPEMD160_CTX) 
+    return Int
+    with Import => True, Convention => StdCall, External_Name => "RIPEMD160_Init";
+  
+  function RIPEMD160_Update (
+    c    : in RIPEMD160_CTX;
+    data : in Byte_Access;
+    len  : in Size_T)
+    return Int
+    with Import => True, Convention => StdCall, External_Name => "RIPEMD160_Update";
+    
+  function RIPEMD160_Final (
+    md : in Byte_Access;
+    c  : in RIPEMD160_CTX)
+    return Int
+    with Import => True, Convention => StdCall, External_Name => "RIPEMD160_Final";
+    
+  procedure RIPEMD160_Transform (
+    c : in RIPEMD160_CTX;
+    b : in Byte_Access)
+    with Import => True, Convention => StdCall, External_Name => "RIPEMD160_Transform";
 
   -----------
   -- Error --
