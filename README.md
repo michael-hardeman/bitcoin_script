@@ -16,7 +16,7 @@ Differences to the standard:
 
 ## Compiling
 
-There are 4 building Options available:
+There are 4 build options available:
 
 - Word_Size : 32 or 64
 - System : windows or unix
@@ -50,8 +50,6 @@ When you're ready, open a pull request to merge back into develop, I'll review t
 
 Things to work on:
 
-- OpenSSL binding
-  - RIPEMD160 binding
 - Opcodes
   - Stack
   - Splice
