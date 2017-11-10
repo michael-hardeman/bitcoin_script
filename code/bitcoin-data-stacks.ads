@@ -15,8 +15,9 @@ package Bitcoin.Data.Stacks is
 
   subtype Stack_Type is Stack_Indefinite_Vectors.Vector;
 
-  function  Peek (Into : in     Stack_Type) return Element_Type;
-  procedure Push (To   : in out Stack_Type; Item : in Element_Type);
-  function  Pop  (From : in out Stack_Type) return Element_Type;
-  procedure Pop  (From : in out Stack_Type);
+  function  Size (Stack : in     Stack_Type) return Natural is (Natural (Stack_Indefinite_Vectors.Length (Stack)));
+  function  Peek (Into  : in     Stack_Type) return Element_Type;
+  procedure Push (Into  : in out Stack_Type; Item : in Element_Type);
+  function  Pop  (From  : in out Stack_Type) return Element_Type;
+  procedure Pop  (From  : in out Stack_Type);
 end;

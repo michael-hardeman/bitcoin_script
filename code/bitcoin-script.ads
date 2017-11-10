@@ -165,8 +165,8 @@ package Bitcoin.Script is
 
   for Opcode_Kind'Size use Byte'Size;
 
-  function To_Opcode_Kind is new Ada.Unchecked_Conversion (Source => Byte, Target => Opcode_Kind);
-  function To_Byte is new Ada.Unchecked_Conversion (Source => Opcode_Kind, Target => Byte);
+  function To_Opcode_Kind is new Ada.Unchecked_Conversion (Source => Byte,        Target => Opcode_Kind);
+  function To_Byte        is new Ada.Unchecked_Conversion (Source => Opcode_Kind, Target => Byte);
 
   -------------
   -- Aliases --

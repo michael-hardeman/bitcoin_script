@@ -4,9 +4,9 @@ package body Bitcoin.Data.Stacks is
   ----------
   -- Push --
   ----------
-  procedure Push (To : in out Stack_Type; Item : in Element_Type) is
+  procedure Push (Into : in out Stack_Type; Item : in Element_Type) is
   begin
-   To.Append (Item);
+   Into.Append (Item);
   end;
 
   ---------
