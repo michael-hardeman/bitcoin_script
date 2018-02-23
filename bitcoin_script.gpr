@@ -19,7 +19,7 @@ project Bitcoin_Script is
   Word_Size : Word_Size_Option := external ("Word_Size", "32");
   System    : System_Option    := external ("System",    "windows");
   Debug     : Boolean_Option   := external ("Debug",     "Yes");
-  Test      : Test_Option      := external ("Test",      "base64_test.adb");
+  Test      : Test_Option      := external ("Test",      "script_test.adb");
 
   ---------------
   -- Variables --

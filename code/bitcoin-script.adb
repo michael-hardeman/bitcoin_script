@@ -3,14 +3,6 @@ with Ada.Text_IO; use Ada.Text_IO;
 package body Bitcoin.Script is
   use Byte_Array_Stacks;
 
-  -----------------
-  -- Comparisons --
-  -----------------
-  function Is_Zero (Bytes : in Byte_Array) return Boolean is (Bytes = (Bytes'Range => 16#00#));
-  function Is_One  (Bytes : in Byte_Array) return Boolean is begin
-    return (for all I in Bytes'First .. Bytes'Last => Bytes (I) = 16#00#) and then Bytes (Bytes'Last) = 16#01#;
-  end;
-
   ------------
   -- Parser --
   ------------
@@ -147,7 +139,8 @@ package body Bitcoin.Script is
         when OP_1NEGATE => Push (Primary_Stack, (1 .. 4 => 16#FF#));
 
         -- The number in the word name (1-16) is pushed onto the stack.
-        when OP_1 .. OP_16 => Push (Primary_Stack, (1 .. 3 => 16#00#, 4 => (To_Byte (Opcode) - (To_Byte (OP_1) - 16#01#))));
+        when OP_1 .. OP_16 => 
+          Push (Primary_Stack, (1 .. 3 => 16#00#, 4 => (To_Byte (Opcode) - (To_Byte (OP_1) - 16#01#))));
 
         -- The next byte contains the number of bytes to be pushed onto the stack.
         when OP_PUSHDATA1 => Push_Bytes_To_Stack (Primary_Stack, Positive (To_Byte (Next)));
@@ -189,142 +182,163 @@ package body Bitcoin.Script is
         -- Stack --
         -----------
         -- Puts the input onto the top of the alt stack. Removes it from the main stack.
-        when OP_TOALTSTACK => Push (Secondary_Stack, Pop (Primary_Stack));
+        when OP_TOALTSTACK =>
+          Push (Secondary_Stack, Pop (Primary_Stack));
 
         -- Puts the input onto the top of the main stack. Removes it from the alt stack.
-        when OP_FROMALTSTACK => Push (Primary_Stack, Pop (Secondary_Stack));
+        when OP_FROMALTSTACK =>
+          Push (Primary_Stack, Pop (Secondary_Stack));
 
         -- Puts the number of stack items onto the stack.
-        when OP_DEPTH => Push (Primary_Stack, (1 => Byte (Size (Primary_Stack))));
+        when OP_DEPTH =>
+          Push (Primary_Stack, (1 => Byte (Size (Primary_Stack))));
 
         -- Removes the top stack item.
         when OP_DROP =>
           Pop (Primary_Stack);
 
         -- Removes the top two stack items.
-        when OP_2DROP => 
+        when OP_2DROP =>
           Pop (Primary_Stack); 
           Pop (Primary_Stack);
 
         -- Duplicates the top stack item.
-        when OP_DUP => 
+        when OP_DUP =>
           Push (Primary_Stack, Peek (Primary_Stack));
 
         -- Duplicates the top two stack items.
-        when OP_2DUP => 
-          Push (Primary_Stack, Peek (Primary_Stack));
-          Push (Primary_Stack, Peek (Primary_Stack));
+        when OP_2DUP =>
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
 
         -- Duplicates the top three stack items.
-        when OP_3DUP => 
-          Push (Primary_Stack, Peek (Primary_Stack));
-          Push (Primary_Stack, Peek (Primary_Stack)); 
-          Push (Primary_Stack, Peek (Primary_Stack));
+        when OP_3DUP =>
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
 
         -- If the top stack value is not 0, duplicate it.
-        when OP_IFDUP => if Peek (Primary_Stack) /= (1 => 0) then Push (Primary_Stack, Peek (Primary_Stack)); end if;
+        when OP_IFDUP =>
+          if not Is_Zero (Peek (Primary_Stack)) then
+            Push (Primary_Stack, Peek (Primary_Stack)); 
+          end if;
 
         -- Removes the second-to-top stack item.
-        when OP_NIP => 
-          declare First : Byte_Array := Pop (Primary_Stack); begin
-            Pop (Primary_Stack);
-            Push (Primary_Stack, First);
-          end;
-
+        when OP_NIP =>
+          Delete (Primary_Stack, Top_Index (Primary_Stack) - 1);
+      
         -- Copies the second-to-top stack item to the top.
-        -- [1, 2] => [2, 1, 2]
-        when OP_OVER => 
-          declare 
-            First  : Byte_Array := Pop  (Primary_Stack);
-            Second : Byte_Array := Peek (Primary_Stack);
-          begin
-            Push (Primary_Stack, First);
-            Push (Primary_Stack, Second);
-          end;
+        -- [... 1, 2] TOP => [... 1, 2, 1] TOP
+        when OP_OVER =>
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
 
         -- Copies the pair of items two spaces back in the stack to the front.
-        -- [1, 2] => [1, 2, 1, 2]
+        -- [... 1, 2. 3] TOP => [... 1, 2, 3, 1, 2] TOP
         when OP_2OVER =>
-          declare 
-            First  : Byte_Array := Pop  (Primary_Stack);
-            Second : Byte_Array := Peek (Primary_Stack);
-          begin
-            Push (Primary_Stack, First);
-            Push (Primary_Stack, Second);
-            Push (Primary_Stack, First);
-          end;
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
 
         -- The top three items on the stack are rotated to the left.
-        -- [1, 2, 3] => [2, 3, 1]
+        -- [... 1, 2, 3] TOP => [... 2, 3, 1] TOP
         when OP_ROT =>
-          declare 
-            First  : Byte_Array := Pop (Primary_Stack);
-            Second : Byte_Array := Pop (Primary_Stack);
-            Third  : Byte_Array := Pop (Primary_Stack);
-          begin
-            Push (Primary_Stack, First);
-            Push (Primary_Stack, Third);
-            Push (Primary_Stack, Second);
-          end;
+          Push   (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
+          Delete (Primary_Stack,                     Top_Index (Primary_Stack) - 3);
 
         -- The fifth and sixth items back are moved to the top of the stack.
-        -- [1, 2, 3, 4, 5, 6] =>  [5, 6, 1, 2, 3, 4]
+        -- [... 1, 2, 3, 4, 5, 6] TOP => [... 3, 4, 5, 6, 1, 2] TOP
         when OP_2ROT => 
-          declare 
-            First  : Byte_Array := Pop (Primary_Stack);
-            Second : Byte_Array := Pop (Primary_Stack);
-            Third  : Byte_Array := Pop (Primary_Stack);
-            Fourth : Byte_Array := Pop (Primary_Stack);
-            Fifth  : Byte_Array := Pop (Primary_Stack);
-            Sixth  : Byte_Array := Pop (Primary_Stack);
-          begin
-            Push (Primary_Stack, Fourth);
-            Push (Primary_Stack, Third);
-            Push (Primary_Stack, Second);
-            Push (Primary_Stack, First);
-            Push (Primary_Stack, Sixth);
-            Push (Primary_Stack, Fifth);
-          end;
+          Push   (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 5));
+          Delete (Primary_Stack,                     Top_Index (Primary_Stack) - 6);
+          Push   (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 5));
+          Delete (Primary_Stack,                     Top_Index (Primary_Stack) - 6);
 
         -- The top two items on the stack are swapped.
-        -- [1, 2] => [2, 1]
+        -- [... 1, 2] TOP => [... 2, 1] TOP
         when OP_SWAP => 
-          declare 
-            First  : Byte_Array := Pop (Primary_Stack);
-            Second : Byte_Array := Pop (Primary_Stack);
-          begin
-            Push (Primary_Stack, First);
-            Push (Primary_Stack, Second);
-          end;
+          Swap (Primary_Stack, Top_Index (Primary_Stack) - 1, Top_Index (Primary_Stack));
 
         -- Swaps the top two pairs of items.
-        -- [1, 2, 3, 4] => [3, 4, 1, 2]
+        -- [... 1, 2, 3, 4] TOP => [... 3, 4, 1, 2] TOP
         when OP_2SWAP =>
-          declare 
-            First  : Byte_Array := Pop (Primary_Stack);
-            Second : Byte_Array := Pop (Primary_Stack);
-            Third  : Byte_Array := Pop (Primary_Stack);
-            Fourth : Byte_Array := Pop (Primary_Stack);
-          begin
-            Push (Primary_Stack, Second);
-            Push (Primary_Stack, First);
-            Push (Primary_Stack, Fourth);
-            Push (Primary_Stack, Third);
-          end;
+          Swap (Primary_Stack, Top_Index (Primary_Stack) - 3, Top_Index (Primary_Stack) - 1);
+          Swap (Primary_Stack, Top_Index (Primary_Stack) - 2, Top_Index (Primary_Stack) - 0);
 
         -- The item n back in the stack is copied to the top.
-        when OP_PICK => null;
+        when OP_PICK => 
+          Push (Primary_Stack, Get (Primary_Stack, To_Natural (Pop (Primary_Stack))));
 
         -- The item n back in the stack is moved to the top.
-        when OP_ROLL => null;
+        when OP_ROLL => 
+          Push   (Primary_Stack, Get (Primary_Stack, To_Natural (Pop (Primary_Stack))));
+          Delete (Primary_Stack,                     To_Natural (Pop (Primary_Stack)));
 
         -- The item at the top of the stack is copied and inserted before the second-to-top item.
-        when OP_TUCK => null;
+        when OP_TUCK => 
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index(Primary_Stack)));
+          Swap (Primary_Stack, Top_Index(Primary_Stack) - 2, Top_Index(Primary_Stack) - 1);
 
         ------------
         -- Splice --
         ------------
+        -- Pushes the string length of the top element of the stack (without popping it).
         when OP_SIZE => Push (Primary_Stack, (1 => Byte (Peek (Primary_Stack)'Length)));
+        
+        -------------------
+        -- Bitwise logic --
+        -------------------
+        -- Returns 1 if the inputs are exactly equal, 0 otherwise.
+        when OP_EQUAL => 
+          if Pop (Primary_Stack) /= Pop (Primary_Stack) then Push (Primary_Stack, (1 => 16#01#)); end if;
+        
+        -- Same as OP_EQUAL, but runs OP_VERIFY afterward.
+        when OP_EQUALVERIFY =>
+          if Pop (Primary_Stack) /= Pop (Primary_Stack) then Push (Primary_Stack, (1 => 16#01#)); end if;
+          if not Is_One (Pop (Primary_Stack)) then raise Verification_Failed; end if;
+        
+        ----------------
+        -- Arithmetic --
+        ----------------
+        -- 1 is added to the input.
+        when OP_1ADD => null;
+        
+        -- 1 is subtracted from the input.
+        when OP_1SUB => null;
+        
+        -- The sign of the input is flipped.
+        when OP_NEGATE => null;
+        
+        -- The input is made positive.
+        when OP_ABS => null;
+        
+        -- If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
+        when OP_NOT => null;
+        
+        -- Returns 0 if the input is 0. 1 otherwise.
+        when OP_0NOTEQUAL => null;
+        
+        -- The 2nd stack item  is added to the top
+        when OP_ADD => null;
+        
+        -- The 2nd stack  item is subtracted from the top of the stack.
+        when OP_SUB => null;
+        
+        -- If both a and b are not "" (null string), the output is 1. Otherwise 0.
+        when OP_BOOLAND => null;
+        when OP_BOOLOR => null;
+        when OP_NUMEQUAL => null;
+        when OP_NUMEQUALVERIFY => null;
+        when OP_NUMNOTEQUAL => null;
+        when OP_LESSTHAN => null;
+        when OP_GREATERTHAN => null;
+        when OP_LESSTHANOREQUAL => null;
+        when OP_GREATERTHANOREQUAL => null;
+        when OP_MIN => null;
+        when OP_MAX => null;
+        when OP_WITHIN => null;
+        
+        ------------
+        -- Crypto --
+        ------------
 
         when others => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
       end case;

@@ -13,7 +13,10 @@ package Bitcoin is
   -----------------
   -- Subprograms --
   -----------------
-  function Image (Items : Byte_Array) return String;
-  function To_Byte_Array (Item : in String) return Byte_Array;
+  function Image         (Bytes : in Byte_Array) return String;
+  function To_Byte_Array (Item  : in String)     return Byte_Array;
+  function To_Natural    (Bytes : in Byte_Array) return Natural;
+  function Is_Zero       (Bytes : in Byte_Array) return Boolean is (Bytes = (Bytes'Range => 16#00#));
+  function Is_One        (Bytes : in Byte_Array) return Boolean;
 
 end;

@@ -13,6 +13,7 @@ Differences to the standard:
 
 - Nested If/Else blocks are supported
 - OP_VERIF and OP_VERNOTIF will only invalidate if they are evaluated
+- Segwit is not, and never will be, supported.
 
 ## Compiling
 
@@ -23,7 +24,7 @@ There are 4 build options available:
 - Debug : Yes or No
 - Test : any file from the tests folder
 
-To compile from command line with all the defaults (32, windows, No, bitcoin_script.adb):
+To compile from command line with all the defaults (32, windows, No, script_test.adb):
 
 `gprbuild -P bitcoin_script.gpr`
 
