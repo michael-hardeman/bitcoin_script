@@ -304,9 +304,6 @@ package body Bitcoin.Script is
         -- 1 is subtracted from the input.
         when OP_1SUB => null;
         
-        -- The sign of the input is flipped.
-        when OP_NEGATE => null;
-        
         -- The input is made positive.
         when OP_ABS => null;
         
