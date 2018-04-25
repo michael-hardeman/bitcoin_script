@@ -1,2 +1,1 @@
-package Bitcoin.Encoding is
-end;
+package Bitcoin.Encoding is end;

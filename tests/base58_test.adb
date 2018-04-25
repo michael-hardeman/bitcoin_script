@@ -112,6 +112,7 @@ procedure Base58_Test is
     Put_Line ("--------------");
     Put_Line ("Expected : " & Image (Expected_Decoded));
     Put_Line ("Actual   : " & Image (Actual_Decoded));
+    New_Line;
   end;
 
   ---------------
