@@ -11,7 +11,8 @@ project Bitcoin_Script is
                             "stacks_test.adb",
                             "script_test.adb",
                             "crypto_test.adb",
-                            "ripemd160_test.adb");
+                            "ripemd160_test.adb",
+                            "byte_array_test.adb");
 
   -------------
   -- Options --

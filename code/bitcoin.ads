@@ -23,7 +23,6 @@ package Bitcoin is
   function Is_Zero       (Bytes : in Byte_Array) return Boolean is (Bytes = (Bytes'Range => 16#00#));
   function Is_One        (Bytes : in Byte_Array) return Boolean;
 
-
   function "+"   (X, Y : Byte_Array) return Byte_Array;
   function "-"   (X, Y : Byte_Array) return Byte_Array;
   function "*"   (X, Y : Byte_Array) return Byte_Array;
