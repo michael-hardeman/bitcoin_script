@@ -1,3 +1,5 @@
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+
 package body Bitcoin is
 
   -----------
@@ -14,6 +16,18 @@ package body Bitcoin is
     return To_String (Output);
   end;
 
+  ---------------
+  -- To_String --
+  ---------------
+  function To_String (Bytes : in Byte_Array) return String is
+    Output : String (Bytes'First .. Bytes'Last);
+  begin
+    for I in Bytes'Range loop
+      Output (I) := Character'Val (Bytes (I));
+    end loop;
+    return Output;
+  end;
+
   -------------------
   -- To_Byte_Array --
   -------------------
@@ -28,16 +42,18 @@ package body Bitcoin is
   -- To_Natural --
   ----------------
   function To_Natural (Bytes : in Byte_Array) return Natural is
-    Output : Natural := 0;
+    Output  : Natural    := 0;
+    Trimmed : Byte_Array := Trim_Leading_Zeros (Bytes);
   begin
-    if Bytes'Length > 4 then raise Constraint_Error with "Input larger than Natural'Last"; end if;
-    if Bytes'Length = 4 and then Bytes (Bytes'First) > 16#7F# and then
-       (for all I in Bytes'First + 1 .. Bytes'Last => Bytes (I) = 16#FF#) then
-       raise Constraint_Error with "Input is a large negative number Natural'Last";
+    if Is_Zero (Bytes) then return 0; end if;
+    if Trimmed'Length > 4 then raise Constraint_Error with "Input larger than Natural'Last"; end if;
+    if Trimmed'Length = 4 and then Bytes (Bytes'First) > 16#7F# and then
+       (for all I in Trimmed'First + 1 .. Trimmed'Last => Trimmed (I) = 16#FF#) then
+       raise Constraint_Error with "Input is a valid Integer, but is negative.";
     end if;
 
-    for I in 0 .. Bytes'Last - 1 loop
-      Output := Output + (Natural(Bytes (Bytes'Last - I)) * (2 ** (8 * I)));
+    for I in 0 .. Trimmed'Length - 1 loop
+      Output := Output + (Natural(Trimmed (Trimmed'Last - I)) * (2 ** (8 * I)));
     end loop;
 
     return Output;
@@ -49,6 +65,24 @@ package body Bitcoin is
   function Is_One (Bytes : in Byte_Array) return Boolean is begin
     return (for all I in Bytes'First .. Bytes'Last => Bytes (I) = 16#00#) and then Bytes (Bytes'Last) = 16#01#;
   end;
+
+  -------------------------
+  -- Count_Leading_Zeros --
+  -------------------------
+  function Count_Leading_Zeros (Bytes : in Byte_Array) return Natural is
+    Counter : Natural := 0;
+  begin
+    for I in Bytes'Range loop
+      exit when Bytes(I) /= Byte'First;
+      Counter := Natural'Succ (Counter);
+    end loop;
+    return Counter;
+  end;
+
+  ------------------------
+  -- Trim_Leading_Zeros --
+  ------------------------
+  function Trim_Leading_Zeros (Bytes : in Byte_Array) return Byte_Array is (Bytes (Bytes'First + Count_Leading_Zeros (Bytes) .. Bytes'Last));
 
   -------
   -- + --
