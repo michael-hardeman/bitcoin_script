@@ -12,7 +12,8 @@ package body Bitcoin is
     for I in Bytes'First .. Bytes'Last - 1 loop
       Append (Output, Byte'Image (Bytes (I))); Append (Output, ",");
     end loop;
-    Append (Output, Byte'Image (Bytes (Bytes'Last))); Append (Output, " )");
+    if Bytes'Length > 0 then Append (Output, Byte'Image (Bytes (Bytes'Last))); end if;
+    Append (Output, " )");
     return To_String (Output);
   end;
 

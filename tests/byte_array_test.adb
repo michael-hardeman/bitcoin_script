@@ -14,7 +14,7 @@ procedure Byte_Array_Test is
   ONE_LONG           : constant Byte_Array (1 .. 10) := (10 => 16#01#, others => 16#00#);
   NATURAL_MAX        : constant Byte_Array (1 .. 4)  := ( 1 => 16#7F#, others => 16#FF#);
   NATURAL_MAX_SUCC   : constant Byte_Array (1 .. 4)  := ( 1 => 16#80#, others => 16#00#);
-  EXAMPLE_ONE        : constant Byte_Array           := (16#6a#, 16#61#, 16#63#, 16#6b#, 16#64#,
+  PANAGRAM           : constant Byte_Array           := (16#6a#, 16#61#, 16#63#, 16#6b#, 16#64#,
                                                          16#61#, 16#77#, 16#73#, 16#20#, 16#6c#,
                                                          16#6f#, 16#76#, 16#65#, 16#20#, 16#6d#,
                                                          16#79#, 16#20#, 16#62#, 16#69#, 16#67#,
@@ -28,7 +28,7 @@ procedure Byte_Array_Test is
   ONE_LONG_IMAGE          : constant String           := "( 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 )";
   NATURAL_MAX_IMAGE       : constant String           := "( 127, 255, 255, 255 )";
   NATURAL_MAX_SUCC_IMAGE  : constant String           := "( 128, 0, 0, 0 )";
-  EXAMPLE_ONE_IMAGE       : constant String           := "( 106, 97, 99, 107, 100,"  &
+  PANAGRAM_IMAGE          : constant String           := "( 106, 97, 99, 107, 100,"  &
                                                           " 97, 119, 115, 32, 108,"  &
                                                           " 111, 118, 101, 32, 109," &
                                                           " 121, 32, 98, 105, 103,"  &
@@ -41,7 +41,7 @@ procedure Byte_Array_Test is
   ONE_LONG_STRING         : constant String (1 .. 10) := (10 => Character'Val(1), others => Character'Val(0));
   NATURAL_MAX_STRING      : constant String (1 .. 4)  := ( 1 => Character'Val(16#7F#), others => Character'Val(16#FF#));
   NATURAL_MAX_SUCC_STRING : constant String (1 .. 4)  := ( 1 => Character'Val(16#80#), others => Character'Val(0));
-  EXAMPLE_ONE_STRING      : constant String           := "jackdaws love my big sphinx of quartz";
+  PANAGRAM_STRING         : constant String           := "jackdaws love my big sphinx of quartz";
   ZERO_SHORT_NATURAL      : constant Natural          := 0;
   ZERO_LONG_NATURAL       : constant Natural          := 0;
   ONE_SHORT_NATURAL       : constant Natural          := 1;
@@ -178,7 +178,7 @@ procedure Byte_Array_Test is
     Total_Result := Total_Result and String_Test (ONE_LONG_IMAGE,         Image (ONE_LONG));
     Total_Result := Total_Result and String_Test (NATURAL_MAX_IMAGE,      Image (NATURAL_MAX));
     Total_Result := Total_Result and String_Test (NATURAL_MAX_SUCC_IMAGE, Image (NATURAL_MAX_SUCC));
-    Total_Result := Total_Result and String_Test (EXAMPLE_ONE_IMAGE,      Image (EXAMPLE_ONE));
+    Total_Result := Total_Result and String_Test (PANAGRAM_IMAGE,         Image (PANAGRAM));
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;
@@ -198,7 +198,7 @@ procedure Byte_Array_Test is
     Total_Result := Total_Result and String_Test (ONE_LONG_STRING,         To_String (ONE_LONG));
     Total_Result := Total_Result and String_Test (NATURAL_MAX_STRING,      To_String (NATURAL_MAX));
     Total_Result := Total_Result and String_Test (NATURAL_MAX_SUCC_STRING, To_String (NATURAL_MAX_SUCC));
-    Total_Result := Total_Result and String_Test (EXAMPLE_ONE_STRING,      To_String (EXAMPLE_ONE));
+    Total_Result := Total_Result and String_Test (PANAGRAM_STRING,         To_String (PANAGRAM));
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;
@@ -218,7 +218,7 @@ procedure Byte_Array_Test is
     Total_Result := Total_Result and Byte_Array_Test (ONE_LONG,         To_Byte_Array (ONE_LONG_STRING));
     Total_Result := Total_Result and Byte_Array_Test (NATURAL_MAX,      To_Byte_Array (NATURAL_MAX_STRING));
     Total_Result := Total_Result and Byte_Array_Test (NATURAL_MAX_SUCC, To_Byte_Array (NATURAL_MAX_SUCC_STRING));
-    Total_Result := Total_Result and Byte_Array_Test (EXAMPLE_ONE,      To_Byte_Array (EXAMPLE_ONE_STRING));
+    Total_Result := Total_Result and Byte_Array_Test (PANAGRAM,         To_Byte_Array (PANAGRAM_STRING));
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;
@@ -232,6 +232,11 @@ procedure Byte_Array_Test is
     Put_Line ("-------------------------");
     Put_Line ("-- Count_Leading_Zeros --");
     Put_Line ("-------------------------");
+    Total_Result := Total_Result and Natural_Test (1,  Count_Leading_Zeros (ZERO_SHORT));
+    Total_Result := Total_Result and Natural_Test (10, Count_Leading_Zeros (ZERO_LONG));
+    Total_Result := Total_Result and Natural_Test (0,  Count_Leading_Zeros (ONE_SHORT));
+    Total_Result := Total_Result and Natural_Test (9,  Count_Leading_Zeros (ONE_LONG));
+    Total_Result := Total_Result and Natural_Test (0,  Count_Leading_Zeros (PANAGRAM));
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;
@@ -245,6 +250,11 @@ procedure Byte_Array_Test is
     Put_Line ("------------------------");
     Put_Line ("-- Trim_Leading_Zeros --");
     Put_Line ("------------------------");
+    Total_Result := Total_Result and Natural_Test    (0,         Trim_Leading_Zeros (ZERO_SHORT)'Length);
+    Total_Result := Total_Result and Natural_Test    (0,         Trim_Leading_Zeros (ZERO_LONG)'Length);
+    Total_Result := Total_Result and Byte_Array_Test (ONE_SHORT, Trim_Leading_Zeros (ONE_SHORT));
+    Total_Result := Total_Result and Byte_Array_Test (ONE_SHORT, Trim_Leading_Zeros (ONE_LONG));
+    Total_Result := Total_Result and Byte_Array_Test (PANAGRAM,  Trim_Leading_Zeros (PANAGRAM));
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;
@@ -262,7 +272,7 @@ procedure Byte_Array_Test is
     Total_Result := Total_Result and Boolean_Test (TRUE,  Is_Zero (ZERO_LONG));
     Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (ONE_SHORT));
     Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (ONE_LONG));
-    Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (EXAMPLE_ONE));
+    Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (PANAGRAM));
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;
@@ -280,7 +290,7 @@ procedure Byte_Array_Test is
     Total_Result := Total_Result and Boolean_Test (FALSE, Is_One (ZERO_LONG));
     Total_Result := Total_Result and Boolean_Test (TRUE,  Is_One (ONE_SHORT));
     Total_Result := Total_Result and Boolean_Test (TRUE,  Is_One (ONE_LONG));
-    Total_Result := Total_Result and Boolean_Test (FALSE, Is_One (EXAMPLE_ONE));
+    Total_Result := Total_Result and Boolean_Test (FALSE, Is_One (PANAGRAM));
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;
@@ -301,7 +311,7 @@ procedure Byte_Array_Test is
     Total_Result := Total_Result and Natural_Test (NATURAL_MAX_NATURAL, To_Natural (NATURAL_MAX));
 
     Total_Result := Total_Result and Natural_Exception_Test ("CONSTRAINT_ERROR", NATURAL_MAX_SUCC);
-    Total_Result := Total_Result and Natural_Exception_Test ("CONSTRAINT_ERROR", EXAMPLE_ONE);
+    Total_Result := Total_Result and Natural_Exception_Test ("CONSTRAINT_ERROR", PANAGRAM);
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;
