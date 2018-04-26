@@ -28,7 +28,13 @@ procedure Byte_Array_Test is
   ONE_LONG_IMAGE          : constant String           := "( 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 )";
   NATURAL_MAX_IMAGE       : constant String           := "( 127, 255, 255, 255 )";
   NATURAL_MAX_SUCC_IMAGE  : constant String           := "( 128, 0, 0, 0 )";
-  EXAMPLE_ONE_IMAGE       : constant String           := "( 106, 97, 99, 107, 100, 97, 119, 115, 32, 108, 111, 118, 101, 32, 109, 121, 32, 98, 105, 103, 32, 115, 112, 104, 105, 110, 120, 32, 111, 102, 32, 113, 117, 97, 114, 116, 122 )";
+  EXAMPLE_ONE_IMAGE       : constant String           := "( 106, 97, 99, 107, 100,"  &
+                                                          " 97, 119, 115, 32, 108,"  &
+                                                          " 111, 118, 101, 32, 109," &
+                                                          " 121, 32, 98, 105, 103,"  &
+                                                          " 32, 115, 112, 104, 105," &
+                                                          " 110, 120, 32, 111, 102," &
+                                                          " 32, 113, 117, 97, 114, 116, 122 )";
   ZERO_SHORT_STRING       : constant String           := "" & Character'Val(0);
   ZERO_LONG_STRING        : constant String (1 .. 10) := (others => Character'Val(0));
   ONE_SHORT_STRING        : constant String           := "" & Character'Val(1);
@@ -153,9 +159,13 @@ procedure Byte_Array_Test is
 
   function String_Test is new Aggregate_Test (String, "=", String_Image);
   function Byte_Array_Test is new Aggregate_Test (Byte_Array, "=", Image);
+  function Boolean_Test is new Discrete_Test (Boolean, "=", Boolean'Image);
   function Natural_Test is new Discrete_Test (Natural, "=", Natural'Image);
   function Natural_Exception_Test is new Aggregate_Exception_Test (Byte_Array, Run_To_Natural, Image);
 
+  -----------------
+  -- Image_Tests --
+  -----------------
   procedure Image_Tests is
     Total_Result : Boolean := TRUE;
   begin
@@ -173,6 +183,9 @@ procedure Byte_Array_Test is
     New_Line;
   end;
 
+  ---------------------
+  -- To_String_Tests --
+  ---------------------
   procedure To_String_Tests is
     Total_Result : Boolean := TRUE;
   begin
@@ -190,6 +203,9 @@ procedure Byte_Array_Test is
     New_Line;
   end;
 
+  -------------------------
+  -- To_Byte_Array_Tests --
+  -------------------------
   procedure To_Byte_Array_Tests is
     Total_Result : Boolean := TRUE;
   begin
@@ -207,6 +223,71 @@ procedure Byte_Array_Test is
     New_Line;
   end;
 
+  -------------------------
+  -- Count_Leading_Zeros --
+  -------------------------
+  procedure Count_Leading_Zeros is
+    Total_Result : Boolean := TRUE;
+  begin
+    Put_Line ("-------------------------");
+    Put_Line ("-- Count_Leading_Zeros --");
+    Put_Line ("-------------------------");
+    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
+    New_Line;
+  end;
+
+  ------------------------
+  -- Trim_Leading_Zeros --
+  ------------------------
+  procedure Trim_Leading_Zeros is
+    Total_Result : Boolean := TRUE;
+  begin
+    Put_Line ("------------------------");
+    Put_Line ("-- Trim_Leading_Zeros --");
+    Put_Line ("------------------------");
+    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
+    New_Line;
+  end;
+
+  -------------------
+  -- Is_Zero_Tests --
+  -------------------
+  procedure Is_Zero_Tests is
+    Total_Result : Boolean := TRUE;
+  begin
+    Put_Line ("-------------------");
+    Put_Line ("-- Is_Zero_Tests --");
+    Put_Line ("-------------------");
+    Total_Result := Total_Result and Boolean_Test (TRUE,  Is_Zero (ZERO_SHORT));
+    Total_Result := Total_Result and Boolean_Test (TRUE,  Is_Zero (ZERO_LONG));
+    Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (ONE_SHORT));
+    Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (ONE_LONG));
+    Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (EXAMPLE_ONE));
+    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
+    New_Line;
+  end;
+
+  ------------------
+  -- Is_One_Tests --
+  ------------------
+  procedure Is_One_Tests is
+    Total_Result : Boolean := TRUE;
+  begin
+    Put_Line ("------------------");
+    Put_Line ("-- Is_One_Tests --");
+    Put_Line ("------------------");
+    Total_Result := Total_Result and Boolean_Test (FALSE, Is_One (ZERO_SHORT));
+    Total_Result := Total_Result and Boolean_Test (FALSE, Is_One (ZERO_LONG));
+    Total_Result := Total_Result and Boolean_Test (TRUE,  Is_One (ONE_SHORT));
+    Total_Result := Total_Result and Boolean_Test (TRUE,  Is_One (ONE_LONG));
+    Total_Result := Total_Result and Boolean_Test (FALSE, Is_One (EXAMPLE_ONE));
+    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
+    New_Line;
+  end;
+
+  ----------------------
+  -- To_Natural_Tests --
+  ----------------------
   procedure To_Natural_Tests is
     Total_Result : Boolean := TRUE;
   begin
@@ -219,8 +300,8 @@ procedure Byte_Array_Test is
     Total_Result := Total_Result and Natural_Test (ONE_LONG_NATURAL,    To_Natural (ONE_LONG));
     Total_Result := Total_Result and Natural_Test (NATURAL_MAX_NATURAL, To_Natural (NATURAL_MAX));
 
-    Total_Result := Total_Result and Natural_Exception_Test ( "CONSTRAINT_ERROR", NATURAL_MAX_SUCC);
-    Total_Result := Total_Result and Natural_Exception_Test ( "CONSTRAINT_ERROR", EXAMPLE_ONE);
+    Total_Result := Total_Result and Natural_Exception_Test ("CONSTRAINT_ERROR", NATURAL_MAX_SUCC);
+    Total_Result := Total_Result and Natural_Exception_Test ("CONSTRAINT_ERROR", EXAMPLE_ONE);
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;
@@ -229,5 +310,10 @@ begin
   Image_Tests;
   To_String_Tests;
   To_Byte_Array_Tests;
+  Count_Leading_Zeros;
+  Trim_Leading_Zeros;
+  Is_Zero_Tests;
+  Is_One_Tests;
   To_Natural_Tests;
 end;
+
