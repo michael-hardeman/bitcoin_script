@@ -8,9 +8,9 @@ procedure RIPEMD160_Test is
   -----------
   -- Types --
   -----------
-  type Test_State (Message_Length : Positive; Digest_Length : Positive) is record
+  type Test_State (Message_Length : Positive) is record
     Message : String     (1 .. Message_Length);
-    Digest  : Byte_Array (1 .. Digest_Length);
+    Digest  : Byte_Array (1 .. 20);
   end record;
   type Test_State_Access is access all Test_State;
   type Test_State_Access_Array is array (Positive range <>) of Test_State_Access;
@@ -19,7 +19,7 @@ procedure RIPEMD160_Test is
   -- TESTS --
   -----------
   TESTS : constant Test_State_Access_Array := (
-    1 => new Test_State'(Message_Length => 38, Digest_Length => 20,
+    1 => new Test_State'(Message_Length => 38,
       Message =>
         "Jackdaws love my big sphinx of quartz.",
       Digest => (
@@ -27,7 +27,7 @@ procedure RIPEMD160_Test is
         16#d6#, 16#b5#, 16#ba#, 16#0e#, 16#f5#,
         16#c5#, 16#d0#, 16#90#, 16#83#, 16#8f#,
         16#6e#, 16#53#, 16#ec#, 16#84#, 16#63#)),
-    2 => new Test_State'(Message_Length => 169, Digest_Length => 20,
+    2 => new Test_State'(Message_Length => 169,
       Message =>
         "A purely peer-to-peer version of electronic cash would allow "  &
         "online payments to be sent directly from one party to another " &
@@ -37,7 +37,7 @@ procedure RIPEMD160_Test is
         16#46#, 16#95#, 16#f4#, 16#7f#, 16#68#,
         16#db#, 16#e7#, 16#2b#, 16#a4#, 16#56#,
         16#f2#, 16#be#, 16#36#, 16#b3#, 16#9b#)),
-    3 => new Test_State'(Message_Length => 145, Digest_Length => 20,
+    3 => new Test_State'(Message_Length => 145,
       Message =>
         "Ada was originally designed with three overriding concerns: program reliability " &
         "and maintenance, programming as a human activity, and efficiency.",
@@ -55,12 +55,10 @@ procedure RIPEMD160_Test is
     Expected_Digest : Byte_Array := Test.Digest;
     Actual_Digest   : Byte_Array := Digest (Test.Message);
   begin
-    Put_Line ("----------");
-    Put_Line ("-- Test --");
-    Put_Line ("----------");
     Put_Line ("Message  : " & Test.Message);
     Put_Line ("Expected : " & Image (Expected_Digest));
     Put_Line ("Actual   : " & Image (Actual_Digest));
+    Put_Line ("");
   end;
 
   ---------------

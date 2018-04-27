@@ -1,4 +1,3 @@
-with Ada.Text_IO; use Ada.Text_IO;
 with Bitcoin; use Bitcoin;
 with Bitcoin.Script; use Bitcoin.Script;
 
