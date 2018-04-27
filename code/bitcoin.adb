@@ -55,7 +55,8 @@ package body Bitcoin is
   ------------------------
   -- Trim_Leading_Zeros --
   ------------------------
-  function Trim_Leading_Zeros (Bytes : in Byte_Array) return Byte_Array is (Bytes (Bytes'First + Count_Leading_Zeros (Bytes) .. Bytes'Last));
+  function Trim_Leading_Zeros (Bytes : in Byte_Array) return Byte_Array is (
+    Bytes (Bytes'First + Count_Leading_Zeros (Bytes) .. Bytes'Last));
 
   ------------
   -- Is_One --

@@ -8,33 +8,35 @@ procedure Byte_Array_Test is
   ---------------
   -- Constants --
   ---------------
-  ZERO_SHORT         : constant Byte_Array (1 .. 1)  := ( 1 => 16#00#);
-  ZERO_LONG          : constant Byte_Array (1 .. 10) := (others => 16#00#);
-  ONE_SHORT          : constant Byte_Array (1 .. 1)  := ( 1 => 16#01#);
-  ONE_LONG           : constant Byte_Array (1 .. 10) := (10 => 16#01#, others => 16#00#);
-  NATURAL_MAX        : constant Byte_Array (1 .. 4)  := ( 1 => 16#7F#, others => 16#FF#);
-  NATURAL_MAX_SUCC   : constant Byte_Array (1 .. 4)  := ( 1 => 16#80#, others => 16#00#);
-  PANAGRAM           : constant Byte_Array           := (16#6a#, 16#61#, 16#63#, 16#6b#, 16#64#,
-                                                         16#61#, 16#77#, 16#73#, 16#20#, 16#6c#,
-                                                         16#6f#, 16#76#, 16#65#, 16#20#, 16#6d#,
-                                                         16#79#, 16#20#, 16#62#, 16#69#, 16#67#,
-                                                         16#20#, 16#73#, 16#70#, 16#68#, 16#69#,
-                                                         16#6e#, 16#78#, 16#20#, 16#6f#, 16#66#,
-                                                         16#20#, 16#71#, 16#75#, 16#61#, 16#72#,
-                                                         16#74#, 16#7a#);
-  ZERO_SHORT_IMAGE        : constant String           := "( 0 )";
-  ZERO_LONG_IMAGE         : constant String           := "( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )";
-  ONE_SHORT_IMAGE         : constant String           := "( 1 )";
-  ONE_LONG_IMAGE          : constant String           := "( 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 )";
-  NATURAL_MAX_IMAGE       : constant String           := "( 127, 255, 255, 255 )";
-  NATURAL_MAX_SUCC_IMAGE  : constant String           := "( 128, 0, 0, 0 )";
-  PANAGRAM_IMAGE          : constant String           := "( 106, 97, 99, 107, 100,"  &
-                                                          " 97, 119, 115, 32, 108,"  &
-                                                          " 111, 118, 101, 32, 109," &
-                                                          " 121, 32, 98, 105, 103,"  &
-                                                          " 32, 115, 112, 104, 105," &
-                                                          " 110, 120, 32, 111, 102," &
-                                                          " 32, 113, 117, 97, 114, 116, 122 )";
+  ZERO_SHORT       : constant Byte_Array (1 .. 1)  := ( 1 => 16#00#);
+  ZERO_LONG        : constant Byte_Array (1 .. 10) := (others => 16#00#);
+  ONE_SHORT        : constant Byte_Array (1 .. 1)  := ( 1 => 16#01#);
+  ONE_LONG         : constant Byte_Array (1 .. 10) := (10 => 16#01#, others => 16#00#);
+  NATURAL_MAX      : constant Byte_Array (1 .. 4)  := ( 1 => 16#7F#, others => 16#FF#);
+  NATURAL_MAX_SUCC : constant Byte_Array (1 .. 4)  := ( 1 => 16#80#, others => 16#00#);
+  PANAGRAM         : constant Byte_Array           := (16#6a#, 16#61#, 16#63#, 16#6b#, 16#64#,
+                                                       16#61#, 16#77#, 16#73#, 16#20#, 16#6c#,
+                                                       16#6f#, 16#76#, 16#65#, 16#20#, 16#6d#,
+                                                       16#79#, 16#20#, 16#62#, 16#69#, 16#67#,
+                                                       16#20#, 16#73#, 16#70#, 16#68#, 16#69#,
+                                                       16#6e#, 16#78#, 16#20#, 16#6f#, 16#66#,
+                                                       16#20#, 16#71#, 16#75#, 16#61#, 16#72#,
+                                                       16#74#, 16#7a#);
+
+  ZERO_SHORT_IMAGE       : constant String := "( 0 )";
+  ZERO_LONG_IMAGE        : constant String := "( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )";
+  ONE_SHORT_IMAGE        : constant String := "( 1 )";
+  ONE_LONG_IMAGE         : constant String := "( 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 )";
+  NATURAL_MAX_IMAGE      : constant String := "( 127, 255, 255, 255 )";
+  NATURAL_MAX_SUCC_IMAGE : constant String := "( 128, 0, 0, 0 )";
+  PANAGRAM_IMAGE         : constant String := "( 106, 97, 99, 107, 100,"  &
+                                               " 97, 119, 115, 32, 108,"  &
+                                               " 111, 118, 101, 32, 109," &
+                                               " 121, 32, 98, 105, 103,"  &
+                                               " 32, 115, 112, 104, 105," &
+                                               " 110, 120, 32, 111, 102," &
+                                               " 32, 113, 117, 97, 114, 116, 122 )";
+
   ZERO_SHORT_STRING       : constant String           := "" & Character'Val(0);
   ZERO_LONG_STRING        : constant String (1 .. 10) := (others => Character'Val(0));
   ONE_SHORT_STRING        : constant String           := "" & Character'Val(1);
@@ -42,19 +44,20 @@ procedure Byte_Array_Test is
   NATURAL_MAX_STRING      : constant String (1 .. 4)  := ( 1 => Character'Val(16#7F#), others => Character'Val(16#FF#));
   NATURAL_MAX_SUCC_STRING : constant String (1 .. 4)  := ( 1 => Character'Val(16#80#), others => Character'Val(0));
   PANAGRAM_STRING         : constant String           := "jackdaws love my big sphinx of quartz";
-  ZERO_SHORT_NATURAL      : constant Natural          := 0;
-  ZERO_LONG_NATURAL       : constant Natural          := 0;
-  ONE_SHORT_NATURAL       : constant Natural          := 1;
-  ONE_LONG_NATURAL        : constant Natural          := 1;
-  NATURAL_MAX_NATURAL     : constant Natural          := Natural'Last;
+
+  ZERO_SHORT_NATURAL  : constant Natural := 0;
+  ZERO_LONG_NATURAL   : constant Natural := 0;
+  ONE_SHORT_NATURAL   : constant Natural := 1;
+  ONE_LONG_NATURAL    : constant Natural := 1;
+  NATURAL_MAX_NATURAL : constant Natural := Natural'Last;
 
   -------------------
   -- Discrete_Test --
   -------------------
   generic
     type Result_Type is private;
-    with function "=" (Left, Right : in Result_Type) return Boolean;
-    with function Image (Item : in Result_Type) return String;
+    with function "="   (Left, Right : in Result_Type) return Boolean;
+    with function Image (Item        : in Result_Type) return String;
   function Discrete_Test (Expected : in Result_Type; Actual : in Result_Type) return Boolean;
   function Discrete_Test (Expected : in Result_Type; Actual : in Result_Type) return Boolean is
     Result : Boolean := Expected = Actual;
@@ -80,8 +83,8 @@ procedure Byte_Array_Test is
   --------------------
   generic
     type Result_Type (<>) is private;
-    with function "=" (Left, Right : in Result_Type) return Boolean;
-    with function Image (Item : in Result_Type) return String;
+    with function "="   (Left, Right : in Result_Type) return Boolean;
+    with function Image (Item        : in Result_Type) return String;
   function Aggregate_Test (Expected : in Result_Type; Actual : in Result_Type) return Boolean;
   function Aggregate_Test (Expected : in Result_Type; Actual : in Result_Type) return Boolean is
     Result : Boolean := Expected = Actual;
@@ -108,7 +111,7 @@ procedure Byte_Array_Test is
   generic
     type Input_Type is private;
     with procedure Should_Raise (Item : in Input_Type);
-    with function Image (Item : in Input_Type) return String;
+    with function Image         (Item : in Input_Type) return String;
   function Discrete_Exception_Test (Name : in String; Input : in Input_Type) return Boolean;
   function Discrete_Exception_Test (Name : in String; Input : in Input_Type) return Boolean is
   begin
@@ -134,7 +137,7 @@ procedure Byte_Array_Test is
   generic
     type Input_Type (<>) is private;
     with procedure Should_Raise (Item : in Input_Type);
-    with function Image (Item : in Input_Type) return String;
+    with function  Image        (Item : in Input_Type) return String;
   function Aggregate_Exception_Test (Name : in String; Input : in Input_Type) return Boolean;
   function Aggregate_Exception_Test (Name : in String; Input : in Input_Type) return Boolean is
   begin
@@ -154,13 +157,13 @@ procedure Byte_Array_Test is
       return FALSE;
   end;
 
-  function  String_Image   (Item : in String) return String is (Item);
+  function String_Image (Item : in String) return String is (Item);
   procedure Run_To_Natural (Item : in Byte_Array) is Ignore : Natural := To_Natural (Item); begin null; end;
 
-  function String_Test is new Aggregate_Test (String, "=", String_Image);
-  function Byte_Array_Test is new Aggregate_Test (Byte_Array, "=", Image);
-  function Boolean_Test is new Discrete_Test (Boolean, "=", Boolean'Image);
-  function Natural_Test is new Discrete_Test (Natural, "=", Natural'Image);
+  function String_Test            is new Aggregate_Test           (String,     "=",            String_Image);
+  function Byte_Array_Test        is new Aggregate_Test           (Byte_Array, "=",            Image);
+  function Boolean_Test           is new Discrete_Test            (Boolean,    "=",            Boolean'Image);
+  function Natural_Test           is new Discrete_Test            (Natural,    "=",            Natural'Image);
   function Natural_Exception_Test is new Aggregate_Exception_Test (Byte_Array, Run_To_Natural, Image);
 
   -----------------
