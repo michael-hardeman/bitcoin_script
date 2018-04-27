@@ -12,7 +12,8 @@ package body Bitcoin is
     for I in Bytes'First .. Bytes'Last - 1 loop
       Append (Output, Byte'Image (Bytes (I))); Append (Output, ",");
     end loop;
-    Append (Output, Byte'Image (Bytes (Bytes'Last))); Append (Output, " )");
+    if Bytes'Length > 0 then Append (Output, Byte'Image (Bytes (Bytes'Last))); end if;
+    Append (Output, " )");
     return To_String (Output);
   end;
 
@@ -38,6 +39,34 @@ package body Bitcoin is
     return Output;
   end;
 
+  -------------------------
+  -- Count_Leading_Zeros --
+  -------------------------
+  function Count_Leading_Zeros (Bytes : in Byte_Array) return Natural is
+    Counter : Natural := 0;
+  begin
+    for I in Bytes'Range loop
+      exit when Bytes(I) /= Byte'First;
+      Counter := Natural'Succ (Counter);
+    end loop;
+    return Counter;
+  end;
+
+  ------------------------
+  -- Trim_Leading_Zeros --
+  ------------------------
+  function Trim_Leading_Zeros (Bytes : in Byte_Array) return Byte_Array is (
+    Bytes (Bytes'First + Count_Leading_Zeros (Bytes) .. Bytes'Last));
+
+  ------------
+  -- Is_One --
+  ------------
+  function Is_One (Bytes : in Byte_Array) return Boolean is
+    Trimmed : Byte_Array := Trim_Leading_Zeros (Bytes);
+  begin
+    return (Trimmed'Length = 1 and then Trimmed (Trimmed'First) = 16#01#);
+  end;
+
   ----------------
   -- To_Natural --
   ----------------
@@ -58,31 +87,6 @@ package body Bitcoin is
 
     return Output;
   end;
-
-  ------------
-  -- Is_One --
-  ------------
-  function Is_One (Bytes : in Byte_Array) return Boolean is begin
-    return (for all I in Bytes'First .. Bytes'Last => Bytes (I) = 16#00#) and then Bytes (Bytes'Last) = 16#01#;
-  end;
-
-  -------------------------
-  -- Count_Leading_Zeros --
-  -------------------------
-  function Count_Leading_Zeros (Bytes : in Byte_Array) return Natural is
-    Counter : Natural := 0;
-  begin
-    for I in Bytes'Range loop
-      exit when Bytes(I) /= Byte'First;
-      Counter := Natural'Succ (Counter);
-    end loop;
-    return Counter;
-  end;
-
-  ------------------------
-  -- Trim_Leading_Zeros --
-  ------------------------
-  function Trim_Leading_Zeros (Bytes : in Byte_Array) return Byte_Array is (Bytes (Bytes'First + Count_Leading_Zeros (Bytes) .. Bytes'Last));
 
   -------
   -- + --
