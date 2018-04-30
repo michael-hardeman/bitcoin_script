@@ -25,7 +25,7 @@ project Bitcoin_Script is
   ---------------
   -- Variables --
   ---------------
-  Executable_Directory := "binaries\" & System & "\" & Word_Size;
+  Executable_Directory := "binaries/" & System & "/" & Word_Size;
   Switch_Binder        := ("-E");                 -- Store traceback in exceptions
   Switch_Linker        := ("-fprofile-generate"); -- Generate code coverage
   Switch_Compiler      := ("-gnateE",             -- Put extra info in exception messages
@@ -43,14 +43,12 @@ project Bitcoin_Script is
   -- System --
   ------------
   case System is
-    when "unix" => Switch_Linker := Switch_Linker & ("libcrypto-1_1", "libssl-1_1");
+    when "unix" => Switch_Linker := Switch_Linker & ("-lcrypto");
     when "windows" =>
       Switch_Linker := Switch_Linker & ("-Wl,--enable-stdcall-fixup"); -- Suppress linker resolution warnings
       case Word_Size is
-        when "32" => Switch_Linker := Switch_Linker & (Executable_Directory & "\libcrypto-1_1.dll",
-                                                       Executable_Directory & "\libssl-1_1.dll");
-        when "64" => Switch_Linker := Switch_Linker & (Executable_Directory & "\libcrypto-1_1-x64.dll",
-                                                       Executable_Directory & "\libssl-1_1-x64.dll");
+        when "32" => Switch_Linker := Switch_Linker & (Executable_Directory & "/libcrypto-1_1.dll");
+        when "64" => Switch_Linker := Switch_Linker & (Executable_Directory & "/libcrypto-1_1-x64.dll");
       end case;
   end case;
 

@@ -216,9 +216,9 @@ package Bitcoin.API.OpenSSL is
   --------------------
   -- BIGNUM_CONTEXT --
   --------------------
-  function BN_CTX_secure_new
+  function BN_CTX_new
     return BN_CTX
-    with Import => True, Convention => StdCall, External_Name => "BN_CTX_secure_new";
+    with Import => True, Convention => StdCall, External_Name => "BN_CTX_new";
 
   procedure BN_CTX_start(
     ctx : in BN_CTX)
