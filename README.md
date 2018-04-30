@@ -38,9 +38,9 @@ Or the free IDE [Gnat Programming Studio](http://libre.adacore.com/download/) ca
 
 - OpenSSL
 
-Windows: I've included the latest 1.1.0 openSSL binaries. The gpr file assumes the dlls will be in the binaries\\system\\word_size folder.
+Windows: I've included the latest 1.1.0 openSSL binaries since they are a little difficult to find. The gpr file assumes the dlls will be in the binaries/system/word_size folder.
 
-Linux: You'll have to find your own. You can usually install libssl with your package manager. The gpr file assumes the binaries will be on the path.
+Linux: Use your package manager to install the openssl dev libraries. For ubuntu based systems: `sudo apt-get install libssl-dev`
 
 ## Contributing
 
