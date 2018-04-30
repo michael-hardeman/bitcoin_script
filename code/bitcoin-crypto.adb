@@ -140,7 +140,7 @@ package body Bitcoin.Crypto is
   ------------------------
   procedure Initialize (Item : in out Big_Number_Context) is
   begin
-    Item.Ptr := BN_CTX_secure_new;
+    Item.Ptr := BN_CTX_new;
     BN_CTX_start (Item.Ptr);
   end;
 
