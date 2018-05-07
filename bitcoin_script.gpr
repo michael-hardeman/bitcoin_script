@@ -6,13 +6,6 @@ project Bitcoin_Script is
   type Word_Size_Option is ("32",   "64");
   type System_Option    is ("unix", "windows");
   type Boolean_Option   is ("Yes",  "No");
-  type Test_Option      is ("base58_test.adb",
-                            "base64_test.adb",
-                            "stacks_test.adb",
-                            "script_test.adb",
-                            "crypto_test.adb",
-                            "ripemd160_test.adb",
-                            "byte_array_test.adb");
 
   -------------
   -- Options --
@@ -20,60 +13,51 @@ project Bitcoin_Script is
   Word_Size : Word_Size_Option := external ("Word_Size", "32");
   System    : System_Option    := external ("System",    "windows");
   Debug     : Boolean_Option   := external ("Debug",     "Yes");
-  Test      : Test_Option      := external ("Test",      "script_test.adb");
 
   ---------------
   -- Variables --
   ---------------
-  Executable_Directory := "binaries/" & System & "/" & Word_Size;
-  Switch_Binder        := ("-E");                 -- Store traceback in exceptions
-  Switch_Linker        := ("-fprofile-generate"); -- Generate code coverage
-  Switch_Compiler      := ("-gnateE",             -- Put extra info in exception messages
-                           "-gnatW8");            -- Enable wide-character unicode identifiers
+  Library_Directory := "binaries/" & System & "/" & Word_Size;
 
-  ---------------
-  -- Word_Size --
-  ---------------
-  case Word_Size is
-    when "32" => null;
-    when "64" => Switch_Compiler := Switch_Compiler & ("-m64"); -- Try 64 bit compilation
-  end case;
+  --------------
+  -- Settings --
+  --------------
+  for Languages    use ("Ada");
+  for Library_Name use "BitcoinScript";
+  for Library_Dir  use Library_Directory;
+  for Source_Dirs  use ("code");
+  for Object_Dir   use "objects";
 
-  ------------
-  -- System --
-  ------------
-  case System is
-    when "unix" => Switch_Linker := Switch_Linker & ("-lcrypto");
-    when "windows" =>
-      Switch_Linker := Switch_Linker & ("-Wl,--enable-stdcall-fixup"); -- Suppress linker resolution warnings
-      case Word_Size is
-        when "32" => Switch_Linker := Switch_Linker & (Executable_Directory & "/libcrypto-1_1.dll");
-        when "64" => Switch_Linker := Switch_Linker & (Executable_Directory & "/libcrypto-1_1-x64.dll");
-      end case;
-  end case;
+  -------------
+  -- Builder --
+  -------------
+  package Builder is
+    Switch_Builder := ("-E"); -- Store traceback in exceptions
+    case Word_Size is
+      when "32" => Switch_Builder := Switch_Builder & ("-m32"); -- Pass onto gcc ld.exe produce only 32 bit code
+      when "64" => Switch_Builder := Switch_Builder & ("-m64"); -- Pass onto gcc ld.exe produce only 64 bit code
+    end case;
+    for Default_Switches ("Ada") use Switch_Builder;
+  end Builder;
 
-  -----------
-  -- Debug --
-  -----------
-  case DEBUG is
-    when "No"  => Switch_Compiler := Switch_Compiler & ("-gnatp", -- Surpress all checks
-                                                        "-O3");   -- Optimize as much as possible
-    when "Yes" => Switch_Compiler := Switch_Compiler & ("-gnato", -- Enable overflow checking for numerics
-                                                        "-gnatE", -- Enable dynamic generic elaboration checks
-                                                        "-gnata", -- Enable pre and post conditions
-                                                        "-gnatf", --
-                                                        "-O0",    -- Avoid any optimization
-                                                        "-g");    -- Create extended info in stack traces
-  end case;
-
-  for Source_Dirs use ("code", "tests");
-  for Object_Dir  use "objects";
-  for Exec_Dir    use Executable_Directory;
-  for Main        use (Test);
-
-  package Compiler is for Default_Switches ("Ada") use Switch_Compiler; end Compiler;
-  package Linker   is for Default_Switches ("Ada") use Switch_Linker;   end Linker;
-  package Binder   is for Default_Switches ("Ada") use Switch_Binder;   end Binder;
+  --------------
+  -- Compiler --
+  --------------
+  package Compiler is
+    Switch_Compiler := ("-gnatW8",    -- Wide character encoding method (?=h/u/s/e/8/b)
+                        "-gnat2012"); -- Ada 2012 mode (default)
+    case Debug is
+      when "No"  => Switch_Compiler := Switch_Compiler & ("-O3",     -- Maximum Optimization
+                                                          "-gnatp"); -- Surpress all checks
+      when "Yes" => Switch_Compiler := Switch_Compiler & ("-O0",     -- Minimize Optimization
+                                                          "-g",      -- Generate debugging information
+                                                          "-gnata",  -- Assertions enabled. Pragma Assert/Debug to be activated
+                                                          "-gnatE",  -- Generate extra information in exception messages
+                                                          "-gnatf",  -- Full errors. Verbose details, all undefined references
+                                                          "-gnato",  -- Enable overflow checking for numerics
+                                                          "-gnatv"); -- Verbose mode. Full error output with source lines to stdout
+    end case;
+    for Default_Switches ("Ada") use Switch_Compiler;
+  end Compiler;
 
 end Bitcoin_Script;
-
