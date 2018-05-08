@@ -1,9 +1,9 @@
-with Ada.Text_IO; use Ada.Text_IO;
-with Ada.Exceptions; use Ada.Exceptions;
 
+with AUnit.Assertions; use AUnit.Assertions;
+with Test_Utilities; use Test_Utilities;
 with Bitcoin; use Bitcoin;
 
-procedure Byte_Array_Test is
+package body Bitcoin.Byte_Array_Tests is
 
   ---------------
   -- Constants --
@@ -51,111 +51,105 @@ procedure Byte_Array_Test is
   ONE_LONG_NATURAL    : constant Natural := 1;
   NATURAL_MAX_NATURAL : constant Natural := Natural'Last;
 
-  -------------------
-  -- Discrete_Test --
-  -------------------
-  generic
-    type Result_Type is private;
-    with function "="   (Left, Right : in Result_Type) return Boolean;
-    with function Image (Item        : in Result_Type) return String;
-  function Discrete_Test (Expected : in Result_Type; Actual : in Result_Type) return Boolean;
-  function Discrete_Test (Expected : in Result_Type; Actual : in Result_Type) return Boolean is
-    Result : Boolean := Expected = Actual;
-  begin
-    if not Result then
-      Put_Line ("FAILURE");
-      Put_Line ("  Expected: " & Image (Expected));
-      Put_Line ("  Actual  : " & Image (Actual));
-    end if;
-    return Result;
-  exception
-    when Error: others =>
-      Put_Line ("FAILURE");
-      Put_Line ("  An unhandled exception has occoured during test: " & Image (Expected));
-      Put_Line ("  " & Exception_Name        (Error));
-      Put_Line ("  " & Exception_Message     (Error));
-      Put_Line ("  " & Exception_Information (Error));
-      return FALSE;
-  end;
-
   --------------------
-  -- Aggregate_Test --
+  -- Register_Tests --
   --------------------
-  generic
-    type Result_Type (<>) is private;
-    with function "="   (Left, Right : in Result_Type) return Boolean;
-    with function Image (Item        : in Result_Type) return String;
-  function Aggregate_Test (Expected : in Result_Type; Actual : in Result_Type) return Boolean;
-  function Aggregate_Test (Expected : in Result_Type; Actual : in Result_Type) return Boolean is
-    Result : Boolean := Expected = Actual;
+  procedure Register_Tests (T : in out TC) is
+    use AUnit.Test_Cases.Registration;
   begin
-    if not Result then
-      Put_Line ("FAILURE");
-      Put_Line ("  Expected: " & Image (Expected));
-      Put_Line ("  Actual  : " & Image (Actual));
-    end if;
-    return Result;
-  exception
-    when Error: others =>
-      Put_Line ("FAILURE");
-      Put_Line ("  An unhandled exception has occured during test: " & Image (Expected));
-      Put_Line ("  " & Exception_Name        (Error));
-      Put_Line ("  " & Exception_Message     (Error));
-      Put_Line ("  " & Exception_Information (Error));
-      return FALSE;
-  end;
+    Register_Routine (T, Test_Image'Access,               "Ensure Bitcoin.Image returns a string visualizing the byte array");
+    Register_Routine (T, Test_To_String'Access,           "Ensure Bitcoin.To_String converts a byte array directly into a String by getting Character'Val");
+    Register_Routine (T, Test_To_Byte_Array'Access,       "Ensure Bitcoin.To_Byte_Array converts a string into a byte array of Character'Pos codes");
+    Register_Routine (T, Test_Count_Leading_Zeros'Access, "Ensure Bitcoin.Count_Leading_Zeros returns the correct number of leading zeros in a byte array");
+    Register_Routine (T, Test_Trim_Leading_Zeros'Access,  "Ensure Bitcoin.Trim_Leading_Zeros removes the leading zeros from a byte array");
+    Register_Routine (T, Test_Is_Zero'Access,             "Ensure Bitcoin.Is_Zero returns true when all bytes = 0 and false in all other cases");
+    Register_Routine (T, Test_Is_One'Access,              "Ensure Bitcoin.Is_One returns true when the last byte = 1 and all others bytes = 0, and false in all other cases");
+    Register_Routine (T, Test_To_Natural'Access,          "Ensure Bitcoin.To_Natural converts a byte array into a valid Natural, and raises an exception in all other cases");
+  end Register_Tests;
 
-  -----------------------------
-  -- Discrete_Exception_Test --
-  -----------------------------
-  generic
-    type Input_Type is private;
-    with procedure Should_Raise (Item : in Input_Type);
-    with function Image         (Item : in Input_Type) return String;
-  function Discrete_Exception_Test (Name : in String; Input : in Input_Type) return Boolean;
-  function Discrete_Exception_Test (Name : in String; Input : in Input_Type) return Boolean is
+  ----------
+  -- Name --
+  ----------
+  function Name (T : TC) return Message_String is
+    pragma Unreferenced (T);
   begin
-    Should_Raise (Input);
-    Put_Line ("FAILURE");
-    Put_Line ("  Expected exception did not occur during test: " & Image (Input));
-    Put_Line ("  Expected name: " & Name);
-    return FALSE;
-  exception
-    when Error: others =>
-      If Exception_Name (Error) = Name then return TRUE; end if;
-      Put_Line ("FAILURE");
-      Put_Line ("  Expected exception did not occur during test: " & Image (Input));
-      Put_Line ("  Expected name   : " & Name    & " to equal " & Exception_Name    (Error));
-      Put_Line ("  Expected message: " & Exception_Message     (Error));
-      Put_Line ("  Exception info  : " & Exception_Information (Error));
-      return FALSE;
-  end;
+    return AUnit.Format ("Testing Bitcoin.Byte_Array operations");
+  end Name;
 
-  ------------------------------
-  -- Aggregate_Exception_Test --
-  ------------------------------
-  generic
-    type Input_Type (<>) is private;
-    with procedure Should_Raise (Item : in Input_Type);
-    with function  Image        (Item : in Input_Type) return String;
-  function Aggregate_Exception_Test (Name : in String; Input : in Input_Type) return Boolean;
-  function Aggregate_Exception_Test (Name : in String; Input : in Input_Type) return Boolean is
-  begin
-    Should_Raise (Input);
-    Put_Line ("FAILURE");
-    Put_Line ("  Expected exception did not occur during test: " & Image (Input));
-    Put_Line ("  Expected name: " & Name);
-    return FALSE;
-  exception
-    when Error: others =>
-      If Exception_Name (Error) = Name then return TRUE; end if;
-      Put_Line ("FAILURE");
-      Put_Line ("  Expected exception did not occur during test: " & Image (Input));
-      Put_Line ("  Expected name   : " & Name & " to equal " & Exception_Name (Error));
-      Put_Line ("  Expected message: " & Exception_Message     (Error));
-      Put_Line ("  Exception info  : " & Exception_Information (Error));
-      return FALSE;
-  end;
+  ------------
+  -- Set_Up --
+  ------------
+  procedure Set_Up (T : in out TC) is begin
+    T.Pool.Create (8092);
+  end Set_Up;
+
+  ----------------------------
+  -- Generic Instantiations --
+  ----------------------------
+  function String_Image is (Item : in String) return String is (Item);
+  function Assert_Strings_Equal is new Assert_Indefinite_Equal (Indefinite_Type => String,
+                                                                "="             => "=",
+                                                                Image           => String_Image);
+
+   ----------------
+   -- Test_Image --
+   ----------------
+   procedure Test_Image (Test : in out Test_Cases.Test_Case'Class) is
+   begin
+     Assert_Strings_Equal (ZERO_SHORT_IMAGE,       Image (ZERO_SHORT));
+     Assert_Strings_Equal (ZERO_LONG_IMAGE,        Image (ZERO_LONG));
+     Assert_Strings_Equal (ONE_SHORT_IMAGE,        Image (ONE_SHORT));
+     Assert_Strings_Equal (ONE_LONG_IMAGE,         Image (ONE_LONG));
+     Assert_Strings_Equal (ONE_LONG_IMAGE,         Image (NATURAL_MAX));
+     Assert_Strings_Equal (NATURAL_MAX_SUCC_IMAGE, Image (NATURAL_MAX_SUCC));
+     Assert_Strings_Equal (PANAGRAM_IMAGE,         Image (PANAGRAM));
+   end;
+
+   --------------------
+   -- Test_To_String --
+   --------------------
+   procedure Test_To_String (Test : in out Test_Cases.Test_Case'Class) is begin
+   end;
+
+   ------------------------
+   -- Test_To_Byte_Array --
+   ------------------------
+   procedure Test_To_Byte_Array (Test : in out Test_Cases.Test_Case'Class) is begin
+   end;
+
+   ------------------------------
+   -- Test_Count_Leading_Zeros --
+   ------------------------------
+   procedure Test_Count_Leading_Zeros (Test : in out Test_Cases.Test_Case'Class) is begin
+   end;
+
+   -----------------------------
+   -- Test_Trim_Leading_Zeros --
+   -----------------------------
+   procedure Test_Trim_Leading_Zeros (Test : in out Test_Cases.Test_Case'Class) is begin
+   end;
+
+   ------------------
+   -- Test_Is_Zero --
+   ------------------
+   procedure Test_Is_Zero (Test : in out Test_Cases.Test_Case'Class) is begin
+   end;
+
+   -----------------
+   -- Test_Is_One --
+   -----------------
+   procedure Test_Is_One (Test : in out Test_Cases.Test_Case'Class) is begin
+   end;
+
+   ----------------
+   -- Test_Image --
+   ----------------
+   procedure Test_To_Natural (Test : in out Test_Cases.Test_Case'Class) is begin
+   end;
+
+end;
+
+procedure Byte_Array_Test is
 
   function String_Image (Item : in String) return String is (Item);
   procedure Run_To_Natural (Item : in Byte_Array) is Ignore : Natural := To_Natural (Item); begin null; end;
@@ -174,14 +168,6 @@ procedure Byte_Array_Test is
   begin
     Put_Line ("-----------");
     Put_Line ("-- Image --");
-    Put_Line ("-----------");
-    Total_Result := Total_Result and String_Test (ZERO_SHORT_IMAGE,       Image (ZERO_SHORT));
-    Total_Result := Total_Result and String_Test (ZERO_LONG_IMAGE,        Image (ZERO_LONG));
-    Total_Result := Total_Result and String_Test (ONE_SHORT_IMAGE,        Image (ONE_SHORT));
-    Total_Result := Total_Result and String_Test (ONE_LONG_IMAGE,         Image (ONE_LONG));
-    Total_Result := Total_Result and String_Test (NATURAL_MAX_IMAGE,      Image (NATURAL_MAX));
-    Total_Result := Total_Result and String_Test (NATURAL_MAX_SUCC_IMAGE, Image (NATURAL_MAX_SUCC));
-    Total_Result := Total_Result and String_Test (PANAGRAM_IMAGE,         Image (PANAGRAM));
     Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
     New_Line;
   end;

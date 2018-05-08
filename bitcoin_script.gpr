@@ -34,7 +34,7 @@ project Bitcoin_Script is
   package Builder is
     Switch_Builder := ("-E"); -- Store traceback in exceptions
     case Word_Size is
-      when "32" => Switch_Builder := Switch_Builder & ("-m32"); -- Pass onto gcc ld.exe produce only 32 bit code
+      when "32" => null;
       when "64" => Switch_Builder := Switch_Builder & ("-m64"); -- Pass onto gcc ld.exe produce only 64 bit code
     end case;
     for Default_Switches ("Ada") use Switch_Builder;
@@ -54,10 +54,10 @@ project Bitcoin_Script is
                                                           "-gnata",  -- Assertions enabled. Pragma Assert/Debug to be activated
                                                           "-gnatE",  -- Generate extra information in exception messages
                                                           "-gnatf",  -- Full errors. Verbose details, all undefined references
-                                                          "-gnato",  -- Enable overflow checking for numerics
-                                                          "-gnatv"); -- Verbose mode. Full error output with source lines to stdout
+                                                          "-gnato"); -- Enable overflow checking for numerics
     end case;
     for Default_Switches ("Ada") use Switch_Compiler;
   end Compiler;
 
 end Bitcoin_Script;
+
