@@ -2,12 +2,12 @@
 with AUnit.Run;
 with AUnit.Reporter.Text;
 with Bitcoin.Test_Suite;
-with Bitcoin.Data.Stacks.Test_Suite;
-with Bitcoin.Encoding.Base64.Test_Suite;
-with Bitcoin.Encoding.Base58.Test_Suite;
-with Bitcoin.Crypto.Test_Suite;
-with Bitcoin.Crypto.RIPEMD160.Test_Suite;
-with Bitcoin.Script.Test_Suite;
+-- with Bitcoin.Data.Stacks.Test_Suite;
+-- with Bitcoin.Encoding.Base64.Test_Suite;
+-- with Bitcoin.Encoding.Base58.Test_Suite;
+-- with Bitcoin.Crypto.Test_Suite;
+-- with Bitcoin.Crypto.RIPEMD160.Test_Suite;
+-- with Bitcoin.Script.Test_Suite;
 
 procedure Bitcoin.Test_Harness is
 

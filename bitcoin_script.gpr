@@ -18,15 +18,17 @@ project Bitcoin_Script is
   -- Variables --
   ---------------
   Library_Directory := "binaries/" & System & "/" & Word_Size;
+  Name              := "bitcoin_script";
 
   --------------
   -- Settings --
   --------------
   for Languages    use ("Ada");
-  for Library_Name use "BitcoinScript";
+  for Library_Name use Name;
   for Library_Dir  use Library_Directory;
   for Source_Dirs  use ("code");
   for Object_Dir   use "objects";
+  for Library_Kind use "dynamic";
 
   -------------
   -- Builder --

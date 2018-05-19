@@ -1,7 +1,7 @@
 
-with AUnit.Assertions; use AUnit.Assertions;
-with Test_Utilities; use Test_Utilities;
-with Bitcoin; use Bitcoin;
+with Bitcoin;                       use Bitcoin;
+with Bitcoin.Test_Utilities.Common; use Bitcoin.Test_Utilities.Common;
+with Aunit.Assertions;              use AUnit.Assertions;
 
 package body Bitcoin.Byte_Array_Tests is
 
@@ -76,243 +76,105 @@ package body Bitcoin.Byte_Array_Tests is
     return AUnit.Format ("Testing Bitcoin.Byte_Array operations");
   end Name;
 
-  ------------
-  -- Set_Up --
-  ------------
-  procedure Set_Up (T : in out TC) is begin
-    T.Pool.Create (8092);
-  end Set_Up;
-
-  ----------------------------
-  -- Generic Instantiations --
-  ----------------------------
-  function String_Image is (Item : in String) return String is (Item);
-  function Assert_Strings_Equal is new Assert_Indefinite_Equal (Indefinite_Type => String,
-                                                                "="             => "=",
-                                                                Image           => String_Image);
-
-   ----------------
-   -- Test_Image --
-   ----------------
-   procedure Test_Image (Test : in out Test_Cases.Test_Case'Class) is
-   begin
-     Assert_Strings_Equal (ZERO_SHORT_IMAGE,       Image (ZERO_SHORT));
-     Assert_Strings_Equal (ZERO_LONG_IMAGE,        Image (ZERO_LONG));
-     Assert_Strings_Equal (ONE_SHORT_IMAGE,        Image (ONE_SHORT));
-     Assert_Strings_Equal (ONE_LONG_IMAGE,         Image (ONE_LONG));
-     Assert_Strings_Equal (ONE_LONG_IMAGE,         Image (NATURAL_MAX));
-     Assert_Strings_Equal (NATURAL_MAX_SUCC_IMAGE, Image (NATURAL_MAX_SUCC));
-     Assert_Strings_Equal (PANAGRAM_IMAGE,         Image (PANAGRAM));
-   end;
-
-   --------------------
-   -- Test_To_String --
-   --------------------
-   procedure Test_To_String (Test : in out Test_Cases.Test_Case'Class) is begin
-   end;
-
-   ------------------------
-   -- Test_To_Byte_Array --
-   ------------------------
-   procedure Test_To_Byte_Array (Test : in out Test_Cases.Test_Case'Class) is begin
-   end;
-
-   ------------------------------
-   -- Test_Count_Leading_Zeros --
-   ------------------------------
-   procedure Test_Count_Leading_Zeros (Test : in out Test_Cases.Test_Case'Class) is begin
-   end;
-
-   -----------------------------
-   -- Test_Trim_Leading_Zeros --
-   -----------------------------
-   procedure Test_Trim_Leading_Zeros (Test : in out Test_Cases.Test_Case'Class) is begin
-   end;
-
-   ------------------
-   -- Test_Is_Zero --
-   ------------------
-   procedure Test_Is_Zero (Test : in out Test_Cases.Test_Case'Class) is begin
-   end;
-
-   -----------------
-   -- Test_Is_One --
-   -----------------
-   procedure Test_Is_One (Test : in out Test_Cases.Test_Case'Class) is begin
-   end;
-
-   ----------------
-   -- Test_Image --
-   ----------------
-   procedure Test_To_Natural (Test : in out Test_Cases.Test_Case'Class) is begin
-   end;
-
-end;
-
-procedure Byte_Array_Test is
-
-  function String_Image (Item : in String) return String is (Item);
-  procedure Run_To_Natural (Item : in Byte_Array) is Ignore : Natural := To_Natural (Item); begin null; end;
-
-  function String_Test            is new Aggregate_Test           (String,     "=",            String_Image);
-  function Byte_Array_Test        is new Aggregate_Test           (Byte_Array, "=",            Image);
-  function Boolean_Test           is new Discrete_Test            (Boolean,    "=",            Boolean'Image);
-  function Natural_Test           is new Discrete_Test            (Natural,    "=",            Natural'Image);
-  function Natural_Exception_Test is new Aggregate_Exception_Test (Byte_Array, Run_To_Natural, Image);
-
-  -----------------
-  -- Image_Tests --
-  -----------------
-  procedure Image_Tests is
-    Total_Result : Boolean := TRUE;
+  ----------------
+  -- Test_Image --
+  ----------------
+  procedure Test_Image (Test : in out Test_Cases.Test_Case'Class) is
   begin
-    Put_Line ("-----------");
-    Put_Line ("-- Image --");
-    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
-    New_Line;
+    Assert_Strings_Equal (ZERO_SHORT_IMAGE,       Image (ZERO_SHORT));
+    Assert_Strings_Equal (ZERO_LONG_IMAGE,        Image (ZERO_LONG));
+    Assert_Strings_Equal (ONE_SHORT_IMAGE,        Image (ONE_SHORT));
+    Assert_Strings_Equal (ONE_LONG_IMAGE,         Image (ONE_LONG));
+    Assert_Strings_Equal (ONE_LONG_IMAGE,         Image (NATURAL_MAX));
+    Assert_Strings_Equal (NATURAL_MAX_SUCC_IMAGE, Image (NATURAL_MAX_SUCC));
+    Assert_Strings_Equal (PANAGRAM_IMAGE,         Image (PANAGRAM));
   end;
 
-  ---------------------
-  -- To_String_Tests --
-  ---------------------
-  procedure To_String_Tests is
-    Total_Result : Boolean := TRUE;
-  begin
-    Put_Line ("---------------");
-    Put_Line ("-- To_String --");
-    Put_Line ("---------------");
-    Total_Result := Total_Result and String_Test (ZERO_SHORT_STRING,       To_String (ZERO_SHORT));
-    Total_Result := Total_Result and String_Test (ZERO_LONG_STRING,        To_String (ZERO_LONG));
-    Total_Result := Total_Result and String_Test (ONE_SHORT_STRING,        To_String (ONE_SHORT));
-    Total_Result := Total_Result and String_Test (ONE_LONG_STRING,         To_String (ONE_LONG));
-    Total_Result := Total_Result and String_Test (NATURAL_MAX_STRING,      To_String (NATURAL_MAX));
-    Total_Result := Total_Result and String_Test (NATURAL_MAX_SUCC_STRING, To_String (NATURAL_MAX_SUCC));
-    Total_Result := Total_Result and String_Test (PANAGRAM_STRING,         To_String (PANAGRAM));
-    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
-    New_Line;
-  end;
-
-  -------------------------
-  -- To_Byte_Array_Tests --
-  -------------------------
-  procedure To_Byte_Array_Tests is
-    Total_Result : Boolean := TRUE;
-  begin
-    Put_Line ("-------------------");
-    Put_Line ("-- To_Byte_Array --");
-    Put_Line ("-------------------");
-    Total_Result := Total_Result and Byte_Array_Test (ZERO_SHORT,       To_Byte_Array (ZERO_SHORT_STRING));
-    Total_Result := Total_Result and Byte_Array_Test (ZERO_LONG,        To_Byte_Array (ZERO_LONG_STRING));
-    Total_Result := Total_Result and Byte_Array_Test (ONE_SHORT,        To_Byte_Array (ONE_SHORT_STRING));
-    Total_Result := Total_Result and Byte_Array_Test (ONE_LONG,         To_Byte_Array (ONE_LONG_STRING));
-    Total_Result := Total_Result and Byte_Array_Test (NATURAL_MAX,      To_Byte_Array (NATURAL_MAX_STRING));
-    Total_Result := Total_Result and Byte_Array_Test (NATURAL_MAX_SUCC, To_Byte_Array (NATURAL_MAX_SUCC_STRING));
-    Total_Result := Total_Result and Byte_Array_Test (PANAGRAM,         To_Byte_Array (PANAGRAM_STRING));
-    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
-    New_Line;
-  end;
-
-  -------------------------
-  -- Count_Leading_Zeros --
-  -------------------------
-  procedure Count_Leading_Zeros is
-    Total_Result : Boolean := TRUE;
-  begin
-    Put_Line ("-------------------------");
-    Put_Line ("-- Count_Leading_Zeros --");
-    Put_Line ("-------------------------");
-    Total_Result := Total_Result and Natural_Test (1,  Count_Leading_Zeros (ZERO_SHORT));
-    Total_Result := Total_Result and Natural_Test (10, Count_Leading_Zeros (ZERO_LONG));
-    Total_Result := Total_Result and Natural_Test (0,  Count_Leading_Zeros (ONE_SHORT));
-    Total_Result := Total_Result and Natural_Test (9,  Count_Leading_Zeros (ONE_LONG));
-    Total_Result := Total_Result and Natural_Test (0,  Count_Leading_Zeros (PANAGRAM));
-    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
-    New_Line;
+  --------------------
+  -- Test_To_String --
+  --------------------
+  procedure Test_To_String (Test : in out Test_Cases.Test_Case'Class) is begin
+    Assert_Strings_Equal (ZERO_SHORT_STRING,       To_String (ZERO_SHORT));
+    Assert_Strings_Equal (ZERO_LONG_STRING,        To_String (ZERO_LONG));
+    Assert_Strings_Equal (ONE_SHORT_STRING,        To_String (ONE_SHORT));
+    Assert_Strings_Equal (ONE_LONG_STRING,         To_String (ONE_LONG));
+    Assert_Strings_Equal (NATURAL_MAX_STRING,      To_String (NATURAL_MAX));
+    Assert_Strings_Equal (NATURAL_MAX_SUCC_STRING, To_String (NATURAL_MAX_SUCC));
+    Assert_Strings_Equal (PANAGRAM_STRING,         To_String (PANAGRAM));
   end;
 
   ------------------------
-  -- Trim_Leading_Zeros --
+  -- Test_To_Byte_Array --
   ------------------------
-  procedure Trim_Leading_Zeros is
-    Total_Result : Boolean := TRUE;
-  begin
-    Put_Line ("------------------------");
-    Put_Line ("-- Trim_Leading_Zeros --");
-    Put_Line ("------------------------");
-    Total_Result := Total_Result and Natural_Test    (0,         Trim_Leading_Zeros (ZERO_SHORT)'Length);
-    Total_Result := Total_Result and Natural_Test    (0,         Trim_Leading_Zeros (ZERO_LONG)'Length);
-    Total_Result := Total_Result and Byte_Array_Test (ONE_SHORT, Trim_Leading_Zeros (ONE_SHORT));
-    Total_Result := Total_Result and Byte_Array_Test (ONE_SHORT, Trim_Leading_Zeros (ONE_LONG));
-    Total_Result := Total_Result and Byte_Array_Test (PANAGRAM,  Trim_Leading_Zeros (PANAGRAM));
-    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
-    New_Line;
+  procedure Test_To_Byte_Array (Test : in out Test_Cases.Test_Case'Class) is begin
+    Assert_Byte_Arrays_Equal (ZERO_SHORT,       To_Byte_Array (ZERO_SHORT_STRING));
+    Assert_Byte_Arrays_Equal (ZERO_LONG,        To_Byte_Array (ZERO_LONG_STRING));
+    Assert_Byte_Arrays_Equal (ONE_SHORT,        To_Byte_Array (ONE_SHORT_STRING));
+    Assert_Byte_Arrays_Equal (ONE_LONG,         To_Byte_Array (ONE_LONG_STRING));
+    Assert_Byte_Arrays_Equal (NATURAL_MAX,      To_Byte_Array (NATURAL_MAX_STRING));
+    Assert_Byte_Arrays_Equal (NATURAL_MAX_SUCC, To_Byte_Array (NATURAL_MAX_SUCC_STRING));
+    Assert_Byte_Arrays_Equal (PANAGRAM,         To_Byte_Array (PANAGRAM_STRING));
   end;
 
-  -------------------
-  -- Is_Zero_Tests --
-  -------------------
-  procedure Is_Zero_Tests is
-    Total_Result : Boolean := TRUE;
-  begin
-    Put_Line ("-------------------");
-    Put_Line ("-- Is_Zero_Tests --");
-    Put_Line ("-------------------");
-    Total_Result := Total_Result and Boolean_Test (TRUE,  Is_Zero (ZERO_SHORT));
-    Total_Result := Total_Result and Boolean_Test (TRUE,  Is_Zero (ZERO_LONG));
-    Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (ONE_SHORT));
-    Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (ONE_LONG));
-    Total_Result := Total_Result and Boolean_Test (FALSE, Is_Zero (PANAGRAM));
-    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
-    New_Line;
+  ------------------------------
+  -- Test_Count_Leading_Zeros --
+  ------------------------------
+  procedure Test_Count_Leading_Zeros (Test : in out Test_Cases.Test_Case'Class) is begin
+    Assert_Naturals_Equal (1,  Count_Leading_Zeros (ZERO_SHORT));
+    Assert_Naturals_Equal (10, Count_Leading_Zeros (ZERO_LONG));
+    Assert_Naturals_Equal (0,  Count_Leading_Zeros (ONE_SHORT));
+    Assert_Naturals_Equal (9,  Count_Leading_Zeros (ONE_LONG));
+    Assert_Naturals_Equal (0,  Count_Leading_Zeros (PANAGRAM));
+  end;
+
+  -----------------------------
+  -- Test_Trim_Leading_Zeros --
+  -----------------------------
+  procedure Test_Trim_Leading_Zeros (Test : in out Test_Cases.Test_Case'Class) is begin
+    Assert_Naturals_Equal    (0,         Trim_Leading_Zeros (ZERO_SHORT)'Length);
+    Assert_Naturals_Equal    (0,         Trim_Leading_Zeros (ZERO_LONG)'Length);
+    Assert_Byte_Arrays_Equal (ONE_SHORT, Trim_Leading_Zeros (ONE_SHORT));
+    Assert_Byte_Arrays_Equal (ONE_SHORT, Trim_Leading_Zeros (ONE_LONG));
+    Assert_Byte_Arrays_Equal (PANAGRAM,  Trim_Leading_Zeros (PANAGRAM));
   end;
 
   ------------------
-  -- Is_One_Tests --
+  -- Test_Is_Zero --
   ------------------
-  procedure Is_One_Tests is
-    Total_Result : Boolean := TRUE;
-  begin
-    Put_Line ("------------------");
-    Put_Line ("-- Is_One_Tests --");
-    Put_Line ("------------------");
-    Total_Result := Total_Result and Boolean_Test (FALSE, Is_One (ZERO_SHORT));
-    Total_Result := Total_Result and Boolean_Test (FALSE, Is_One (ZERO_LONG));
-    Total_Result := Total_Result and Boolean_Test (TRUE,  Is_One (ONE_SHORT));
-    Total_Result := Total_Result and Boolean_Test (TRUE,  Is_One (ONE_LONG));
-    Total_Result := Total_Result and Boolean_Test (FALSE, Is_One (PANAGRAM));
-    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
-    New_Line;
+  procedure Test_Is_Zero (Test : in out Test_Cases.Test_Case'Class) is begin
+    Assert_Booleans_Equal (TRUE,  Is_Zero (ZERO_SHORT));
+    Assert_Booleans_Equal (TRUE,  Is_Zero (ZERO_LONG));
+    Assert_Booleans_Equal (FALSE, Is_Zero (ONE_SHORT));
+    Assert_Booleans_Equal (FALSE, Is_Zero (ONE_LONG));
+    Assert_Booleans_Equal (FALSE, Is_Zero (PANAGRAM));
   end;
 
-  ----------------------
-  -- To_Natural_Tests --
-  ----------------------
-  procedure To_Natural_Tests is
-    Total_Result : Boolean := TRUE;
-  begin
-    Put_Line ("----------------");
-    Put_Line ("-- To_Natural --");
-    Put_Line ("----------------");
-    Total_Result := Total_Result and Natural_Test (ZERO_SHORT_NATURAL,  To_Natural (ZERO_SHORT));
-    Total_Result := Total_Result and Natural_Test (ZERO_LONG_NATURAL,   To_Natural (ZERO_LONG));
-    Total_Result := Total_Result and Natural_Test (ONE_SHORT_NATURAL,   To_Natural (ONE_SHORT));
-    Total_Result := Total_Result and Natural_Test (ONE_LONG_NATURAL,    To_Natural (ONE_LONG));
-    Total_Result := Total_Result and Natural_Test (NATURAL_MAX_NATURAL, To_Natural (NATURAL_MAX));
-
-    Total_Result := Total_Result and Natural_Exception_Test ("CONSTRAINT_ERROR", NATURAL_MAX_SUCC);
-    Total_Result := Total_Result and Natural_Exception_Test ("CONSTRAINT_ERROR", PANAGRAM);
-    Put_Line ("ALL PASSING? " & Boolean'Image (Total_Result));
-    New_Line;
+  -----------------
+  -- Test_Is_One --
+  -----------------
+  procedure Test_Is_One (Test : in out Test_Cases.Test_Case'Class) is begin
+    Assert_Booleans_Equal (FALSE, Is_Zero (ZERO_SHORT));
+    Assert_Booleans_Equal (FALSE, Is_Zero (ZERO_LONG));
+    Assert_Booleans_Equal (TRUE,  Is_Zero (ONE_SHORT));
+    Assert_Booleans_Equal (TRUE,  Is_Zero (ONE_LONG));
+    Assert_Booleans_Equal (FALSE, Is_Zero (PANAGRAM));
   end;
 
-begin
-  Image_Tests;
-  To_String_Tests;
-  To_Byte_Array_Tests;
-  Count_Leading_Zeros;
-  Trim_Leading_Zeros;
-  Is_Zero_Tests;
-  Is_One_Tests;
-  To_Natural_Tests;
+  procedure To_Natural_Natural_Max_Successor is Ignore : Natural; begin Ignore := To_Natural (NATURAL_MAX_SUCC); end;
+  procedure To_Natural_Panagram              is Ignore : Natural; begin Ignore := To_Natural (PANAGRAM);         end;
+
+  ----------------
+  -- Test_Image --
+  ----------------
+  procedure Test_To_Natural (Test : in out Test_Cases.Test_Case'Class) is begin
+    Assert_Naturals_Equal (ZERO_SHORT_NATURAL,  To_Natural (ZERO_SHORT));
+    Assert_Naturals_Equal (ZERO_LONG_NATURAL,   To_Natural (ZERO_LONG));
+    Assert_Naturals_Equal (ONE_SHORT_NATURAL,   To_Natural (ONE_SHORT));
+    Assert_Naturals_Equal (ONE_LONG_NATURAL,    To_Natural (ONE_LONG));
+    Assert_Naturals_Equal (NATURAL_MAX_NATURAL, To_Natural (NATURAL_MAX));
+
+    Assert_Exception      (To_Natural_Natural_Max_Successor'Access, "Expected Natural'Last + 1 to throw an error.");
+    Assert_Exception      (To_Natural_Panagram'Access,              "Expected the Jackdaws panagram to throw an error.");
+  end;
+
 end;
-
