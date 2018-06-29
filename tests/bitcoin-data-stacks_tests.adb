@@ -11,15 +11,6 @@ package body Bitcoin.Data.Stacks_Tests is
   package String_Stacks is new Bitcoin.Data.Stacks (Positive, String, "=");
   use String_Stacks;
 
-  ----------
-  -- Name --
-  ----------
-  function Name (T : TC) return Message_String is
-    pragma Unreferenced (T);
-  begin
-    return AUnit.Format ("Testing Bitcoin.Data.Stacks operations");
-  end Name;
-
   --------------------
   -- Register_Tests --
   --------------------

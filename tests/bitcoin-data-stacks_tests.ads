@@ -8,7 +8,7 @@ package Bitcoin.Data.Stacks_Tests is
 
   type TC is new Test_Cases.Test_Case with null record;
 
-  function Name (T : TC) return Message_String;
+  function Name (T : TC) return Message_String is (AUnit.Format ("Bitcoin.Data.Stacks"));
 
   overriding procedure Register_Tests (T : in out TC);
 
