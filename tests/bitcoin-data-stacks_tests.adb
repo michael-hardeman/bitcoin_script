@@ -17,18 +17,39 @@ package body Bitcoin.Data.Stacks_Tests is
   procedure Register_Tests (T : in out TC) is
     use AUnit.Test_Cases.Registration;
   begin
-    Register_Routine (T, Test_Top_Index'Access,   "Top_Index");
-    Register_Routine (T, Test_Size'Access,        "Size");
-    Register_Routine (T, Test_Get'Access,         "Get");
-    Register_Routine (T, Test_Peek'Access,        "Peek");
-    Register_Routine (T, Test_Push'Access,        "Push");
-    Register_Routine (T, Test_Pop'Access,         "Pop (function)");
-    Register_Routine (T, Test_Pop_Ignored'Access, "Pop (procedure)");
-    Register_Routine (T, Test_Swap'Access,        "Swap");
-    Register_Routine (T, Test_Delate'Access,      "Delete");
+    Register_Routine (T, Test_Top_Index'Access,     "Top_Index");
+    Register_Routine (T, Test_Size'Access,          "Size");
+    Register_Routine (T, Test_Get'Access,           "Get");
+    Register_Routine (T, Test_Peek'Access,          "Peek");
+    Register_Routine (T, Test_Push'Access,          "Push");
+    Register_Routine (T, Test_Pop'Access,           "Pop (function)");
+    Register_Routine (T, Test_Pop_Procedure'Access, "Pop (procedure)");
+    Register_Routine (T, Test_Swap'Access,          "Swap");
+    Register_Routine (T, Test_Delate'Access,        "Delete");
   end Register_Tests;
 
-  procedure Top_Index_Of_Empty_Stack is Ignore : Positive; Stack : Stack_Type; begin Ignore := Top_Index (Stack); end;
+  ------------------------------
+  -- Error Raising Procedures --
+  ------------------------------
+  procedure Top_Index_Of_Empty_Stack is
+    Ignore : Positive;
+    Stack  : Stack_Type;
+  begin
+    Ignore := Top_Index (Stack);
+  end;
+
+  procedure Pop_Empty_Stack is
+    Ignore : String (1..3);
+    Stack : Stack_Type;
+  begin
+    Ignore := Pop (Stack);
+  end;
+
+  procedure Pop_Procedure_Empty_Stack is
+    Stack : Stack_Type;
+  begin
+    Pop (Stack);
+  end;
 
   --------------------
   -- Test_Top_Index --
@@ -80,7 +101,12 @@ package body Bitcoin.Data.Stacks_Tests is
   procedure Test_Peek (Test : in out Test_Cases.Test_Case'Class) is
     Stack : Stack_Type;
   begin
-    null;
+    Push (Stack, "foo");
+    Push (Stack, "bar");
+    Assert_Strings_Equal (Expected => "bar", Actual => Peek (Stack));
+    Assert_Strings_Equal (Expected => "bar", Actual => Peek (Stack));
+    Pop (Stack);
+    Assert_Strings_Equal (Expected => "foo", Actual => Peek (Stack));
   end;
 
   ---------------
@@ -89,7 +115,12 @@ package body Bitcoin.Data.Stacks_Tests is
   procedure Test_Push (Test : in out Test_Cases.Test_Case'Class) is
     Stack : Stack_Type;
   begin
-    null;
+    Push (Stack, "foo");
+    Assert_Strings_Equal (Expected => "foo", Actual => Peek (Stack));
+    Push (Stack, "bar");
+    Assert_Strings_Equal (Expected => "bar", Actual => Peek (Stack));
+    Push (Stack, "baz");
+    Assert_Strings_Equal (Expected => "baz", Actual => Peek (Stack));
   end;
 
   --------------
@@ -98,16 +129,30 @@ package body Bitcoin.Data.Stacks_Tests is
   procedure Test_Pop (Test : in out Test_Cases.Test_Case'Class) is
     Stack : Stack_Type;
   begin
-    null;
+    Push (Stack, "foo");
+    Push (Stack, "bar");
+    Push (Stack, "baz");
+    Assert_Strings_Equal (Expected => "baz", Actual => Pop (Stack));
+    Assert_Strings_Equal (Expected => "bar", Actual => Pop (Stack));
+    Assert_Strings_Equal (Expected => "foo", Actual => Pop (Stack));
+    Assert_Exception (Pop_Empty_Stack'Access, "Expected Pop on empty stack to raise an error.");
   end;
 
-  ----------------------
-  -- Test_Pop_Ignored --
-  ----------------------
-  procedure Test_Pop_Ignored (Test : in out Test_Cases.Test_Case'Class) is
+  ------------------------
+  -- Test_Pop_Procedure --
+  ------------------------
+  procedure Test_Pop_Procedure (Test : in out Test_Cases.Test_Case'Class) is
     Stack : Stack_Type;
   begin
-    null;
+    Push (Stack, "foo");
+    Push (Stack, "bar");
+    Push (Stack, "baz");
+    Assert_Strings_Equal (Expected => "baz", Actual => Peek (Stack));
+    Pop (Stack);
+    Assert_Strings_Equal (Expected => "bar", Actual => Peek (Stack));
+    Pop (Stack);
+    Assert_Strings_Equal (Expected => "foo", Actual => Peek (Stack));
+    Assert_Exception (Pop_Procedure_Empty_Stack'Access, "Expected Pop on empty stack to raise an error.");
   end;
 
   ---------------
@@ -116,7 +161,14 @@ package body Bitcoin.Data.Stacks_Tests is
   procedure Test_Swap (Test : in out Test_Cases.Test_Case'Class) is
     Stack : Stack_Type;
   begin
-    null;
+    Push (Stack, "foo");
+    Push (Stack, "bar");
+    Push (Stack, "baz");
+    Assert_Strings_Equal (Expected => "foo", Actual => Get (Stack, 1));
+    Assert_Strings_Equal (Expected => "baz", Actual => Get (Stack, 3));
+    Swap (Stack, 1, 3);
+    Assert_Strings_Equal (Expected => "foo", Actual => Get (Stack, 3));
+    Assert_Strings_Equal (Expected => "baz", Actual => Get (Stack, 1));
   end;
 
   -----------------
@@ -125,7 +177,14 @@ package body Bitcoin.Data.Stacks_Tests is
   procedure Test_Delate (Test : in out Test_Cases.Test_Case'Class) is
     Stack : Stack_Type;
   begin
-    null;
+    Push (Stack, "foo");
+    Push (Stack, "bar");
+    Push (Stack, "baz");
+    Assert_Naturals_Equal (Expected => 3, Actual => Size (Stack));
+    Delete (Stack, 2);
+    Assert_Naturals_Equal (Expected => 2, Actual => Size (Stack));
+    Assert_Strings_Equal (Expected => "foo", Actual => Get (Stack, 1));
+    Assert_Strings_Equal (Expected => "baz", Actual => Get (Stack, 2));
   end;
 
 end;

@@ -43,7 +43,7 @@ package body Bitcoin.Byte_Array_Tests is
   ZERO_SHORT_STRING       : constant String           := "" & Character'Val(0);
   ZERO_LONG_STRING        : constant String (1 .. 10) := (others => Character'Val(0));
   ONE_SHORT_STRING        : constant String           := "" & Character'Val(1);
-  ONE_LONG_STRING         : constant String (1 .. 10) := (10 => Character'Val(1), others => Character'Val(0));
+  ONE_LONG_STRING         : constant String (1 .. 10) := (10 => Character'Val(1),      others => Character'Val(0));
   NATURAL_MAX_STRING      : constant String (1 .. 4)  := ( 1 => Character'Val(16#7F#), others => Character'Val(16#FF#));
   NATURAL_MAX_SUCC_STRING : constant String (1 .. 4)  := ( 1 => Character'Val(16#80#), others => Character'Val(0));
   PANGRAM_STRING          : constant String           := "jackdaws love my big sphinx of quartz";
