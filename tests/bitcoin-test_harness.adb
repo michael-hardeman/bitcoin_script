@@ -1,6 +1,11 @@
 
 with AUnit.Run;
 with AUnit.Reporter.Text;
+pragma Elaborate_All (AUnit);
+pragma Elaborate_All (AUnit.Run);
+pragma Elaborate_All (AUnit.Reporter);
+pragma Elaborate_All (AUnit.Reporter.Text);
+
 with Bitcoin.Test_Suite;
 -- with Bitcoin.Data.Stacks.Test_Suite;
 -- with Bitcoin.Encoding.Base64.Test_Suite;

@@ -23,22 +23,53 @@ project Bitcoin_Script is
   --------------
   -- Settings --
   --------------
-  for Languages    use ("Ada");
-  for Library_Name use Name;
-  for Library_Dir  use Library_Directory;
-  for Source_Dirs  use ("code");
-  for Object_Dir   use "objects";
-  for Library_Kind use "dynamic";
+  for Languages          use ("Ada");
+  for Library_Name       use Name;
+  for Library_Dir        use Library_Directory;
+  for Source_Dirs        use ("code");
+  for Object_Dir         use "objects";
+  for Library_ALI_Dir    use "objects/ali";
+  for Library_Kind       use "dynamic";
+  for Library_Standalone use "encapsulated";
+  for Library_Interface  use (
+    "Bitcoin",
+    "Bitcoin.Data",
+    "Bitcoin.Data.Stacks",
+    "Bitcoin.Api",
+    "Bitcoin.Api.OpenSSL",
+    "Bitcoin.Crypto",
+    "Bitcoin.Crypto.Ripemd160",
+    "Bitcoin.Encoding",
+    "Bitcoin.Encoding.Generic_Encoder",
+    "Bitcoin.Encoding.Base58_Characters",
+    "Bitcoin.Encoding.Base58",
+    "Bitcoin.Encoding.Base64",
+    "Bitcoin.Script");
+
+  case System is
+    when "unix"    => null;
+    when "windows" =>
+      case Word_Size is
+        when "32" =>
+          for Library_Options use (
+            "../" & Library_Directory & "/libcrypto-1_1.dll");
+        when "64" =>
+          for Library_Options use (
+            "../" & Library_Directory & "/libcrypto-1_1-x64.dll");
+      end case;
+  end case;
 
   -------------
   -- Builder --
   -------------
   package Builder is
     Switch_Builder := ("-E"); -- Store traceback in exceptions
+
     case Word_Size is
       when "32" => null;
       when "64" => Switch_Builder := Switch_Builder & ("-m64"); -- Pass onto gcc ld.exe produce only 64 bit code
     end case;
+
     for Default_Switches ("Ada") use Switch_Builder;
   end Builder;
 

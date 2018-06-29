@@ -2,6 +2,7 @@ with Ada.Text_IO; use Ada.Text_IO;
 with Bitcoin.Data.Stacks;
 
 procedure Stacks_Test is
+
   package String_Stacks is new Bitcoin.Data.Stacks (Positive, String, "=");
   use String_Stacks;
 

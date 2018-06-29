@@ -1,7 +1,10 @@
 
+with AUnit.Assertions; use AUnit.Assertions;
+pragma Elaborate_All (AUnit);
+pragma Elaborate_All (AUnit.Assertions);
+
 with Bitcoin;                       use Bitcoin;
 with Bitcoin.Test_Utilities.Common; use Bitcoin.Test_Utilities.Common;
-with Aunit.Assertions;              use AUnit.Assertions;
 
 package body Bitcoin.Byte_Array_Tests is
 

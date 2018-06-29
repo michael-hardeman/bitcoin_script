@@ -1,14 +1,16 @@
 with AUnit.Assertions; use AUnit.Assertions;
+pragma Elaborate_All (AUnit);
+pragma Elaborate_All (AUnit.Assertions);
 
 package body Bitcoin.Test_Utilities is
-  
+
   ---------------------------
   -- Assert_Definite_Equal --
   ---------------------------
   procedure Assert_Definite_Equal (Expected, Actual : in Definite_Type) is begin
     Assert (Actual = Expected, "Expected: " & Image (Expected) & " but found " & Image (Actual));
   end;
-  
+
   -----------------------------
   -- Assert_Indefinite_Equal --
   -----------------------------

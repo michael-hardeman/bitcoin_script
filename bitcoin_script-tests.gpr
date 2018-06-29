@@ -1,21 +1,16 @@
-with "../bitcoin_script.gpr";
+with "bitcoin_script.gpr";
 with "aunit";
 
 project Bitcoin_Script.Tests is
-
-  ---------------
-  -- Variables --
-  ---------------
-  Executable_Directory := "binaries/" & Bitcoin_Script.System & "/" & Bitcoin_Script.Word_Size;
 
   --------------
   -- Settings --
   --------------
   for Languages   use ("Ada");
-  for Source_Dirs use ("code");
+  for Source_Dirs use ("tests");
   for Object_Dir  use "objects";
   for Library_Dir use Bitcoin_Script.Library_Directory;
-  for Exec_Dir    use Executable_Directory;
+  for Exec_Dir    use Bitcoin_Script.Library_Directory;
   for Main        use ("bitcoin-test_harness.adb");
 
   --------------
@@ -34,10 +29,10 @@ project Bitcoin_Script.Tests is
         case Bitcoin_Script.Word_Size is
           when "32" => for Default_Switches ("Ada") use ("-Wl,--enable-stdcall-fixup",
                                                          Bitcoin_Script.Library_Directory & "/libcrypto-1_1.dll",
-                                                         Bitcoin_Script.Library_Directory & "/" & Bitcoin_Script.Name & ".dll");
+                                                         Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".dll");
           when "64" => for Default_Switches ("Ada") use ("-Wl,--enable-stdcall-fixup",
                                                          Bitcoin_Script.Library_Directory & "/libcrypto-1_1-x64.dll",
-                                                         Bitcoin_Script.Library_Directory & "/" & Bitcoin_Script.Name & ".dll");
+                                                         Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".dll");
         end case;
     end case;
   end Linker;
