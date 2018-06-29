@@ -17,7 +17,7 @@ package body Bitcoin.Byte_Array_Tests is
   ONE_LONG         : constant Byte_Array (1 .. 10) := (10 => 16#01#, others => 16#00#);
   NATURAL_MAX      : constant Byte_Array (1 .. 4)  := ( 1 => 16#7F#, others => 16#FF#);
   NATURAL_MAX_SUCC : constant Byte_Array (1 .. 4)  := ( 1 => 16#80#, others => 16#00#);
-  PANAGRAM         : constant Byte_Array           := (16#6a#, 16#61#, 16#63#, 16#6b#, 16#64#,
+  PANGRAM          : constant Byte_Array           := (16#6a#, 16#61#, 16#63#, 16#6b#, 16#64#,
                                                        16#61#, 16#77#, 16#73#, 16#20#, 16#6c#,
                                                        16#6f#, 16#76#, 16#65#, 16#20#, 16#6d#,
                                                        16#79#, 16#20#, 16#62#, 16#69#, 16#67#,
@@ -32,7 +32,7 @@ package body Bitcoin.Byte_Array_Tests is
   ONE_LONG_IMAGE         : constant String := "( 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 )";
   NATURAL_MAX_IMAGE      : constant String := "( 127, 255, 255, 255 )";
   NATURAL_MAX_SUCC_IMAGE : constant String := "( 128, 0, 0, 0 )";
-  PANAGRAM_IMAGE         : constant String := "( 106, 97, 99, 107, 100,"  &
+  PANGRAM_IMAGE          : constant String := "( 106, 97, 99, 107, 100,"  &
                                                " 97, 119, 115, 32, 108,"  &
                                                " 111, 118, 101, 32, 109," &
                                                " 121, 32, 98, 105, 103,"  &
@@ -46,7 +46,7 @@ package body Bitcoin.Byte_Array_Tests is
   ONE_LONG_STRING         : constant String (1 .. 10) := (10 => Character'Val(1), others => Character'Val(0));
   NATURAL_MAX_STRING      : constant String (1 .. 4)  := ( 1 => Character'Val(16#7F#), others => Character'Val(16#FF#));
   NATURAL_MAX_SUCC_STRING : constant String (1 .. 4)  := ( 1 => Character'Val(16#80#), others => Character'Val(0));
-  PANAGRAM_STRING         : constant String           := "jackdaws love my big sphinx of quartz";
+  PANGRAM_STRING          : constant String           := "jackdaws love my big sphinx of quartz";
 
   ZERO_SHORT_NATURAL  : constant Natural := 0;
   ZERO_LONG_NATURAL   : constant Natural := 0;
@@ -88,9 +88,9 @@ package body Bitcoin.Byte_Array_Tests is
     Assert_Strings_Equal (ZERO_LONG_IMAGE,        Image (ZERO_LONG));
     Assert_Strings_Equal (ONE_SHORT_IMAGE,        Image (ONE_SHORT));
     Assert_Strings_Equal (ONE_LONG_IMAGE,         Image (ONE_LONG));
-    Assert_Strings_Equal (ONE_LONG_IMAGE,         Image (NATURAL_MAX));
+    Assert_Strings_Equal (NATURAL_MAX_IMAGE,      Image (NATURAL_MAX));
     Assert_Strings_Equal (NATURAL_MAX_SUCC_IMAGE, Image (NATURAL_MAX_SUCC));
-    Assert_Strings_Equal (PANAGRAM_IMAGE,         Image (PANAGRAM));
+    Assert_Strings_Equal (PANGRAM_IMAGE,          Image (PANGRAM));
   end;
 
   --------------------
@@ -103,7 +103,7 @@ package body Bitcoin.Byte_Array_Tests is
     Assert_Strings_Equal (ONE_LONG_STRING,         To_String (ONE_LONG));
     Assert_Strings_Equal (NATURAL_MAX_STRING,      To_String (NATURAL_MAX));
     Assert_Strings_Equal (NATURAL_MAX_SUCC_STRING, To_String (NATURAL_MAX_SUCC));
-    Assert_Strings_Equal (PANAGRAM_STRING,         To_String (PANAGRAM));
+    Assert_Strings_Equal (PANGRAM_STRING,          To_String (PANGRAM));
   end;
 
   ------------------------
@@ -116,7 +116,7 @@ package body Bitcoin.Byte_Array_Tests is
     Assert_Byte_Arrays_Equal (ONE_LONG,         To_Byte_Array (ONE_LONG_STRING));
     Assert_Byte_Arrays_Equal (NATURAL_MAX,      To_Byte_Array (NATURAL_MAX_STRING));
     Assert_Byte_Arrays_Equal (NATURAL_MAX_SUCC, To_Byte_Array (NATURAL_MAX_SUCC_STRING));
-    Assert_Byte_Arrays_Equal (PANAGRAM,         To_Byte_Array (PANAGRAM_STRING));
+    Assert_Byte_Arrays_Equal (PANGRAM,          To_Byte_Array (PANGRAM_STRING));
   end;
 
   ------------------------------
@@ -127,7 +127,7 @@ package body Bitcoin.Byte_Array_Tests is
     Assert_Naturals_Equal (10, Count_Leading_Zeros (ZERO_LONG));
     Assert_Naturals_Equal (0,  Count_Leading_Zeros (ONE_SHORT));
     Assert_Naturals_Equal (9,  Count_Leading_Zeros (ONE_LONG));
-    Assert_Naturals_Equal (0,  Count_Leading_Zeros (PANAGRAM));
+    Assert_Naturals_Equal (0,  Count_Leading_Zeros (PANGRAM));
   end;
 
   -----------------------------
@@ -138,7 +138,7 @@ package body Bitcoin.Byte_Array_Tests is
     Assert_Naturals_Equal    (0,         Trim_Leading_Zeros (ZERO_LONG)'Length);
     Assert_Byte_Arrays_Equal (ONE_SHORT, Trim_Leading_Zeros (ONE_SHORT));
     Assert_Byte_Arrays_Equal (ONE_SHORT, Trim_Leading_Zeros (ONE_LONG));
-    Assert_Byte_Arrays_Equal (PANAGRAM,  Trim_Leading_Zeros (PANAGRAM));
+    Assert_Byte_Arrays_Equal (PANGRAM,   Trim_Leading_Zeros (PANGRAM));
   end;
 
   ------------------
@@ -149,22 +149,22 @@ package body Bitcoin.Byte_Array_Tests is
     Assert_Booleans_Equal (TRUE,  Is_Zero (ZERO_LONG));
     Assert_Booleans_Equal (FALSE, Is_Zero (ONE_SHORT));
     Assert_Booleans_Equal (FALSE, Is_Zero (ONE_LONG));
-    Assert_Booleans_Equal (FALSE, Is_Zero (PANAGRAM));
+    Assert_Booleans_Equal (FALSE, Is_Zero (PANGRAM));
   end;
 
   -----------------
   -- Test_Is_One --
   -----------------
   procedure Test_Is_One (Test : in out Test_Cases.Test_Case'Class) is begin
-    Assert_Booleans_Equal (FALSE, Is_Zero (ZERO_SHORT));
-    Assert_Booleans_Equal (FALSE, Is_Zero (ZERO_LONG));
-    Assert_Booleans_Equal (TRUE,  Is_Zero (ONE_SHORT));
-    Assert_Booleans_Equal (TRUE,  Is_Zero (ONE_LONG));
-    Assert_Booleans_Equal (FALSE, Is_Zero (PANAGRAM));
+    Assert_Booleans_Equal (FALSE, Is_One (ZERO_SHORT));
+    Assert_Booleans_Equal (FALSE, Is_One (ZERO_LONG));
+    Assert_Booleans_Equal (TRUE,  Is_One (ONE_SHORT));
+    Assert_Booleans_Equal (TRUE,  Is_One (ONE_LONG));
+    Assert_Booleans_Equal (FALSE, Is_One (PANGRAM));
   end;
 
   procedure To_Natural_Natural_Max_Successor is Ignore : Natural; begin Ignore := To_Natural (NATURAL_MAX_SUCC); end;
-  procedure To_Natural_Panagram              is Ignore : Natural; begin Ignore := To_Natural (PANAGRAM);         end;
+  procedure To_Natural_Pangram               is Ignore : Natural; begin Ignore := To_Natural (PANGRAM);         end;
 
   ----------------
   -- Test_Image --
@@ -177,7 +177,7 @@ package body Bitcoin.Byte_Array_Tests is
     Assert_Naturals_Equal (NATURAL_MAX_NATURAL, To_Natural (NATURAL_MAX));
 
     Assert_Exception      (To_Natural_Natural_Max_Successor'Access, "Expected Natural'Last + 1 to throw an error.");
-    Assert_Exception      (To_Natural_Panagram'Access,              "Expected the Jackdaws panagram to throw an error.");
+    Assert_Exception      (To_Natural_Pangram'Access,               "Expected the Jackdaws pangram to throw an error.");
   end;
 
 end;
