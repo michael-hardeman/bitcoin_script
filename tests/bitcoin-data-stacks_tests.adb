@@ -17,15 +17,15 @@ package body Bitcoin.Data.Stacks_Tests is
   procedure Register_Tests (T : in out TC) is
     use AUnit.Test_Cases.Registration;
   begin
-    Register_Routine (T, Test_Top_Index'Access,   "Ensure Top_Index returns the array index of the last item.");
-    Register_Routine (T, Test_Size'Access,        "Ensure Size returns the stack size.");
-    Register_Routine (T, Test_Get'Access,         "Ensure Get returns the item at the array index.");
-    Register_Routine (T, Test_Peek'Access,        "Ensure Peek returns the top item on the stack without modifying it.");
-    Register_Routine (T, Test_Push'Access,        "Ensure Push adds the new item to the top.");
-    Register_Routine (T, Test_Pop'Access,         "Ensure Pop removes and returns the top item.");
-    Register_Routine (T, Test_Pop_Ignored'Access, "Ensure Pop removes the top item.");
-    Register_Routine (T, Test_Swap'Access,        "Ensure Swap swaps two items on the stack by index.");
-    Register_Routine (T, Test_Delate'Access,      "Ensure Delete removes the item at the provided index.");
+    Register_Routine (T, Test_Top_Index'Access,   "Top_Index");
+    Register_Routine (T, Test_Size'Access,        "Size");
+    Register_Routine (T, Test_Get'Access,         "Get");
+    Register_Routine (T, Test_Peek'Access,        "Peek");
+    Register_Routine (T, Test_Push'Access,        "Push");
+    Register_Routine (T, Test_Pop'Access,         "Pop (function)");
+    Register_Routine (T, Test_Pop_Ignored'Access, "Pop (procedure)");
+    Register_Routine (T, Test_Swap'Access,        "Swap");
+    Register_Routine (T, Test_Delate'Access,      "Delete");
   end Register_Tests;
 
   --------------------
