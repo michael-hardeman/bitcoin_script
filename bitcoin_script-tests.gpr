@@ -24,14 +24,12 @@ project Bitcoin_Script.Tests is
   ------------
   package Linker is
     case Bitcoin_Script.System is
-      when "unix"    => for Default_Switches ("Ada") use ("-lcrypto", Bitcoin_Script.Library_Directory & "/" & Bitcoin_Script.Name & ".a");
+      when "unix"    => for Default_Switches ("Ada") use (Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".a");
       when "windows" =>
         case Bitcoin_Script.Word_Size is
           when "32" => for Default_Switches ("Ada") use ("-Wl,--enable-stdcall-fixup",
-                                                         Bitcoin_Script.Library_Directory & "/libcrypto-1_1.dll",
                                                          Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".dll");
           when "64" => for Default_Switches ("Ada") use ("-Wl,--enable-stdcall-fixup",
-                                                         Bitcoin_Script.Library_Directory & "/libcrypto-1_1-x64.dll",
                                                          Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".dll");
         end case;
     end case;

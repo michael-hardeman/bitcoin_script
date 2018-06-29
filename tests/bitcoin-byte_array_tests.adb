@@ -155,7 +155,7 @@ package body Bitcoin.Byte_Array_Tests is
   end;
 
   procedure To_Natural_Natural_Max_Successor is Ignore : Natural; begin Ignore := To_Natural (NATURAL_MAX_SUCC); end;
-  procedure To_Natural_Pangram               is Ignore : Natural; begin Ignore := To_Natural (PANGRAM);         end;
+  procedure To_Natural_Pangram               is Ignore : Natural; begin Ignore := To_Natural (PANGRAM);          end;
 
   ----------------
   -- Test_Image --
