@@ -54,6 +54,15 @@ package body Bitcoin.Byte_Array_Tests is
   ONE_LONG_NATURAL    : constant Natural := 1;
   NATURAL_MAX_NATURAL : constant Natural := Natural'Last;
 
+  ----------
+  -- Name --
+  ----------
+  function Name (T : TC) return Message_String is
+    pragma Unreferenced (T);
+  begin
+    return AUnit.Format ("Testing Bitcoin.Byte_Array operations");
+  end Name;
+
   --------------------
   -- Register_Tests --
   --------------------
@@ -69,15 +78,6 @@ package body Bitcoin.Byte_Array_Tests is
     Register_Routine (T, Test_Is_One'Access,              "Ensure Bitcoin.Is_One returns true when the last byte = 1 and all others bytes = 0, and false in all other cases");
     Register_Routine (T, Test_To_Natural'Access,          "Ensure Bitcoin.To_Natural converts a byte array into a valid Natural, and raises an exception in all other cases");
   end Register_Tests;
-
-  ----------
-  -- Name --
-  ----------
-  function Name (T : TC) return Message_String is
-    pragma Unreferenced (T);
-  begin
-    return AUnit.Format ("Testing Bitcoin.Byte_Array operations");
-  end Name;
 
   ----------------
   -- Test_Image --

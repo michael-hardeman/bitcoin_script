@@ -9,9 +9,9 @@ package Bitcoin.Byte_Array_Tests is
 
   type TC is new Test_Cases.Test_Case with null record;
 
-  overriding procedure Register_Tests (T : in out TC);
-
   function Name (T : TC) return Message_String;
+
+  overriding procedure Register_Tests (T : in out TC);
 
   procedure Test_Image               (Test : in out Test_Cases.Test_Case'Class);
   procedure Test_To_String           (Test : in out Test_Cases.Test_Case'Class);
