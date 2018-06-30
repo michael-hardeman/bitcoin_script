@@ -6,7 +6,7 @@ package body Bitcoin.Crypto.Test_Suite is
   Result : aliased AUnit.Test_Suites.Test_Suite;
 
   Crypto_Test_Case    : aliased Bitcoin.Crypto.Tests.TC;
-  RIPEMD160_Test_Case : aliased Bitcoin.Crypto.Tests.TC;
+  RIPEMD160_Test_Case : aliased Bitcoin.Crypto.RIPEMD160_Tests.TC;
 
   function Suite return AUnit.Test_Suites.Access_Test_Suite is
   begin
