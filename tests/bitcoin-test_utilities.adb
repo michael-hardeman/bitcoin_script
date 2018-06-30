@@ -9,6 +9,8 @@ package body Bitcoin.Test_Utilities is
   ---------------------------
   procedure Assert_Definite_Equal (Expected, Actual : in Definite_Type) is begin
     Assert (Actual = Expected, "Expected: " & Image (Expected) & " but found " & Image (Actual));
+  exception
+    when others => raise Assertion_Error;
   end;
 
   -----------------------------
@@ -16,5 +18,7 @@ package body Bitcoin.Test_Utilities is
   -----------------------------
   procedure Assert_Indefinite_Equal (Expected, Actual : in Indefinite_Type) is begin
     Assert (Actual = Expected, "Expected: " & Image (Expected) & " but found " & Image (Actual));
+  exception
+    when others => raise Assertion_Error;
   end;
 end;
