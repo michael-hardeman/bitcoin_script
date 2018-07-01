@@ -67,9 +67,7 @@ package body Bitcoin.Crypto is
   --------------------
   procedure Free_Allocated (Key_Pair : in out Key_Pair_Type) is
   begin
-    -- Put_Line ("Freeing EC_KEY: " & Address_Image (Key_Pair.Ptr));
     for Allocated of Key_Pair.Allocated loop
-      -- Put_Line ("  " & Allocation_Kind'Image (Allocated.Kind) & ": " & Address_Image (Allocated.Ptr));
       Free (Allocated);
     end loop;
     Clear (Key_Pair.Allocated);

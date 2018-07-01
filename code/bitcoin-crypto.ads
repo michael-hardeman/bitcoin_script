@@ -6,6 +6,8 @@ with Ada.Unchecked_Conversion;
 with Ada.Containers.Indefinite_Vectors; use Ada.Containers;
 with Bitcoin.API.OpenSSL;               use Bitcoin.API.OpenSSL;
 
+pragma Elaborate_All (Bitcoin.API.OpenSSL);
+
 package Bitcoin.Crypto is
 
   ------------------

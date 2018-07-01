@@ -24,6 +24,7 @@ package body Bitcoin.Data.Stacks is
   ---------
   procedure Pop (From : in out Stack_Type) is
   begin
+    if Size (From) = 0 then raise Constraint_Error; end if;
     Delete_Last (From);
   end;
 

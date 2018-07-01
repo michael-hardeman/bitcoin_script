@@ -1,0 +1,38 @@
+with "bitcoin_script.gpr";
+with "aunit";
+
+project Bitcoin_Script.Tests is
+
+  --------------
+  -- Settings --
+  --------------
+  for Languages   use ("Ada");
+  for Source_Dirs use ("tests");
+  for Object_Dir  use "objects";
+  for Library_Dir use Bitcoin_Script.Library_Directory;
+  for Exec_Dir    use Bitcoin_Script.Library_Directory;
+  for Main        use ("bitcoin-test_harness.adb");
+
+  --------------
+  -- Packages --
+  --------------
+  package Builder  renames Bitcoin_Script.Builder;
+  package Compiler renames Bitcoin_Script.Compiler;
+
+  ------------
+  -- Linker --
+  ------------
+  package Linker is
+    case Bitcoin_Script.System is
+      when "unix"    => for Default_Switches ("Ada") use (Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".a");
+      when "windows" =>
+        case Bitcoin_Script.Word_Size is
+          when "32" => for Default_Switches ("Ada") use ("-Wl,--enable-stdcall-fixup",
+                                                         Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".dll");
+          when "64" => for Default_Switches ("Ada") use ("-Wl,--enable-stdcall-fixup",
+                                                         Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".dll");
+        end case;
+    end case;
+  end Linker;
+
+end Bitcoin_Script.Tests;
