@@ -13,5 +13,7 @@ package Bitcoin.Crypto.Tests is
 
   overriding procedure Register_Tests (T : in out TC);
 
-  procedure Test_Sign (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_Generate        (Test : in out Test_Cases.Test_Case'Class);
+  procedure From_Private_Key     (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_Sign_And_Verify (Test : in out Test_Cases.Test_Case'Class);
 end;
