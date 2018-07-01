@@ -13,5 +13,5 @@ package Bitcoin.Script.Tests is
 
   overriding procedure Register_Tests (T : in out TC);
 
-  procedure Test_Evaluate (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_Evaluate_Most_Common_Script (Test : in out Test_Cases.Test_Case'Class);
 end;
