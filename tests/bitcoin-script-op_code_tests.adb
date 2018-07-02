@@ -8,6 +8,7 @@ with Bitcoin.Script;                use Bitcoin.Script;
 with Bitcoin.Test_Utilities.Common; use Bitcoin.Test_Utilities.Common;
 
 package body Bitcoin.Script.Op_Code_Tests is
+  use Byte_Array_Stacks;
 
   --------------------
   -- Register_Tests --
@@ -26,8 +27,6 @@ package body Bitcoin.Script.Op_Code_Tests is
   -- Test_OP_0 --
   ---------------
   procedure Test_OP_0 (Test : in out Test_Cases.Test_Case'Class) is
-    use Byte_Array_Stacks;
-
     SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
@@ -40,9 +39,7 @@ package body Bitcoin.Script.Op_Code_Tests is
   ----------------------
   -- Test_OP_PUSHDATA --
   ----------------------
-  procedure Test_OP_PUSHDATA (Test : in out Test_Cases.Test_Case'Class) is
-    use Byte_Array_Stacks;
-  begin
+  procedure Test_OP_PUSHDATA (Test : in out Test_Cases.Test_Case'Class) is begin
     for I in 16#01# .. 16#4B# loop
       declare
         DATA            : constant Byte_Array (1 .. Positive (I)) := (others => 16#FF#);
@@ -61,8 +58,6 @@ package body Bitcoin.Script.Op_Code_Tests is
   -- Test_OP_PUSHDATA1 --
   -----------------------
   procedure Test_OP_PUSHDATA1 (Test : in out Test_Cases.Test_Case'Class) is
-    use Byte_Array_Stacks;
-
     LENGTH          : constant Byte       := 16#07#;
     DATA            : constant Byte_Array := (1 .. Positive (LENGTH) => 16#FF#);
     SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_PUSHDATA1), 2 => LENGTH) & DATA;
@@ -77,8 +72,6 @@ package body Bitcoin.Script.Op_Code_Tests is
   -- Test_OP_PUSHDATA2 --
   -----------------------
   procedure Test_OP_PUSHDATA2 (Test : in out Test_Cases.Test_Case'Class) is
-    use Byte_Array_Stacks;
-
     LENGTH          : constant Byte_Array := (1 => 16#00#, 2 => 16#07#);
     DATA            : constant Byte_Array := (1 .. 7 => 16#FF#);
     SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_PUSHDATA2)) & LENGTH & DATA;
@@ -93,8 +86,6 @@ package body Bitcoin.Script.Op_Code_Tests is
   -- Test_OP_PUSHDATA4 --
   -----------------------
   procedure Test_OP_PUSHDATA4 (Test : in out Test_Cases.Test_Case'Class) is
-    use Byte_Array_Stacks;
-
     LENGTH          : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#07#);
     DATA            : constant Byte_Array := (1 .. 7 => 16#FF#);
     SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_PUSHDATA4)) & LENGTH & DATA;
