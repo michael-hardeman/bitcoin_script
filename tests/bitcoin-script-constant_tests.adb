@@ -32,7 +32,6 @@ package body Bitcoin.Script.Constant_Tests is
     Secondary_Stack :          Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-
     Assert_Byte_Arrays_Equal (Expected => (1 .. 4 => 16#00#), Actual => Get (Primary_Stack, 1));
   end;
 
@@ -48,7 +47,6 @@ package body Bitcoin.Script.Constant_Tests is
         Secondary_Stack :          Stack_Type;
       begin
         Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-
         Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Get (Primary_Stack, 1));
       end;
     end loop;

@@ -60,7 +60,7 @@ package body Bitcoin.Script is
   ----------------------
   -- Combine Unsigned --
   ----------------------
-  function Combine (High, Low                  : in Byte)        return Unsigned_16 is (Shift_Left (Unsigned_16 (High), 8)  or Unsigned_16 (Low));
+  function Combine (High, Low                  : in Byte)        return Unsigned_16 is (Shift_Left (Unsigned_16 (High),  8) or Unsigned_16 (Low));
   function Combine (High, Low                  : in Unsigned_16) return Unsigned_32 is (Shift_Left (Unsigned_32 (High), 16) or Unsigned_32 (Low));
   function Combine (Highest, High, Low, Lowest : in Byte)        return Unsigned_32 is (Combine (Combine (Highest, High), Combine (Low, Lowest)));
 
@@ -144,10 +144,18 @@ package body Bitcoin.Script is
           Push (Primary_Stack, (1 .. 3 => 16#00#, 4 => (To_Byte (Opcode) - (To_Byte (OP_1) - 16#01#))));
 
         -- The next byte contains the number of bytes to be pushed onto the stack.
-        when OP_PUSHDATA1 => Push_Bytes_To_Stack (Primary_Stack, Positive (To_Byte (Next)));
+        when OP_PUSHDATA1 => Push_Bytes_To_Stack (Primary_Stack, Positive (Next));
 
         -- The next two bytes contain the number of bytes to be pushed onto the stack.
-        when OP_PUSHDATA2 => Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (Next, Next)));
+        when OP_PUSHDATA2 => 
+          declare
+            High  : Byte     := Next;
+            Low   : Byte     := Next;
+            Bytes : Positive := Positive (Combine (High, Low));
+          begin
+            Put_Line (Positive'Image (Bytes));
+            Push_Bytes_To_Stack (Primary_Stack, Bytes);
+          end;
 
         -- The next four bytes contain the number of bytes to be pushed onto the stack.
         when OP_PUSHDATA4 => Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (Next, Next, Next, Next)));
