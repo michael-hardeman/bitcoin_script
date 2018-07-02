@@ -22,8 +22,10 @@ package body Bitcoin.Script.Op_Code_Tests is
   -- Test_OP_0 --
   ---------------
   procedure Test_OP_0 (Test : in out Test_Cases.Test_Case'Class) is
-    Script : constant Byte_Array := (1 => To_Byte (OP_0));
+    Script          : constant Byte_Array := (1 => To_Byte (OP_0));
+    Primary_Stack   : Byte_Array_Stacks.Stack_Type;
+    Secondary_Stack : Byte_Array_Stacks.Stack_Type;
   begin
-    null;
+    Evaluate (Script, Primary_Stack, Secondary_Stack);
   end;
 end;
