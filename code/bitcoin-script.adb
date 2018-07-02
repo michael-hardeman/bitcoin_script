@@ -117,12 +117,12 @@ package body Bitcoin.Script is
     
       if not Opcode'Valid then
         if not (To_Byte (Opcode) in Data_Count_Range) then raise Invalid_Opcode; end if;
-        Put_Line ("Push Data: " & Byte'Image (To_Byte(Opcode)));
+        -- Put_Line ("Push Data: " & Byte'Image (To_Byte(Opcode)));
         Push_Bytes_To_Stack (Primary_Stack, Positive (To_Byte (Opcode)));
         return;
       end if;
       
-      Put_Line ("Evaluate Opcode: " & Opcode_Kind'Image (Opcode));
+      -- Put_Line ("Evaluate Opcode: " & Opcode_Kind'Image (Opcode));
 
       case Opcode is
 

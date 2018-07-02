@@ -16,7 +16,8 @@ package Bitcoin.Script.Op_Code_Tests is
   ---------------
   -- Constants --
   ---------------
-  procedure Test_OP_0 (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_OP_0        (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_OP_PUSHDATA (Test : in out Test_Cases.Test_Case'Class);
   -- OP_0,         OP_PUSHDATA1, OP_PUSHDATA2,
   -- OP_PUSHDATA4, OP_1NEGATE,   OP_RESERVED,
   -- OP_1,         OP_2,         OP_3,
