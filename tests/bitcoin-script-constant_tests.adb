@@ -7,7 +7,7 @@ with Bitcoin;                       use Bitcoin;
 with Bitcoin.Script;                use Bitcoin.Script;
 with Bitcoin.Test_Utilities.Common; use Bitcoin.Test_Utilities.Common;
 
-package body Bitcoin.Script.Op_Code_Tests is
+package body Bitcoin.Script.Constant_Tests is
   use Byte_Array_Stacks;
 
   --------------------
