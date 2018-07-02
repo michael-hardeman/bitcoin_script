@@ -9,7 +9,7 @@ package body Bitcoin.Script is
   package body Parser is
     Program_Counter : Natural := Script'First - 1;
 
-    function  At_EOS  return Boolean is (Program_Counter > Script'Last);
+    function  At_EOS  return Boolean is (Program_Counter >= Script'Last);
     function  Peek    return Byte    is (Script (Positive'Succ (Program_counter)));
     function  Current return Byte    is (Script (Program_Counter));
     function  Next    return Byte    is begin Skip; return Current; end;
