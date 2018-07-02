@@ -6,6 +6,14 @@ with Bitcoin.Data.Stacks;
 
 package Bitcoin.Script is
 
+  --------------
+  -- Packages --
+  --------------
+  package Byte_Array_Stacks is new Bitcoin.Data.Stacks (Positive, Byte_Array, "=");
+
+  --------------
+  -- Op Codes --
+  --------------
   type Opcode_Kind is (
 
     ---------------
@@ -165,9 +173,6 @@ package Bitcoin.Script is
 
   for Opcode_Kind'Size use Byte'Size;
 
-  function To_Opcode_Kind is new Ada.Unchecked_Conversion (Source => Byte,        Target => Opcode_Kind);
-  function To_Byte        is new Ada.Unchecked_Conversion (Source => Opcode_Kind, Target => Byte);
-
   -------------
   -- Aliases --
   -------------
@@ -178,7 +183,7 @@ package Bitcoin.Script is
   -----------------------
   -- Contiguous Groups --
   -----------------------
-  subtype Constants_Opcode_Kind    is Opcode_Kind range OP_FALSE      .. OP_16;
+  subtype Constants_Opcode_Kind    is Opcode_Kind range OP_0          .. OP_16;
   subtype Flow_Control_Opcode_Kind is Opcode_Kind range OP_NOP        .. OP_RETURN;
   subtype Stack_Opcode_Kind        is Opcode_Kind range OP_TOALTSTACK .. OP_TUCK;
   subtype Bitwise_Opcode_Kind      is Opcode_Kind range OP_INVERT     .. OP_RESERVED2;
@@ -209,7 +214,14 @@ package Bitcoin.Script is
   -----------------
   -- Subprograms --
   -----------------
+  function To_Opcode_Kind is new Ada.Unchecked_Conversion (Source => Byte,        Target => Opcode_Kind);
+  function To_Byte        is new Ada.Unchecked_Conversion (Source => Opcode_Kind, Target => Byte);
+
   procedure Evaluate (Script : in Byte_Array);
+  procedure Evaluate (
+    Script          : in  Byte_Array;
+    Primary_Stack   : out Byte_Array_Stacks.Stack_Type;
+    Secondary_Stack : out Byte_Array_Stacks.Stack_Type);
 
   ----------------
   -- Exceptions --
@@ -225,7 +237,6 @@ package Bitcoin.Script is
 -------
 private
 -------
-  package Byte_Array_Stacks is new Bitcoin.Data.Stacks (Positive, Byte_Array, "=");
 
   generic
     Script : Byte_Array;

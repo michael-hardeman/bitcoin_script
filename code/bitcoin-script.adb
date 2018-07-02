@@ -67,12 +67,13 @@ package body Bitcoin.Script is
   --------------
   -- Evaluate --
   --------------
-  procedure Evaluate (Script : in Byte_Array) is
+  procedure Evaluate (
+    Script          : in  Byte_Array; 
+    Primary_Stack   : out Stack_Type; 
+    Secondary_Stack : out Stack_Type)
+  is
     package Script_Parser is new Parser (Script); use Script_Parser;
-
-    Primary_Stack   : Stack_Type;
-    Secondary_Stack : Stack_Type;
-
+    
     -------------------------
     -- Push_Bytes_To_Stack --
     -------------------------
@@ -340,7 +341,18 @@ package body Bitcoin.Script is
         when others => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
       end case;
     end;
+    
   begin
     while not At_EOS loop Evaluate_Opcode (Next); end loop;
+  end;
+  
+  --------------
+  -- Evaluate --
+  --------------
+  procedure Evaluate (Script : in Byte_Array) is
+    Primary_Stack   : Stack_Type;
+    Secondary_Stack : Stack_Type;
+  begin
+    Evaluate (Script, Primary_Stack, Secondary_Stack);
   end;
 end;
