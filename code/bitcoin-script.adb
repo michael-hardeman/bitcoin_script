@@ -306,39 +306,39 @@ package body Bitcoin.Script is
         -- Arithmetic --
         ----------------
         -- 1 is added to the input.
-        when OP_1ADD => null;
+        when OP_1ADD => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- 1 is subtracted from the input.
-        when OP_1SUB => null;
+        when OP_1SUB => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- The input is made positive.
-        when OP_ABS => null;
+        when OP_ABS => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
-        when OP_NOT => null;
+        when OP_NOT => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- Returns 0 if the input is 0. 1 otherwise.
-        when OP_0NOTEQUAL => null;
+        when OP_0NOTEQUAL => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- The 2nd stack item  is added to the top
-        when OP_ADD => null;
+        when OP_ADD => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- The 2nd stack  item is subtracted from the top of the stack.
-        when OP_SUB => null;
+        when OP_SUB => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- If both a and b are not "" (null string), the output is 1. Otherwise 0.
-        when OP_BOOLAND => null;
-        when OP_BOOLOR => null;
-        when OP_NUMEQUAL => null;
-        when OP_NUMEQUALVERIFY => null;
-        when OP_NUMNOTEQUAL => null;
-        when OP_LESSTHAN => null;
-        when OP_GREATERTHAN => null;
-        when OP_LESSTHANOREQUAL => null;
-        when OP_GREATERTHANOREQUAL => null;
-        when OP_MIN => null;
-        when OP_MAX => null;
-        when OP_WITHIN => null;
+        when OP_BOOLAND            => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_BOOLOR             => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_NUMEQUAL           => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_NUMEQUALVERIFY     => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_NUMNOTEQUAL        => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_LESSTHAN           => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_GREATERTHAN        => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_LESSTHANOREQUAL    => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_GREATERTHANOREQUAL => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_MIN                => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_MAX                => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_WITHIN             => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         ------------
         -- Crypto --
