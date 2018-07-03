@@ -16,11 +16,6 @@ package Bitcoin.Script.Constant_Tests is
   ---------------
   -- Constants --
   ---------------
-  procedure Test_OP_0         (Test : in out Test_Cases.Test_Case'Class);
-  procedure Test_OP_PUSHDATA  (Test : in out Test_Cases.Test_Case'Class);
-  procedure Test_OP_PUSHDATA1 (Test : in out Test_Cases.Test_Case'Class);
-  procedure Test_OP_PUSHDATA2 (Test : in out Test_Cases.Test_Case'Class);
-  procedure Test_OP_PUSHDATA4 (Test : in out Test_Cases.Test_Case'Class);
   -- OP_0,         OP_PUSHDATA1, OP_PUSHDATA2,
   -- OP_PUSHDATA4, OP_1NEGATE,   OP_RESERVED,
   -- OP_1,         OP_2,         OP_3,
@@ -29,5 +24,14 @@ package Bitcoin.Script.Constant_Tests is
   -- OP_10,        OP_11,        OP_12,
   -- OP_13,        OP_14,        OP_15,
   -- OP_16,
+
+  procedure Test_OP_0         (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_OP_PUSHDATA  (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_OP_PUSHDATA1 (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_OP_PUSHDATA2 (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_OP_PUSHDATA4 (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_OP_1NEGATE   (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_OP_RESERVED  (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_OP_1_To_16   (Test : in out Test_Cases.Test_Case'Class);
 
 end;

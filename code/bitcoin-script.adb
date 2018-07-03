@@ -148,23 +148,15 @@ package body Bitcoin.Script is
 
         -- The next two bytes contain the number of bytes to be pushed onto the stack.
         when OP_PUSHDATA2 => 
---            declare
---              Bytes : Positive := Positive (Combine (Next, Next));
---            begin
---              Put_Line (Positive'Image (Bytes));
---              Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (Next, Next)));
---            end;
-          declare
-            High  : Byte     := Next;
-            Low   : Byte     := Next;
-            Bytes : Positive := Positive (Combine (High, Low));
-          begin
-            Put_Line (Positive'Image (Bytes));
-            Push_Bytes_To_Stack (Primary_Stack, Bytes);
+          declare High : Byte := Next; Low : Byte := Next; begin
+            Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (High, Low)));
           end;
 
         -- The next four bytes contain the number of bytes to be pushed onto the stack.
-        when OP_PUSHDATA4 => Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (Next, Next, Next, Next)));
+        when OP_PUSHDATA4 => 
+          declare Highest : Byte := Next; High : Byte := Next; Low : Byte := Next; Lowest : Byte := Next; begin
+            Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (Highest, High, Low, Lowest)));
+          end;
 
         ------------------
         -- Flow Control --

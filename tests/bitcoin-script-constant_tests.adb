@@ -21,6 +21,9 @@ package body Bitcoin.Script.Constant_Tests is
     Register_Routine (T, Test_OP_PUSHDATA1'Access, "OP_PUSHDATA1");
     Register_Routine (T, Test_OP_PUSHDATA2'Access, "OP_PUSHDATA2");
     Register_Routine (T, Test_OP_PUSHDATA4'Access, "OP_PUSHDATA4");
+    Register_Routine (T, Test_OP_1NEGATE'Access,   "OP_1NEGATE");
+    Register_Routine (T, Test_OP_RESERVED'Access,  "OP_RESERVED");
+    Register_Routine (T, Test_OP_1_To_16'Access,   "OP_1 .. OP_16");
   end Register_Tests;
 
   ---------------
@@ -32,7 +35,7 @@ package body Bitcoin.Script.Constant_Tests is
     Secondary_Stack :          Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => (1 .. 4 => 16#00#), Actual => Get (Primary_Stack, 1));
+    Assert_Byte_Arrays_Equal (Expected => (1 .. 4 => 16#00#), Actual => Peek (Primary_Stack));
   end;
 
   ----------------------
@@ -47,7 +50,7 @@ package body Bitcoin.Script.Constant_Tests is
         Secondary_Stack :          Stack_Type;
       begin
         Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-        Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Get (Primary_Stack, 1));
+        Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Primary_Stack));
       end;
     end loop;
   end;
@@ -63,7 +66,7 @@ package body Bitcoin.Script.Constant_Tests is
     Secondary_Stack : Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Get (Primary_Stack, 1));
+    Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Primary_Stack));
   end;
 
   -----------------------
@@ -77,7 +80,7 @@ package body Bitcoin.Script.Constant_Tests is
     Secondary_Stack : Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Get (Primary_Stack, 1));
+    Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Primary_Stack));
   end;
 
   -----------------------
@@ -91,6 +94,44 @@ package body Bitcoin.Script.Constant_Tests is
     Secondary_Stack : Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Get (Primary_Stack, 1));
+    Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Primary_Stack));
+  end;
+
+  ---------------------
+  -- Test_OP_1NEGATE --
+  ---------------------
+  procedure Test_OP_1NEGATE (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_1NEGATE));
+    Primary_Stack   : Stack_Type;
+    Secondary_Stack : Stack_Type;
+  begin
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => (1 .. 4 => 16#FF#), Actual => Peek (Primary_Stack));
+  end;
+
+  procedure Evaluate_OP_RESERVED is begin Evaluate ((1 => To_Byte (OP_RESERVED))); end;
+
+  ----------------------
+  -- Test_OP_RESERVED --
+  ----------------------
+  procedure Test_OP_RESERVED (Test : in out Test_Cases.Test_Case'Class) is begin
+    Assert_Exception (Evaluate_OP_RESERVED'Access, "Expected evaluating OP_RESERVED to throw an error.");
+  end;
+
+  ---------------------
+  -- Test_OP_1_To_16 --
+  ---------------------
+  procedure Test_OP_1_To_16 (Test : in out Test_Cases.Test_Case'Class) is
+  begin
+    for I in 16#00# .. 16#0F# loop
+      declare
+        SCRIPT          : constant Byte_Array := (1 => (To_Byte (OP_1) + Byte (I)));
+        Primary_Stack   :          Stack_Type;
+        Secondary_Stack :          Stack_Type;
+      begin
+        Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+        Assert_Byte_Arrays_Equal (Expected => (1 .. 3 => 16#00#, 4 => Byte (I + 1)), Actual => Peek (Primary_Stack));
+      end;
+    end loop;
   end;
 end;
