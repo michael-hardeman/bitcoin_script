@@ -36,6 +36,7 @@ package body Bitcoin.Script.Constant_Tests is
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
     Assert_Byte_Arrays_Equal (Expected => (1 .. 4 => 16#00#), Actual => Peek (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,                  Actual => Size (Secondary_Stack));
   end;
 
   ----------------------
@@ -51,6 +52,7 @@ package body Bitcoin.Script.Constant_Tests is
       begin
         Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
         Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Primary_Stack));
+        Assert_Naturals_Equal    (Expected => 0,    Actual => Size (Secondary_Stack));
       end;
     end loop;
   end;
@@ -67,6 +69,7 @@ package body Bitcoin.Script.Constant_Tests is
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
     Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,    Actual => Size (Secondary_Stack));
   end;
 
   -----------------------
@@ -81,6 +84,7 @@ package body Bitcoin.Script.Constant_Tests is
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
     Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,    Actual => Size (Secondary_Stack));
   end;
 
   -----------------------
@@ -95,6 +99,7 @@ package body Bitcoin.Script.Constant_Tests is
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
     Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,    Actual => Size (Secondary_Stack));
   end;
 
   ---------------------
@@ -107,6 +112,7 @@ package body Bitcoin.Script.Constant_Tests is
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
     Assert_Byte_Arrays_Equal (Expected => (1 .. 4 => 16#FF#), Actual => Peek (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,                  Actual => Size (Secondary_Stack));
   end;
 
   procedure Evaluate_OP_RESERVED is begin Evaluate ((1 => To_Byte (OP_RESERVED))); end;
@@ -131,6 +137,7 @@ package body Bitcoin.Script.Constant_Tests is
       begin
         Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
         Assert_Byte_Arrays_Equal (Expected => (1 .. 3 => 16#00#, 4 => Byte (I + 1)), Actual => Peek (Primary_Stack));
+        Assert_Naturals_Equal    (Expected => 0,                                     Actual => Size (Secondary_Stack));
       end;
     end loop;
   end;

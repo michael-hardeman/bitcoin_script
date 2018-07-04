@@ -1,6 +1,5 @@
-with Bitcoin.Script.Tests;
 with Bitcoin.Script.Constant_Tests;
--- with Bitcoin.Script.Flow_Control_Tests;
+with Bitcoin.Script.Flow_Control_Tests;
 -- with Bitcoin.Script.Stack_Tests;
 -- with Bitcoin.Script.Splice_Tests;
 -- with Bitcoin.Script.Bitwise_Logic_Tests;
@@ -8,14 +7,14 @@ with Bitcoin.Script.Constant_Tests;
 -- with Bitcoin.Script.Crypto_Tests;
 -- with Bitcoin.Script.Lock_Time_Tests;
 -- with Bitcoin.Script.Pseudo_Words_Tests;
+with Bitcoin.Script.Tests;
 
 package body Bitcoin.Script.Test_Suite is
 
   Result : aliased AUnit.Test_Suites.Test_Suite;
 
-  Script_Test_Case        : aliased Bitcoin.Script.Tests.TC;
   Constant_Test_Case      : aliased Bitcoin.Script.Constant_Tests.TC;
-  -- Flow_Control_Test_Case  : aliased Bitcoin.Script.Flow_Control_Tests.TC;
+  Flow_Control_Test_Case  : aliased Bitcoin.Script.Flow_Control_Tests.TC;
   -- Stack_Test_Case         : aliased Bitcoin.Script.Stack_Tests.TC;
   -- Splice_Test_Case        : aliased Bitcoin.Script.Splice_Tests.TC;
   -- Bitwise_Logic_Test_Case : aliased Bitcoin.Script.Bitwise_Logic_Tests.TC;
@@ -23,12 +22,12 @@ package body Bitcoin.Script.Test_Suite is
   -- Crypto_Test_Case        : aliased Bitcoin.Script.Crypto_Tests.TC;
   -- Lock_Time_Test_Case     : aliased Bitcoin.Script.Lock_Time_Tests.TC;
   -- Pseudo_Words_Test_Case  : aliased Bitcoin.Script.Pseudo_Words_Tests.TC;
+  Script_Test_Case        : aliased Bitcoin.Script.Tests.TC;
 
   function Suite return AUnit.Test_Suites.Access_Test_Suite is
   begin
-    AUnit.Test_Suites.Add_Test (Result'Access, Script_Test_Case'Access);
     AUnit.Test_Suites.Add_Test (Result'Access, Constant_Test_Case'Access);
-    -- AUnit.Test_Suites.Add_Test (Result'Access, Flow_Control_Test_Case'Access);
+    AUnit.Test_Suites.Add_Test (Result'Access, Flow_Control_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Stack_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Splice_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Bitwise_Logic_Test_Case'Access);
@@ -36,17 +35,9 @@ package body Bitcoin.Script.Test_Suite is
     -- AUnit.Test_Suites.Add_Test (Result'Access, Crypto_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Lock_Time_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Pseudo_Words_Test_Case'Access);
+    AUnit.Test_Suites.Add_Test (Result'Access, Script_Test_Case'Access);
     return Result'Access;
   end Suite;
-
-  ------------------
-  -- Flow Control --
-  ------------------
-  -- OP_NOP,    OP_VER,
-  -- OP_IF,     OP_NOTIF,
-  -- OP_VERIF,  OP_VERNOTIF,
-  -- OP_ELSE,   OP_ENDIF,
-  -- OP_VERIFY, OP_RETURN,
 
   -----------
   -- Stack --
