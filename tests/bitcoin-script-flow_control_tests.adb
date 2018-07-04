@@ -79,8 +79,12 @@ package body Bitcoin.Script.Flow_Control_Tests is
       To_Byte (    OP_NOP),
       To_Byte (  OP_ENDIF),
       To_Byte (OP_ENDIF));
+    Primary_Stack   : Stack_Type;
+    Secondary_Stack : Stack_Type;
   begin
-    Evaluate (SCRIPT);
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Naturals_Equal (Expected => 0, Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal (Expected => 0, Actual => Size (Secondary_Stack));
   end;
 
   -------------------
@@ -109,8 +113,12 @@ package body Bitcoin.Script.Flow_Control_Tests is
       To_Byte (    OP_NOP),
       To_Byte (  OP_ENDIF),
       To_Byte (OP_ENDIF));
+    Primary_Stack   : Stack_Type;
+    Secondary_Stack : Stack_Type;
   begin
-    Evaluate (SCRIPT);
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Naturals_Equal (Expected => 0, Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal (Expected => 0, Actual => Size (Secondary_Stack));
   end;
 
   -------------------
