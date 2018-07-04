@@ -2,6 +2,18 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 package body Bitcoin.Script is
   use Byte_Array_Stacks;
+  
+  -------------------
+  -- To_Byte_Array --
+  -------------------
+  function To_Byte_Array (Script : in Opcode_Kind_Array) return Byte_Array is
+    Output : Byte_Array (Script'Range);
+  begin
+    for I in Script'Range loop
+      Output (I) := To_Byte (Script (I));
+    end loop;
+    return Output;
+  end;
 
   ------------
   -- Parser --

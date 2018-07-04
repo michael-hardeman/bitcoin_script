@@ -41,11 +41,12 @@ package body Bitcoin.Script.Stack_Tests is
   -- Test_OP_TOALTSTACK --
   ------------------------
   procedure Test_OP_TOALTSTACK (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_TOALTSTACK));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Push (Primary_Stack, (1 => 16#55#));
+
   end;
 
   --------------------------

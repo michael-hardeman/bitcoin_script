@@ -56,27 +56,22 @@ package body Bitcoin.Script.Flow_Control_Tests is
   -- Test_OP_IF --
   ----------------
   procedure Test_OP_IF (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT : constant Byte_Array (1 .. 20) := (
-      To_Byte (OP_1),
-      To_Byte (OP_IF),
-      To_Byte (  OP_NOP),
-      To_Byte (  OP_NOP),
-      To_Byte (OP_ENDIF),
-      To_Byte (OP_0),
-      To_Byte (OP_IF),
-      To_Byte (  OP_RESERVED),
-      To_Byte (OP_ENDIF),
-      To_Byte (OP_1),
-      To_Byte (OP_IF),
-      To_Byte (  OP_0),
-      To_Byte (  OP_IF),
-      To_Byte (    OP_RESERVED),
-      To_Byte (  OP_ENDIF),
-      To_Byte (  OP_1),
-      To_Byte (  OP_IF),
-      To_Byte (    OP_NOP),
-      To_Byte (  OP_ENDIF),
-      To_Byte (OP_ENDIF));
+    SCRIPT : constant Byte_Array := To_Byte_Array (Script => (
+      OP_1, OP_IF,
+        OP_NOP,
+        OP_NOP,
+      OP_ENDIF,
+      OP_0, OP_IF,
+        OP_RESERVED,
+      OP_ENDIF,
+      OP_1, OP_IF,
+        OP_0, OP_IF,
+          OP_RESERVED,
+        OP_ENDIF,
+        OP_1, OP_IF,
+          OP_NOP,
+        OP_ENDIF,
+      OP_ENDIF));
     Primary_Stack   : Stack_Type;
     Secondary_Stack : Stack_Type;
   begin
@@ -89,27 +84,22 @@ package body Bitcoin.Script.Flow_Control_Tests is
   -- Test_OP_NOTIF --
   -------------------
   procedure Test_OP_NOTIF (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT : constant Byte_Array (1 .. 20) := (
-      To_Byte (OP_1),
-      To_Byte (OP_NOTIF),
-      To_Byte (  OP_RESERVED),
-      To_Byte (  OP_RESERVED),
-      To_Byte (OP_ENDIF),
-      To_Byte (OP_0),
-      To_Byte (OP_NOTIF),
-      To_Byte (  OP_NOP),
-      To_Byte (OP_ENDIF),
-      To_Byte (OP_0),
-      To_Byte (OP_NOTIF),
-      To_Byte (  OP_1),
-      To_Byte (  OP_NOTIF),
-      To_Byte (    OP_RESERVED),
-      To_Byte (  OP_ENDIF),
-      To_Byte (  OP_0),
-      To_Byte (  OP_NOTIF),
-      To_Byte (    OP_NOP),
-      To_Byte (  OP_ENDIF),
-      To_Byte (OP_ENDIF));
+    SCRIPT : constant Byte_Array := To_Byte_Array (Script => (
+      OP_1, OP_NOTIF,
+        OP_RESERVED,
+        OP_RESERVED,
+      OP_ENDIF,
+      OP_0, OP_NOTIF,
+        OP_NOP,
+      OP_ENDIF,
+      OP_0, OP_NOTIF,
+        OP_1, OP_NOTIF,
+          OP_RESERVED,
+        OP_ENDIF,
+        OP_0, OP_NOTIF,
+          OP_NOP,
+        OP_ENDIF,
+      OP_ENDIF));
     Primary_Stack   : Stack_Type;
     Secondary_Stack : Stack_Type;
   begin
@@ -141,34 +131,29 @@ package body Bitcoin.Script.Flow_Control_Tests is
   ------------------
   procedure Evaluate_OP_ELSE is begin Evaluate ((1 => To_Byte (OP_ELSE))); end;
   procedure Test_OP_ELSE (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT : constant Byte_Array (1 .. 27) := (
-      To_Byte (OP_1),
-      To_Byte (OP_IF),
-      To_Byte (  OP_NOP),
-      To_Byte (OP_ELSE),
-      To_Byte (  OP_RESERVED),
-      To_Byte (OP_ENDIF),
-      To_Byte (OP_0),
-      To_Byte (OP_IF),
-      To_Byte (  OP_RESERVED),
-      To_Byte (OP_ELSE),
-      To_Byte (  OP_NOP),
-      To_Byte (OP_ENDIF),
-      To_Byte (OP_1),
-      To_Byte (OP_IF),
-      To_Byte (  OP_0),
-      To_Byte (  OP_IF),
-      To_Byte (    OP_RESERVED),
-      To_Byte (  OP_ELSE),
-      To_Byte (    OP_NOP),
-      To_Byte (  OP_ENDIF),
-      To_Byte (  OP_1),
-      To_Byte (  OP_IF),
-      To_Byte (    OP_NOP),
-      To_Byte (  OP_Else),
-      To_Byte (    OP_RESERVED),
-      To_Byte (  OP_ENDIF),
-      To_Byte (OP_ENDIF));
+    SCRIPT : constant Byte_Array := To_Byte_Array (Script => (
+      OP_1, OP_IF,
+        OP_NOP,
+      OP_ELSE,
+        OP_RESERVED,
+      OP_ENDIF,
+      OP_0, OP_IF,
+        OP_RESERVED,
+      OP_ELSE,
+        OP_NOP,
+      OP_ENDIF,
+      OP_1, OP_IF,
+        OP_0, OP_IF,
+          OP_RESERVED,
+        OP_ELSE,
+          OP_NOP,
+        OP_ENDIF,
+        OP_1, OP_IF,
+          OP_NOP,
+        OP_ELSE,
+          OP_RESERVED,
+        OP_ENDIF,
+      OP_ENDIF));
     Primary_Stack   : Stack_Type;
     Secondary_Stack : Stack_Type;
   begin
