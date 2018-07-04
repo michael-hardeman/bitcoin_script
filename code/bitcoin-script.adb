@@ -281,8 +281,8 @@ package body Bitcoin.Script is
 
         -- The item at the top of the stack is copied and inserted before the second-to-top item.
         when OP_TUCK => 
-          Push (Primary_Stack, Get (Primary_Stack, Top_Index(Primary_Stack)));
-          Swap (Primary_Stack, Top_Index(Primary_Stack) - 2, Top_Index(Primary_Stack) - 1);
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack)));
+          Swap (Primary_Stack, Top_Index (Primary_Stack) - 2, Top_Index (Primary_Stack) - 1);
 
         ------------
         -- Splice --

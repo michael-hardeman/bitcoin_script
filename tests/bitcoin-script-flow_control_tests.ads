@@ -9,7 +9,7 @@ package Bitcoin.Script.Flow_Control_Tests is
 
   type TC is new Test_Cases.Test_Case with null record;
 
-  function Name (T : TC) return Message_String is (Aunit.Format ("Bitcoin.Script (Constant Opcodes)"));
+  function Name (T : TC) return Message_String is (Aunit.Format ("Bitcoin.Script (Flow Control Opcodes)"));
 
   overriding procedure Register_Tests (T : in out TC);
 

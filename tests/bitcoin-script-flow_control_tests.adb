@@ -50,23 +50,67 @@ package body Bitcoin.Script.Flow_Control_Tests is
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    Assert_Exception (Evaluate_OP_VER'Access, "Expected OP_VER to raise an error.");
+    Assert_Exception (Evaluate_OP_VER'Access, "Expected OP_VER to raise1 an error.");
   end;
 
   ----------------
   -- Test_OP_IF --
   ----------------
+  -- If OP_IF is working correctly then it should dodge all the OP_RESERVED
   procedure Test_OP_IF (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT : constant Byte_Array (1 .. 20) := (
+      To_Byte (OP_1),
+      To_Byte (OP_IF),
+      To_Byte (  OP_NOP),
+      To_Byte (  OP_NOP),
+      To_Byte (OP_ENDIF),
+      To_Byte (OP_0),
+      To_Byte (OP_IF),
+      To_Byte (  OP_RESERVED),
+      To_Byte (OP_ENDIF),
+      To_Byte (OP_1),
+      To_Byte (OP_IF),
+      To_Byte (  OP_0),
+      To_Byte (  OP_IF),
+      To_Byte (    OP_RESERVED),
+      To_Byte (  OP_ENDIF),
+      To_Byte (  OP_1),
+      To_Byte (  OP_IF),
+      To_Byte (    OP_NOP),
+      To_Byte (  OP_ENDIF),
+      To_Byte (OP_ENDIF));
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT);
   end;
 
   -------------------
   -- Test_OP_NOTIF --
   -------------------
+  -- If OP_IF is working correctly then it should dodge all the OP_RESERVED
   procedure Test_OP_NOTIF (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT : constant Byte_Array (1 .. 20) := (
+      To_Byte (OP_1),
+      To_Byte (OP_NOTIF),
+      To_Byte (  OP_RESERVED),
+      To_Byte (  OP_RESERVED),
+      To_Byte (OP_ENDIF),
+      To_Byte (OP_0),
+      To_Byte (OP_NOTIF),
+      To_Byte (  OP_NOP),
+      To_Byte (OP_ENDIF),
+      To_Byte (OP_0),
+      To_Byte (OP_NOTIF),
+      To_Byte (  OP_1),
+      To_Byte (  OP_NOTIF),
+      To_Byte (    OP_RESERVED),
+      To_Byte (  OP_ENDIF),
+      To_Byte (  OP_0),
+      To_Byte (  OP_NOTIF),
+      To_Byte (    OP_NOP),
+      To_Byte (  OP_ENDIF),
+      To_Byte (OP_ENDIF));
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT);
   end;
 
   -------------------
