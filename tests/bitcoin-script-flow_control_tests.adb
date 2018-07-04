@@ -40,11 +40,10 @@ package body Bitcoin.Script.Flow_Control_Tests is
     Assert_Naturals_Equal (Expected => 0, Actual => Size (Secondary_Stack));
   end;
 
-  procedure Evaluate_OP_VER is begin Evaluate ((1 => To_Byte (OP_VER))); end;
-
   -----------------
   -- Test_OP_VER --
   -----------------
+  procedure Evaluate_OP_VER is begin Evaluate ((1 => To_Byte (OP_VER))); end;
   procedure Test_OP_VER (Test : in out Test_Cases.Test_Case'Class) is
     SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_NOP));
     Primary_Stack   :          Stack_Type;
@@ -56,7 +55,6 @@ package body Bitcoin.Script.Flow_Control_Tests is
   ----------------
   -- Test_OP_IF --
   ----------------
-  -- If OP_IF is working correctly then it should dodge all the OP_RESERVED
   procedure Test_OP_IF (Test : in out Test_Cases.Test_Case'Class) is
     SCRIPT : constant Byte_Array (1 .. 20) := (
       To_Byte (OP_1),
@@ -90,7 +88,6 @@ package body Bitcoin.Script.Flow_Control_Tests is
   -------------------
   -- Test_OP_NOTIF --
   -------------------
-  -- If OP_IF is working correctly then it should dodge all the OP_RESERVED
   procedure Test_OP_NOTIF (Test : in out Test_Cases.Test_Case'Class) is
     SCRIPT : constant Byte_Array (1 .. 20) := (
       To_Byte (OP_1),
@@ -124,24 +121,62 @@ package body Bitcoin.Script.Flow_Control_Tests is
   -------------------
   -- Test_OP_VERIF --
   -------------------
+  procedure Evaluate_OP_VERIF is begin Evaluate ((1 => To_Byte (OP_VERIF))); end;
   procedure Test_OP_VERIF (Test : in out Test_Cases.Test_Case'Class) is
   begin
-    raise Program_Error;
+    Assert_Exception (Evaluate_OP_VERIF'Access, "Expected OP_VERIF to raise an error.");
   end;
 
   ----------------------
   -- Test_OP_VERNOTIF --
   ----------------------
+  procedure Evaluate_OP_VERNOTIF is begin Evaluate ((1 => To_Byte (OP_VERNOTIF))); end;
   procedure Test_OP_VERNOTIF (Test : in out Test_Cases.Test_Case'Class) is
   begin
-    raise Program_Error;
+    Assert_Exception (Evaluate_OP_VERNOTIF'Access, "Expected OP_VERNOTIF to raise an error.");
   end;
 
   ------------------
   -- Test_OP_ELSE --
   ------------------
-  procedure Test_OP_ELSE (Test : in out Test_Cases.Test_Case'Class) is begin
-    raise Program_Error;
+  procedure Evaluate_OP_ELSE is begin Evaluate ((1 => To_Byte (OP_ELSE))); end;
+  procedure Test_OP_ELSE (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT : constant Byte_Array (1 .. 27) := (
+      To_Byte (OP_1),
+      To_Byte (OP_IF),
+      To_Byte (  OP_NOP),
+      To_Byte (OP_ELSE),
+      To_Byte (  OP_RESERVED),
+      To_Byte (OP_ENDIF),
+      To_Byte (OP_0),
+      To_Byte (OP_IF),
+      To_Byte (  OP_RESERVED),
+      To_Byte (OP_ELSE),
+      To_Byte (  OP_NOP),
+      To_Byte (OP_ENDIF),
+      To_Byte (OP_1),
+      To_Byte (OP_IF),
+      To_Byte (  OP_0),
+      To_Byte (  OP_IF),
+      To_Byte (    OP_RESERVED),
+      To_Byte (  OP_ELSE),
+      To_Byte (    OP_NOP),
+      To_Byte (  OP_ENDIF),
+      To_Byte (  OP_1),
+      To_Byte (  OP_IF),
+      To_Byte (    OP_NOP),
+      To_Byte (  OP_Else),
+      To_Byte (    OP_RESERVED),
+      To_Byte (  OP_ENDIF),
+      To_Byte (OP_ENDIF));
+    Primary_Stack   : Stack_Type;
+    Secondary_Stack : Stack_Type;
+  begin
+    Assert_Exception (Evaluate_OP_VERNOTIF'Access, "Expected OP_ELSE without an OP_IF to raise an error.");
+
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Naturals_Equal (Expected => 0, Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal (Expected => 0, Actual => Size (Secondary_Stack));
   end;
 
   --------------------

@@ -201,7 +201,7 @@ package Bitcoin.Script is
     OP_2DIV   | OP_NEGATE | OP_MUL  | OP_DIV   |
     OP_MOD    | OP_LSHIFT | OP_RSHIFT;
   subtype Reserved_Opcode_Kind is Opcode_Kind with Static_Predicate => Reserved_Opcode_Kind in
-    OP_RESERVED | OP_VER | OP_VERIF | OP_RESERVED1 | OP_RESERVED2;
+    OP_RESERVED | OP_VER | OP_VERIF | OP_VERNOTIF | OP_RESERVED1 | OP_RESERVED2;
   subtype Ignored_Opcode_Kind is Opcode_Kind with Static_Predicate => Ignored_Opcode_Kind in
     OP_NOP1 | OP_NOP4 | OP_NOP5 | OP_NOP6  | OP_NOP7 | OP_NOP8 | OP_NOP9 | OP_NOP10;
 
