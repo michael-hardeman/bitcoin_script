@@ -1,6 +1,6 @@
 with Bitcoin.Script.Constant_Tests;
 with Bitcoin.Script.Flow_Control_Tests;
--- with Bitcoin.Script.Stack_Tests;
+with Bitcoin.Script.Stack_Tests;
 -- with Bitcoin.Script.Splice_Tests;
 -- with Bitcoin.Script.Bitwise_Logic_Tests;
 -- with Bitcoin.Script.Arithmetic_Tests;
@@ -15,7 +15,7 @@ package body Bitcoin.Script.Test_Suite is
 
   Constant_Test_Case      : aliased Bitcoin.Script.Constant_Tests.TC;
   Flow_Control_Test_Case  : aliased Bitcoin.Script.Flow_Control_Tests.TC;
-  -- Stack_Test_Case         : aliased Bitcoin.Script.Stack_Tests.TC;
+  Stack_Test_Case         : aliased Bitcoin.Script.Stack_Tests.TC;
   -- Splice_Test_Case        : aliased Bitcoin.Script.Splice_Tests.TC;
   -- Bitwise_Logic_Test_Case : aliased Bitcoin.Script.Bitwise_Logic_Tests.TC;
   -- Arithmetic_Test_Case    : aliased Bitcoin.Script.Arithmetic_Tests.TC;
@@ -28,7 +28,7 @@ package body Bitcoin.Script.Test_Suite is
   begin
     AUnit.Test_Suites.Add_Test (Result'Access, Constant_Test_Case'Access);
     AUnit.Test_Suites.Add_Test (Result'Access, Flow_Control_Test_Case'Access);
-    -- AUnit.Test_Suites.Add_Test (Result'Access, Stack_Test_Case'Access);
+    AUnit.Test_Suites.Add_Test (Result'Access, Stack_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Splice_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Bitwise_Logic_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Arithmetic_Test_Case'Access);
@@ -38,14 +38,6 @@ package body Bitcoin.Script.Test_Suite is
     AUnit.Test_Suites.Add_Test (Result'Access, Script_Test_Case'Access);
     return Result'Access;
   end Suite;
-
-  -----------
-  -- Stack --
-  -----------
-  -- OP_TOALTSTACK, OP_FROMALTSTACK, OP_2DROP, OP_2DUP,  OP_3DUP,
-  -- OP_2OVER,      OP_2ROT,         OP_2SWAP, OP_IFDUP, OP_DEPTH,
-  -- OP_DROP,       OP_DUP,          OP_NIP,   OP_OVER,  OP_PICK,
-  -- OP_ROLL,       OP_ROT,          OP_SWAP,  OP_TUCK,
 
   ------------
   -- Splice --
