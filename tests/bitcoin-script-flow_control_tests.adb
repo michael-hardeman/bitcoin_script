@@ -182,16 +182,31 @@ package body Bitcoin.Script.Flow_Control_Tests is
   --------------------
   -- Test_OP_VERIFY --
   --------------------
+  procedure Evaluate_OP_VERIFY_EMPTY is begin Evaluate ((1 => To_Byte (OP_VERIFY))); end;
+  procedure Evaluate_OP_VERIFY_0     is begin Evaluate ((1 => To_Byte (OP_0),  2 => To_Byte (OP_VERIFY))); end;
+  procedure Evaluate_OP_VERIFY_16    is begin Evaluate ((1 => To_Byte (OP_16), 2 => To_Byte (OP_VERIFY))); end;
   procedure Test_OP_VERIFY (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT : Byte_Array := (
+      1 => To_Byte (OP_1),
+      2 => To_Byte (OP_VERIFY));
+    Primary_Stack   : Stack_Type;
+    Secondary_Stack : Stack_Type;
   begin
-    raise Program_Error;
+    Assert_Exception (Evaluate_OP_VERIFY_EMPTY'Access, "Expected OP_VERIFY with an empty stack to raise an error.");
+    Assert_Exception (Evaluate_OP_VERIFY_0'Access,     "Expected OP_VERIFY with 0 on the stack to raise an error.");
+    Assert_Exception (Evaluate_OP_VERIFY_16'Access,    "Expected OP_VERIFY with 16 on the stack to raise an error.");
+
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Naturals_Equal (Expected => 0, Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal (Expected => 0, Actual => Size (Secondary_Stack));
   end;
 
   --------------------
   -- Test_OP_RETURN --
   --------------------
+  procedure Evaluate_OP_RETURN is begin Evaluate ((1 => To_Byte (OP_RETURN))); end;
   procedure Test_OP_RETURN (Test : in out Test_Cases.Test_Case'Class) is
   begin
-    raise Program_Error;
+    Assert_Exception (Evaluate_OP_RETURN'Access, "Expected OP_RETURN to raise an error.");
   end;
 end;
