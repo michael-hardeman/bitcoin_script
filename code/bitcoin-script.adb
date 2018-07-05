@@ -283,15 +283,21 @@ package body Bitcoin.Script is
           Swap (Primary_Stack, Top_Index (Primary_Stack) - 2, Top_Index (Primary_Stack) - 0);
 
         -- The item n back in the stack is copied to the top.
-        when OP_PICK => 
-          Push (Primary_Stack, Get (Primary_Stack, To_Natural (Pop (Primary_Stack))));
+        -- [Xn, ... 1, 2, n] TOP => [Xn, ... 1, 2, Xn] TOP
+        when OP_PICK =>
+          Push (Primary_Stack, Get (Primary_Stack, To_Natural (Pop (Primary_Stack)) - 1));
 
         -- The item n back in the stack is moved to the top.
-        when OP_ROLL => 
-          Push   (Primary_Stack, Get (Primary_Stack, To_Natural (Pop (Primary_Stack))));
-          Delete (Primary_Stack,                     To_Natural (Pop (Primary_Stack)));
+        when OP_ROLL =>
+          declare
+            N : Natural := To_Natural (Pop (Primary_Stack)) - 1;
+          begin
+            Push   (Primary_Stack, Get (Primary_Stack, N));
+            Delete (Primary_Stack,                     N);
+          end;
 
         -- The item at the top of the stack is copied and inserted before the second-to-top item.
+        -- 
         when OP_TUCK => 
           Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack)));
           Swap (Primary_Stack, Top_Index (Primary_Stack) - 2, Top_Index (Primary_Stack) - 1);

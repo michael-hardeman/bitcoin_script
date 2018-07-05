@@ -279,54 +279,93 @@ package body Bitcoin.Script.Stack_Tests is
   -- Test_OP_PICK --
   ------------------
   procedure Test_OP_PICK (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (
+      OP_0,
+      OP_1,
+      OP_0,
+      OP_0,
+      OP_3,
+      OP_PICK));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_0, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_0, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_0, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   ------------------
   -- Test_OP_ROLL --
   ------------------
   procedure Test_OP_ROLL (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (
+      OP_0,
+      OP_1,
+      OP_0,
+      OP_0,
+      OP_3,
+      OP_ROLL));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_0, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_0, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_0, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   -----------------
   -- Test_OP_ROT --
   -----------------
   procedure Test_OP_ROT (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_3, OP_ROT));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   ------------------
   -- Test_OP_SWAP --
   ------------------
   procedure Test_OP_SWAP (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_SWAP));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   ------------------
   -- Test_OP_TUCK --
   ------------------
   procedure Test_OP_TUCK (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_TUCK));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 end;
