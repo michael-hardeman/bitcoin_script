@@ -14,6 +14,7 @@ package Bitcoin.Data.Stacks is
 
   function  Top_Index (Stack : in     Stack_Type) return Index_Type is (Stack_Vectors.Last_Index(Stack));
   function  Size      (Stack : in     Stack_Type) return Natural is (Natural (Stack_Vectors.Length (Stack)));
+  function  Is_Empty  (Stack : in     Stack_Type) return Boolean is (Size (Stack) = 0);
   function  Get       (Stack : in     Stack_Type; Index : in Index_Type) return Element_Type is (Stack_Vectors.Element (Stack, Index));
   function  Peek      (Into  : in     Stack_Type) return Element_Type;
   procedure Push      (Into  : in out Stack_Type; Item : in Element_Type);

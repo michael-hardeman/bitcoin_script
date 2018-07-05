@@ -17,7 +17,10 @@ project Bitcoin_Script.Tests is
   -- Packages --
   --------------
   package Builder  renames Bitcoin_Script.Builder;
-  package Compiler renames Bitcoin_Script.Compiler;
+
+  package Compiler is
+    for Default_Switches ("Ada") use Bitcoin_Script.Compiler'Default_Switches("Ada") & ("-ftest-coverage", "-fprofile-arcs");
+  end Compiler;
 
   ------------
   -- Linker --
@@ -27,12 +30,16 @@ project Bitcoin_Script.Tests is
       when "unix"    => for Default_Switches ("Ada") use (Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".a");
       when "windows" =>
         case Bitcoin_Script.Word_Size is
-          when "32" => for Default_Switches ("Ada") use ("-Wl,--enable-stdcall-fixup",
+          when "32" => for Default_Switches ("Ada") use ("-lgcov",
+                                                         "-Wl,--enable-stdcall-fixup",
                                                          Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".dll");
-          when "64" => for Default_Switches ("Ada") use ("-Wl,--enable-stdcall-fixup",
+          when "64" => for Default_Switches ("Ada") use ("-lgcov",
+                                                         "-Wl,--enable-stdcall-fixup",
                                                          Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".dll");
         end case;
     end case;
   end Linker;
 
+
+--
 end Bitcoin_Script.Tests;
