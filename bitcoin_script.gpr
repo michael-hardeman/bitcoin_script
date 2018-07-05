@@ -3,9 +3,9 @@ project Bitcoin_Script is
   -----------
   -- Types --
   -----------
-  type Word_Size_Option is ("32",   "64");
-  type System_Option    is ("unix", "windows");
-  type Boolean_Option   is ("Yes",  "No");
+  type Word_Size_Option is ("32",    "64");
+  type System_Option    is ("posix", "windows");
+  type Boolean_Option   is ("Yes",   "No");
 
   -------------
   -- Options --
@@ -47,7 +47,7 @@ project Bitcoin_Script is
     "Bitcoin.Script");
 
   case System is
-    when "unix"    => for Library_Options use ( "-lgcov", "-lcrypto");
+    when "posix"   => for Library_Options use ( "-lgcov", "-lcrypto");
     when "windows" =>
       case Word_Size is
         when "32" => for Library_Options use ("-lgcov", "../" & Library_Directory & "/libcrypto-1_1.dll");

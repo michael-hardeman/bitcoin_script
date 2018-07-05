@@ -27,7 +27,7 @@ project Bitcoin_Script.Tests is
   ------------
   package Linker is
     case Bitcoin_Script.System is
-      when "unix"    => for Default_Switches ("Ada") use ("-lgcov",
+      when "posix"   => for Default_Switches ("Ada") use ("-lgcov",
                                                           "-fprofile-arcs",
                                                           Bitcoin_Script.Library_Directory & "/lib" & Bitcoin_Script.Name & ".so");
       when "windows" =>
