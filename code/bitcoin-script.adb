@@ -2,6 +2,18 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 package body Bitcoin.Script is
   use Byte_Array_Stacks;
+  
+  -------------------
+  -- To_Byte_Array --
+  -------------------
+  function To_Byte_Array (Script : in Opcode_Kind_Array) return Byte_Array is
+    Output : Byte_Array (Script'Range);
+  begin
+    for I in Script'Range loop
+      Output (I) := To_Byte (Script (I));
+    end loop;
+    return Output;
+  end;
 
   ------------
   -- Parser --
@@ -9,7 +21,7 @@ package body Bitcoin.Script is
   package body Parser is
     Program_Counter : Natural := Script'First - 1;
 
-    function  At_EOS  return Boolean is (Program_Counter > Script'Last);
+    function  At_EOS  return Boolean is (Program_Counter >= Script'Last);
     function  Peek    return Byte    is (Script (Positive'Succ (Program_counter)));
     function  Current return Byte    is (Script (Program_Counter));
     function  Next    return Byte    is begin Skip; return Current; end;
@@ -60,19 +72,20 @@ package body Bitcoin.Script is
   ----------------------
   -- Combine Unsigned --
   ----------------------
-  function Combine (High, Low                  : in Byte)        return Unsigned_16 is (Shift_Left (Unsigned_16 (High), 8)  or Unsigned_16 (Low));
+  function Combine (High, Low                  : in Byte)        return Unsigned_16 is (Shift_Left (Unsigned_16 (High),  8) or Unsigned_16 (Low));
   function Combine (High, Low                  : in Unsigned_16) return Unsigned_32 is (Shift_Left (Unsigned_32 (High), 16) or Unsigned_32 (Low));
   function Combine (Highest, High, Low, Lowest : in Byte)        return Unsigned_32 is (Combine (Combine (Highest, High), Combine (Low, Lowest)));
 
   --------------
   -- Evaluate --
   --------------
-  procedure Evaluate (Script : in Byte_Array) is
+  procedure Evaluate (
+    Script          : in     Byte_Array; 
+    Primary_Stack   : in out Stack_Type; 
+    Secondary_Stack : in out Stack_Type)
+  is
     package Script_Parser is new Parser (Script); use Script_Parser;
-
-    Primary_Stack   : Stack_Type;
-    Secondary_Stack : Stack_Type;
-
+    
     -------------------------
     -- Push_Bytes_To_Stack --
     -------------------------
@@ -116,12 +129,12 @@ package body Bitcoin.Script is
     
       if not Opcode'Valid then
         if not (To_Byte (Opcode) in Data_Count_Range) then raise Invalid_Opcode; end if;
-        Put_Line ("Push Data: " & Byte'Image (To_Byte(Opcode)));
+        -- Put_Line ("Push Data: " & Byte'Image (To_Byte(Opcode)));
         Push_Bytes_To_Stack (Primary_Stack, Positive (To_Byte (Opcode)));
         return;
       end if;
       
-      Put_Line ("Evaluate Opcode: " & Opcode_Kind'Image (Opcode));
+      -- Put_Line ("Evaluate Opcode: " & Opcode_Kind'Image (Opcode));
 
       case Opcode is
 
@@ -146,10 +159,16 @@ package body Bitcoin.Script is
         when OP_PUSHDATA1 => Push_Bytes_To_Stack (Primary_Stack, Positive (To_Byte (Next)));
 
         -- The next two bytes contain the number of bytes to be pushed onto the stack.
-        when OP_PUSHDATA2 => Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (Next, Next)));
+        when OP_PUSHDATA2 => 
+          declare High : Byte := Next; Low : Byte := Next; begin
+            Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (High, Low)));
+          end;
 
         -- The next four bytes contain the number of bytes to be pushed onto the stack.
-        when OP_PUSHDATA4 => Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (Next, Next, Next, Next)));
+        when OP_PUSHDATA4 => 
+          declare Highest : Byte := Next; High : Byte := Next; Low : Byte := Next; Lowest : Byte := Next; begin
+            Push_Bytes_To_Stack (Primary_Stack, Positive (Combine (Highest, High, Low, Lowest)));
+          end;
 
         ------------------
         -- Flow Control --
@@ -213,9 +232,9 @@ package body Bitcoin.Script is
 
         -- Duplicates the top three stack items.
         when OP_3DUP =>
-          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
-          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
-          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
 
         -- If the top stack value is not 0, duplicate it.
         when OP_IFDUP =>
@@ -264,18 +283,24 @@ package body Bitcoin.Script is
           Swap (Primary_Stack, Top_Index (Primary_Stack) - 2, Top_Index (Primary_Stack) - 0);
 
         -- The item n back in the stack is copied to the top.
-        when OP_PICK => 
-          Push (Primary_Stack, Get (Primary_Stack, To_Natural (Pop (Primary_Stack))));
+        -- [Xn, ... 1, 2, n] TOP => [Xn, ... 1, 2, Xn] TOP
+        when OP_PICK =>
+          Push (Primary_Stack, Get (Primary_Stack, To_Natural (Pop (Primary_Stack)) - 1));
 
         -- The item n back in the stack is moved to the top.
-        when OP_ROLL => 
-          Push   (Primary_Stack, Get (Primary_Stack, To_Natural (Pop (Primary_Stack))));
-          Delete (Primary_Stack,                     To_Natural (Pop (Primary_Stack)));
+        when OP_ROLL =>
+          declare
+            N : Natural := To_Natural (Pop (Primary_Stack)) - 1;
+          begin
+            Push   (Primary_Stack, Get (Primary_Stack, N));
+            Delete (Primary_Stack,                     N);
+          end;
 
         -- The item at the top of the stack is copied and inserted before the second-to-top item.
+        -- 
         when OP_TUCK => 
-          Push (Primary_Stack, Get (Primary_Stack, Top_Index(Primary_Stack)));
-          Swap (Primary_Stack, Top_Index(Primary_Stack) - 2, Top_Index(Primary_Stack) - 1);
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack)));
+          Swap (Primary_Stack, Top_Index (Primary_Stack) - 2, Top_Index (Primary_Stack) - 1);
 
         ------------
         -- Splice --
@@ -288,50 +313,80 @@ package body Bitcoin.Script is
         -------------------
         -- Returns 1 if the inputs are exactly equal, 0 otherwise.
         when OP_EQUAL => 
-          if Pop (Primary_Stack) /= Pop (Primary_Stack) then Push (Primary_Stack, (1 => 16#01#)); end if;
+          if Pop (Primary_Stack) = Pop (Primary_Stack) then
+            Push (Primary_Stack, (1 .. 3 => 16#00#, 4 => 16#01#));
+          else
+            Push (Primary_Stack, (1 .. 4 => 16#00#));
+          end if;
         
         -- Same as OP_EQUAL, but runs OP_VERIFY afterward.
         when OP_EQUALVERIFY =>
-          if Pop (Primary_Stack) /= Pop (Primary_Stack) then Push (Primary_Stack, (1 => 16#01#)); end if;
+          if Pop (Primary_Stack) = Pop (Primary_Stack) then
+            Push (Primary_Stack, (1 .. 3 => 16#00#, 4 => 16#01#)); 
+          else
+            Push (Primary_Stack, (1 .. 4 => 16#00#));
+          end if;
           if not Is_One (Pop (Primary_Stack)) then raise Verification_Failed; end if;
         
         ----------------
         -- Arithmetic --
         ----------------
         -- 1 is added to the input.
-        when OP_1ADD => null;
+        when OP_1ADD => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- 1 is subtracted from the input.
-        when OP_1SUB => null;
+        when OP_1SUB => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- The input is made positive.
-        when OP_ABS => null;
+        when OP_ABS => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
-        when OP_NOT => null;
+        when OP_NOT => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- Returns 0 if the input is 0. 1 otherwise.
-        when OP_0NOTEQUAL => null;
+        when OP_0NOTEQUAL => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- The 2nd stack item  is added to the top
-        when OP_ADD => null;
+        when OP_ADD => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- The 2nd stack  item is subtracted from the top of the stack.
-        when OP_SUB => null;
+        when OP_SUB => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- If both a and b are not "" (null string), the output is 1. Otherwise 0.
-        when OP_BOOLAND => null;
-        when OP_BOOLOR => null;
-        when OP_NUMEQUAL => null;
-        when OP_NUMEQUALVERIFY => null;
-        when OP_NUMNOTEQUAL => null;
-        when OP_LESSTHAN => null;
-        when OP_GREATERTHAN => null;
-        when OP_LESSTHANOREQUAL => null;
-        when OP_GREATERTHANOREQUAL => null;
-        when OP_MIN => null;
-        when OP_MAX => null;
-        when OP_WITHIN => null;
+        when OP_BOOLAND => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- If a or b is not "" (null string), the output is 1. Otherwise 0.
+        when OP_BOOLOR => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if the numbers are equal, 0 otherwise.
+        when OP_NUMEQUAL => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Same as OP_NUMEQUAL, but runs OP_VERIFY afterward.
+        when OP_NUMEQUALVERIFY => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if the numbers are not equal, 0 otherwise.
+        when OP_NUMNOTEQUAL => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if a is less than b, 0 otherwise.
+        when OP_LESSTHAN => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if a is greater than b, 0 otherwise.
+        when OP_GREATERTHAN => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if a is less than or equal to b, 0 otherwise.
+        when OP_LESSTHANOREQUAL    => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if a is greater than or equal to b, 0 otherwise.
+        when OP_GREATERTHANOREQUAL => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns the smaller of a and b.
+        when OP_MIN => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns the larger of a and b.
+        when OP_MAX => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
+        when OP_WITHIN => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         ------------
         -- Crypto --
@@ -340,7 +395,18 @@ package body Bitcoin.Script is
         when others => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
       end case;
     end;
+    
   begin
     while not At_EOS loop Evaluate_Opcode (Next); end loop;
+  end;
+  
+  --------------
+  -- Evaluate --
+  --------------
+  procedure Evaluate (Script : in Byte_Array) is
+    Primary_Stack   : Stack_Type;
+    Secondary_Stack : Stack_Type;
+  begin
+    Evaluate (Script, Primary_Stack, Secondary_Stack);
   end;
 end;

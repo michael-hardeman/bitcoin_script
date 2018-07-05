@@ -14,6 +14,7 @@ package Bitcoin.Data.Stacks_Tests is
 
   procedure Test_Top_Index     (Test : in out Test_Cases.Test_Case'Class);
   procedure Test_Size          (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_Is_Empty      (Test : in out Test_Cases.Test_Case'Class);
   procedure Test_Get           (Test : in out Test_Cases.Test_Case'Class);
   procedure Test_Peek          (Test : in out Test_Cases.Test_Case'Class);
   procedure Test_Push          (Test : in out Test_Cases.Test_Case'Class);

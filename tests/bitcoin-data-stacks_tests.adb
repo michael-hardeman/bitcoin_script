@@ -19,6 +19,7 @@ package body Bitcoin.Data.Stacks_Tests is
   begin
     Register_Routine (T, Test_Top_Index'Access,     "Top_Index");
     Register_Routine (T, Test_Size'Access,          "Size");
+    Register_Routine (T, Test_Is_Empty'Access,      "Is_Empty");
     Register_Routine (T, Test_Get'Access,           "Get");
     Register_Routine (T, Test_Peek'Access,          "Peek");
     Register_Routine (T, Test_Push'Access,          "Push");
@@ -79,6 +80,19 @@ package body Bitcoin.Data.Stacks_Tests is
     Assert_Naturals_Equal (Expected => 2, Actual => Size (Stack));
     Pop (Stack);
     Assert_Naturals_Equal (Expected => 1, Actual => Size (Stack));
+  end;
+
+  -------------------
+  -- Test_Is_Empty --
+  -------------------
+  procedure Test_Is_Empty (Test : in out Test_Cases.Test_Case'Class) is
+    Stack : Stack_Type;
+  begin
+    Assert_Booleans_Equal (Expected => True, Actual => Is_Empty (Stack));
+    Push (Stack, "foo");
+    Assert_Booleans_Equal (Expected => False, Actual => Is_Empty (Stack));
+    Pop (Stack);
+    Assert_Booleans_Equal (Expected => True, Actual => Is_Empty (Stack));
   end;
 
   --------------

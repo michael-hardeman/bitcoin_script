@@ -6,6 +6,14 @@ with Bitcoin.Data.Stacks;
 
 package Bitcoin.Script is
 
+  --------------
+  -- Packages --
+  --------------
+  package Byte_Array_Stacks is new Bitcoin.Data.Stacks (Positive, Byte_Array, "=");
+
+  --------------
+  -- Op Codes --
+  --------------
   type Opcode_Kind is (
 
     ---------------
@@ -165,9 +173,6 @@ package Bitcoin.Script is
 
   for Opcode_Kind'Size use Byte'Size;
 
-  function To_Opcode_Kind is new Ada.Unchecked_Conversion (Source => Byte,        Target => Opcode_Kind);
-  function To_Byte        is new Ada.Unchecked_Conversion (Source => Opcode_Kind, Target => Byte);
-
   -------------
   -- Aliases --
   -------------
@@ -178,7 +183,7 @@ package Bitcoin.Script is
   -----------------------
   -- Contiguous Groups --
   -----------------------
-  subtype Constants_Opcode_Kind    is Opcode_Kind range OP_FALSE      .. OP_16;
+  subtype Constants_Opcode_Kind    is Opcode_Kind range OP_0          .. OP_16;
   subtype Flow_Control_Opcode_Kind is Opcode_Kind range OP_NOP        .. OP_RETURN;
   subtype Stack_Opcode_Kind        is Opcode_Kind range OP_TOALTSTACK .. OP_TUCK;
   subtype Bitwise_Opcode_Kind      is Opcode_Kind range OP_INVERT     .. OP_RESERVED2;
@@ -196,7 +201,7 @@ package Bitcoin.Script is
     OP_2DIV   | OP_NEGATE | OP_MUL  | OP_DIV   |
     OP_MOD    | OP_LSHIFT | OP_RSHIFT;
   subtype Reserved_Opcode_Kind is Opcode_Kind with Static_Predicate => Reserved_Opcode_Kind in
-    OP_RESERVED | OP_VER | OP_VERIF | OP_RESERVED1 | OP_RESERVED2;
+    OP_RESERVED | OP_VER | OP_VERIF | OP_VERNOTIF | OP_RESERVED1 | OP_RESERVED2;
   subtype Ignored_Opcode_Kind is Opcode_Kind with Static_Predicate => Ignored_Opcode_Kind in
     OP_NOP1 | OP_NOP4 | OP_NOP5 | OP_NOP6  | OP_NOP7 | OP_NOP8 | OP_NOP9 | OP_NOP10;
 
@@ -209,7 +214,15 @@ package Bitcoin.Script is
   -----------------
   -- Subprograms --
   -----------------
+  function To_Opcode_Kind is new Ada.Unchecked_Conversion (Source => Byte,        Target => Opcode_Kind);
+  function To_Byte        is new Ada.Unchecked_Conversion (Source => Opcode_Kind, Target => Byte);
+  function To_Byte_Array (Script : in Opcode_Kind_Array) return Byte_Array;
+
   procedure Evaluate (Script : in Byte_Array);
+  procedure Evaluate (
+    Script          : in     Byte_Array;
+    Primary_Stack   : in out Byte_Array_Stacks.Stack_Type;
+    Secondary_Stack : in out Byte_Array_Stacks.Stack_Type);
 
   ----------------
   -- Exceptions --
@@ -225,7 +238,6 @@ package Bitcoin.Script is
 -------
 private
 -------
-  package Byte_Array_Stacks is new Bitcoin.Data.Stacks (Positive, Byte_Array, "=");
 
   generic
     Script : Byte_Array;
