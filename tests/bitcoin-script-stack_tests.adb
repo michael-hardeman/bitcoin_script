@@ -40,6 +40,7 @@ package body Bitcoin.Script.Stack_Tests is
   ---------------
   -- Constants --
   ---------------
+    DATA_0 : constant Byte_Array := (1 .. 4 => 16#00#);
     DATA_1 : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#01#);
     DATA_2 : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#02#);
     DATA_3 : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#03#);
@@ -99,11 +100,11 @@ package body Bitcoin.Script.Stack_Tests is
     Secondary_Stack :          Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
@@ -117,12 +118,12 @@ package body Bitcoin.Script.Stack_Tests is
     Secondary_Stack :          Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
@@ -136,11 +137,11 @@ package body Bitcoin.Script.Stack_Tests is
     Secondary_Stack :          Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
@@ -154,12 +155,12 @@ package body Bitcoin.Script.Stack_Tests is
     Secondary_Stack :          Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_6, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_5, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_4, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_6, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_5, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_4, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop  (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
@@ -173,10 +174,10 @@ package body Bitcoin.Script.Stack_Tests is
     Secondary_Stack :          Stack_Type;
   begin
     Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_4, Actual => Pop (Primary_Stack));
-    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_4, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop  (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
     Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
@@ -185,66 +186,93 @@ package body Bitcoin.Script.Stack_Tests is
   -- Test_OP_IFDUP --
   -------------------
   procedure Test_OP_IFDUP (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
-    Primary_Stack   :          Stack_Type;
-    Secondary_Stack :          Stack_Type;
+    SCRIPT : constant Byte_Array := To_Byte_Array (Script => (
+      OP_0,
+      OP_IFDUP,
+      OP_1,
+      OP_IFDUP));
+    Primary_Stack   : Stack_Type;
+    Secondary_Stack : Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_0, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   -------------------
   -- Test_OP_DEPTH --
   -------------------
   procedure Test_OP_DEPTH (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_0, OP_0, OP_0, OP_0, OP_DEPTH));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => (1 => 4), Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 4,        Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,        Actual => Size (Secondary_Stack));
   end;
 
   ------------------
   -- Test_OP_DROP --
   ------------------
   procedure Test_OP_DROP (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_DROP));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   -----------------
   -- Test_OP_DUP --
   -----------------
   procedure Test_OP_DUP (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_DUP));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   -----------------
   -- Test_OP_NIP --
   -----------------
   procedure Test_OP_NIP (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_0, OP_1, OP_NIP));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   ------------------
   -- Test_OP_OVER --
   ------------------
   procedure Test_OP_OVER (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_OVER));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   ------------------
