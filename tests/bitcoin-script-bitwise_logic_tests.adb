@@ -1,0 +1,119 @@
+
+with AUnit.Assertions; use AUnit.Assertions;
+pragma Elaborate_All (AUnit);
+pragma Elaborate_All (AUnit.Assertions);
+
+with Bitcoin;                       use Bitcoin;
+with Bitcoin.Script;                use Bitcoin.Script;
+with Bitcoin.Test_Utilities.Common; use Bitcoin.Test_Utilities.Common;
+
+package body Bitcoin.Script.Bitwise_Logic_Tests is
+  use Byte_Array_Stacks;
+
+  --------------------
+  -- Register_Tests --
+  --------------------
+  procedure Register_Tests (T : in out TC) is
+    use AUnit.Test_Cases.Registration;
+  begin
+    Register_Routine (T, Test_OP_INVERT'Access,      "OP_INVERT");
+    Register_Routine (T, Test_OP_AND'Access,         "OP_AND");
+    Register_Routine (T, Test_OP_OR'Access,          "OP_OR");
+    Register_Routine (T, Test_OP_XOR'Access,         "OP_XOR");
+    Register_Routine (T, Test_OP_EQUAL'Access,       "OP_EQUAL");
+    Register_Routine (T, Test_OP_EQUALVERIFY'Access, "OP_EQUALVERIFY");
+    Register_Routine (T, Test_OP_RESERVED1'Access,   "OP_RESERVED1");
+    Register_Routine (T, Test_OP_RESERVED2'Access,   "OP_RESERVED2");
+  end Register_Tests;
+
+  --------------------
+  -- Test_OP_INVERT --
+  --------------------
+  procedure Test_OP_INVERT (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    Primary_Stack   :          Stack_Type;
+    Secondary_Stack :          Stack_Type;
+  begin
+    Push (Primary_Stack, (1 => 16#AA#));
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => (1 => 16#55#), Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,             Actual => Size (Secondary_Stack));
+  end;
+
+  -----------------
+  -- Test_OP_AND --
+  -----------------
+  procedure Test_OP_AND (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    Primary_Stack   :          Stack_Type;
+    Secondary_Stack :          Stack_Type;
+  begin
+    raise Program_Error;
+  end;
+
+  ----------------
+  -- Test_OP_OR --
+  ----------------
+  procedure Test_OP_OR (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    Primary_Stack   :          Stack_Type;
+    Secondary_Stack :          Stack_Type;
+  begin
+    raise Program_Error;
+  end;
+
+  -----------------
+  -- Test_OP_XOR --
+  -----------------
+  procedure Test_OP_XOR (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    Primary_Stack   :          Stack_Type;
+    Secondary_Stack :          Stack_Type;
+  begin
+    raise Program_Error;
+  end;
+
+  -------------------
+  -- Test_OP_EQUAL --
+  -------------------
+  procedure Test_OP_EQUAL (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    Primary_Stack   :          Stack_Type;
+    Secondary_Stack :          Stack_Type;
+  begin
+    raise Program_Error;
+  end;
+
+  -------------------------
+  -- Test_OP_EQUALVERIFY --
+  -------------------------
+  procedure Test_OP_EQUALVERIFY (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    Primary_Stack   :          Stack_Type;
+    Secondary_Stack :          Stack_Type;
+  begin
+    raise Program_Error;
+  end;
+
+  -----------------------
+  -- Test_OP_RESERVED1 --
+  -----------------------
+  procedure Test_OP_RESERVED1 (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    Primary_Stack   :          Stack_Type;
+    Secondary_Stack :          Stack_Type;
+  begin
+    raise Program_Error;
+  end;
+
+  -----------------------
+  -- Test_OP_RESERVED2 --
+  -----------------------
+  procedure Test_OP_RESERVED2 (Test : in out Test_Cases.Test_Case'Class) is
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    Primary_Stack   :          Stack_Type;
+    Secondary_Stack :          Stack_Type;
+  begin
+    raise Program_Error;
+  end;
+end;

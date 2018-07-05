@@ -2,7 +2,7 @@ with Bitcoin.Script.Constant_Tests;
 with Bitcoin.Script.Flow_Control_Tests;
 with Bitcoin.Script.Stack_Tests;
 with Bitcoin.Script.Splice_Tests;
--- with Bitcoin.Script.Bitwise_Logic_Tests;
+with Bitcoin.Script.Bitwise_Logic_Tests;
 -- with Bitcoin.Script.Arithmetic_Tests;
 -- with Bitcoin.Script.Crypto_Tests;
 -- with Bitcoin.Script.Lock_Time_Tests;
@@ -17,7 +17,7 @@ package body Bitcoin.Script.Test_Suite is
   Flow_Control_Test_Case  : aliased Bitcoin.Script.Flow_Control_Tests.TC;
   Stack_Test_Case         : aliased Bitcoin.Script.Stack_Tests.TC;
   Splice_Test_Case        : aliased Bitcoin.Script.Splice_Tests.TC;
-  -- Bitwise_Logic_Test_Case : aliased Bitcoin.Script.Bitwise_Logic_Tests.TC;
+  Bitwise_Logic_Test_Case : aliased Bitcoin.Script.Bitwise_Logic_Tests.TC;
   -- Arithmetic_Test_Case    : aliased Bitcoin.Script.Arithmetic_Tests.TC;
   -- Crypto_Test_Case        : aliased Bitcoin.Script.Crypto_Tests.TC;
   -- Lock_Time_Test_Case     : aliased Bitcoin.Script.Lock_Time_Tests.TC;
@@ -30,7 +30,7 @@ package body Bitcoin.Script.Test_Suite is
     AUnit.Test_Suites.Add_Test (Result'Access, Flow_Control_Test_Case'Access);
     AUnit.Test_Suites.Add_Test (Result'Access, Stack_Test_Case'Access);
     AUnit.Test_Suites.Add_Test (Result'Access, Splice_Test_Case'Access);
-    -- AUnit.Test_Suites.Add_Test (Result'Access, Bitwise_Logic_Test_Case'Access);
+    AUnit.Test_Suites.Add_Test (Result'Access, Bitwise_Logic_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Arithmetic_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Crypto_Test_Case'Access);
     -- AUnit.Test_Suites.Add_Test (Result'Access, Lock_Time_Test_Case'Access);
@@ -38,12 +38,6 @@ package body Bitcoin.Script.Test_Suite is
     AUnit.Test_Suites.Add_Test (Result'Access, Script_Test_Case'Access);
     return Result'Access;
   end Suite;
-
-  -------------------
-  -- Bitwise Logic --
-  -------------------
-  -- OP_INVERT, OP_AND,         OP_OR,        OP_XOR,
-  -- OP_EQUAL,  OP_EQUALVERIFY, OP_RESERVED1, OP_RESERVED2,
 
   ----------------
   -- Arithmetic --
