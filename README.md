@@ -1,13 +1,20 @@
 Ada Bitcoin Script Interpreter
 ==============================
 
-This is the start of a bitcoin script interpreter written in the highly reliable language Ada.
+This a bitcoin script interpreter written in the highly reliable language Ada.
 
-Planned Features:
+Features:
 
 - Evaluate all Bitcoin Script opcodes
 - Base58 and Base64 Encoding
 - Focused OpenSSL binding for secp256k1 and ripemd160
+
+Incomplete:
+
+- Arithmetic Opcodes
+- Crypto Opcodes
+- Locktime Opcodes
+- Pseudo-words Opcodes
 
 Differences to the standard:
 
@@ -29,7 +36,7 @@ For ubuntu based systems:
 
 ## Compiling
 
-To compile the .dll/.so library us the bitcoin_script.gpr project file.
+To compile the .dll/.so library use the bitcoin_script.gpr project file.
 
 This project comes with 3 Scenario Options:
 
@@ -51,7 +58,7 @@ Or the free IDE [Gnat Programming Studio](http://libre.adacore.com/download/) ca
 
 ## Testing
 
-This project uses the Aunit Test Framework and has a large number of unit tests. When developing, it's generally better to use the test project to compile.
+This project uses the AUnit framework and has a large number of unit tests. When developing, it's generally better to use the test project to compile. This project extends the basic project with extra unit testing code.
 
 To compile from command line with all the defaults (64, windows, No):
 
@@ -65,15 +72,8 @@ Or the free IDE [Gnat Programming Studio](http://libre.adacore.com/download/) ca
 
 ## Contributing
 
-This project will use gitfow.
+This project will use [GitFlow](https://datasift.github.io/gitflow/IntroducingGitFlow.html).
 
-To contribute, create a feature branch off develop. Example feature/ripemd160-support. 
-When you're ready, open a pull request to merge back into develop, I'll review the changes.
+To contribute, create a feature branch off develop. For example: `feature/ripemd160-support`
 
-Unfinished Features:
-
-- Opcodes
-  - Arithmetic
-  - Crypto
-  - Locktime
-  - Pseudo-words
+When your feature is complete, and the tests run, simply submit a pull request back to `develop`.  I'll review the changes.
