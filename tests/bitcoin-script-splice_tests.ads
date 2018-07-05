@@ -9,7 +9,7 @@ package Bitcoin.Script.Splice_Tests is
 
   type TC is new Test_Cases.Test_Case with null record;
 
-  function Name (T : TC) return Message_String is (Aunit.Format ("Bitcoin.Script (Stack Opcodes)"));
+  function Name (T : TC) return Message_String is (Aunit.Format ("Bitcoin.Script (Splice Opcodes)"));
 
   overriding procedure Register_Tests (T : in out TC);
 
