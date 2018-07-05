@@ -220,9 +220,9 @@ package Bitcoin.Script is
 
   procedure Evaluate (Script : in Byte_Array);
   procedure Evaluate (
-    Script          : in  Byte_Array;
-    Primary_Stack   : out Byte_Array_Stacks.Stack_Type;
-    Secondary_Stack : out Byte_Array_Stacks.Stack_Type);
+    Script          : in     Byte_Array;
+    Primary_Stack   : in out Byte_Array_Stacks.Stack_Type;
+    Secondary_Stack : in out Byte_Array_Stacks.Stack_Type);
 
   ----------------
   -- Exceptions --

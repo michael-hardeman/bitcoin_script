@@ -80,9 +80,9 @@ package body Bitcoin.Script is
   -- Evaluate --
   --------------
   procedure Evaluate (
-    Script          : in  Byte_Array; 
-    Primary_Stack   : out Stack_Type; 
-    Secondary_Stack : out Stack_Type)
+    Script          : in     Byte_Array; 
+    Primary_Stack   : in out Stack_Type; 
+    Secondary_Stack : in out Stack_Type)
   is
     package Script_Parser is new Parser (Script); use Script_Parser;
     
@@ -232,9 +232,9 @@ package body Bitcoin.Script is
 
         -- Duplicates the top three stack items.
         when OP_3DUP =>
-          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
-          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
-          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
+          Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
 
         -- If the top stack value is not 0, duplicate it.
         when OP_IFDUP =>

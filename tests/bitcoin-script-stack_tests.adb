@@ -37,93 +37,148 @@ package body Bitcoin.Script.Stack_Tests is
     Register_Routine (T, Test_OP_TUCK'Access,         "OP_TUCK");
   end Register_Tests;
 
+  ---------------
+  -- Constants --
+  ---------------
+    DATA_1 : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#01#);
+    DATA_2 : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#02#);
+    DATA_3 : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#03#);
+    DATA_4 : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#04#);
+    DATA_5 : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#05#);
+    DATA_6 : constant Byte_Array := (1 .. 3 => 16#00#, 4 => 16#06#);
+
   ------------------------
   -- Test_OP_TOALTSTACK --
   ------------------------
   procedure Test_OP_TOALTSTACK (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_TOALTSTACK));
+    DATA            : constant Byte_Array := (1 => 16#AA#, 2 => 16#55#);
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_TOALTSTACK));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    Push (Primary_Stack, (1 => 16#55#));
-
+    Push (Primary_Stack, DATA);
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Naturals_Equal    (Expected => 0,    Actual => Size (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Secondary_Stack));
   end;
 
   --------------------------
   -- Test_OP_FROMALTSTACK --
   --------------------------
   procedure Test_OP_FROMALTSTACK (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    DATA            : constant Byte_Array := (1 => 16#AA#, 2 => 16#55#);
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_FROMALTSTACK));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Push (Secondary_Stack, DATA);
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA, Actual => Peek (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,    Actual => Size (Secondary_Stack));
   end;
 
   -------------------
   -- Test_OP_2DROP --
   -------------------
   procedure Test_OP_2DROP (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array (1 .. 4) := To_Byte_Array (Script => (OP_1, OP_2, OP_3, OP_2DROP));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Booleans_Equal (Expected => True, Actual => Is_One (Peek (Primary_Stack)));
+    Assert_Naturals_Equal (Expected => 0,    Actual => Size (Secondary_Stack));
   end;
 
   ------------------
   -- Test_OP_2DUP --
   ------------------
   procedure Test_OP_2DUP (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_3, OP_2DUP));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   ------------------
   -- Test_OP_3DUP --
   ------------------
   procedure Test_OP_3DUP (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_3, OP_3DUP));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   -------------------
   -- Test_OP_2OVER --
   -------------------
   procedure Test_OP_2OVER (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_3, OP_2OVER));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   ------------------
   -- Test_OP_2ROT --
   ------------------
   procedure Test_OP_2ROT (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_3, OP_4, OP_5, OP_6, OP_2ROT));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_6, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_5, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_4, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   -------------------
   -- Test_OP_2SWAP --
   -------------------
   procedure Test_OP_2SWAP (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_2, OP_3, OP_4, OP_2SWAP));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => DATA_2, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_1, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_4, Actual => Pop (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => DATA_3, Actual => Pop (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,      Actual => Size (Secondary_Stack));
   end;
 
   -------------------

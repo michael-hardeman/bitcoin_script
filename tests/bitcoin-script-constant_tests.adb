@@ -30,7 +30,7 @@ package body Bitcoin.Script.Constant_Tests is
   -- Test_OP_0 --
   ---------------
   procedure Test_OP_0 (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := (1 => To_Byte (OP_0));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_0));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
