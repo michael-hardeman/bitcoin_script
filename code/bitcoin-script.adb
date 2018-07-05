@@ -353,18 +353,40 @@ package body Bitcoin.Script is
         when OP_SUB => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         -- If both a and b are not "" (null string), the output is 1. Otherwise 0.
-        when OP_BOOLAND            => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
-        when OP_BOOLOR             => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
-        when OP_NUMEQUAL           => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
-        when OP_NUMEQUALVERIFY     => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
-        when OP_NUMNOTEQUAL        => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
-        when OP_LESSTHAN           => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
-        when OP_GREATERTHAN        => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        when OP_BOOLAND => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- If a or b is not "" (null string), the output is 1. Otherwise 0.
+        when OP_BOOLOR => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if the numbers are equal, 0 otherwise.
+        when OP_NUMEQUAL => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Same as OP_NUMEQUAL, but runs OP_VERIFY afterward.
+        when OP_NUMEQUALVERIFY => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if the numbers are not equal, 0 otherwise.
+        when OP_NUMNOTEQUAL => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if a is less than b, 0 otherwise.
+        when OP_LESSTHAN => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if a is greater than b, 0 otherwise.
+        when OP_GREATERTHAN => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if a is less than or equal to b, 0 otherwise.
         when OP_LESSTHANOREQUAL    => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if a is greater than or equal to b, 0 otherwise.
         when OP_GREATERTHANOREQUAL => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
-        when OP_MIN                => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
-        when OP_MAX                => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
-        when OP_WITHIN             => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns the smaller of a and b.
+        when OP_MIN => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns the larger of a and b.
+        when OP_MAX => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
+        
+        -- Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
+        when OP_WITHIN => raise Unimplemented_Feature with Opcode_Kind'Image (Opcode);
         
         ------------
         -- Crypto --
