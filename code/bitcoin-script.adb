@@ -313,11 +313,19 @@ package body Bitcoin.Script is
         -------------------
         -- Returns 1 if the inputs are exactly equal, 0 otherwise.
         when OP_EQUAL => 
-          if Pop (Primary_Stack) /= Pop (Primary_Stack) then Push (Primary_Stack, (1 => 16#01#)); end if;
+          if Pop (Primary_Stack) = Pop (Primary_Stack) then
+            Push (Primary_Stack, (1 .. 3 => 16#00#, 4 => 16#01#));
+          else
+            Push (Primary_Stack, (1 .. 4 => 16#00#));
+          end if;
         
         -- Same as OP_EQUAL, but runs OP_VERIFY afterward.
         when OP_EQUALVERIFY =>
-          if Pop (Primary_Stack) /= Pop (Primary_Stack) then Push (Primary_Stack, (1 => 16#01#)); end if;
+          if Pop (Primary_Stack) = Pop (Primary_Stack) then
+            Push (Primary_Stack, (1 .. 3 => 16#00#, 4 => 16#01#)); 
+          else
+            Push (Primary_Stack, (1 .. 4 => 16#00#));
+          end if;
           if not Is_One (Pop (Primary_Stack)) then raise Verification_Failed; end if;
         
         ----------------

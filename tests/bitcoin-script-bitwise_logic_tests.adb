@@ -66,22 +66,33 @@ package body Bitcoin.Script.Bitwise_Logic_Tests is
   -- Test_OP_EQUAL --
   -------------------
   procedure Test_OP_EQUAL (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (
+      OP_1, OP_1, OP_EQUAL,
+      OP_0, OP_1, OP_EQUAL));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Byte_Arrays_Equal (Expected => (1 .. 4 => 16#00#),              Actual => Pop  (Primary_Stack));
+    Assert_Byte_Arrays_Equal (Expected => (1 .. 3 => 16#00#, 4 => 16#01#), Actual => Pop  (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,                               Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0,                               Actual => Size (Primary_Stack));
   end;
 
   -------------------------
   -- Test_OP_EQUALVERIFY --
   -------------------------
+  procedure Evaluate_OP_EQUALVERIFY is begin Evaluate (To_Byte_Array (Script => (OP_0, OP_1, OP_EQUALVERIFY))); end;
   procedure Test_OP_EQUALVERIFY (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
+    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (OP_1, OP_1, OP_EQUALVERIFY));
     Primary_Stack   :          Stack_Type;
     Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
+    Assert_Naturals_Equal    (Expected => 0, Actual => Size (Primary_Stack));
+    Assert_Naturals_Equal    (Expected => 0, Actual => Size (Primary_Stack));
+
+    -- Assert_Exception (Evaluate_OP_EQUALVERIFY'Access, "Expected OP_EQUALVERIFY to raise an error.");
   end;
 
   -----------------------
