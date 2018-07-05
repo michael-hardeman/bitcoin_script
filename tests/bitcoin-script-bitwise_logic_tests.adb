@@ -29,48 +29,37 @@ package body Bitcoin.Script.Bitwise_Logic_Tests is
   --------------------
   -- Test_OP_INVERT --
   --------------------
+  procedure Evaluate_OP_INVERT is begin Evaluate ((1 => To_Byte (OP_INVERT))); end;
   procedure Test_OP_INVERT (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
-    Primary_Stack   :          Stack_Type;
-    Secondary_Stack :          Stack_Type;
   begin
-    Push (Primary_Stack, (1 => 16#AA#));
-    Evaluate (SCRIPT, Primary_Stack, Secondary_Stack);
-    Assert_Byte_Arrays_Equal (Expected => (1 => 16#55#), Actual => Pop  (Primary_Stack));
-    Assert_Naturals_Equal    (Expected => 0,             Actual => Size (Secondary_Stack));
+    Assert_Exception (Evaluate_OP_INVERT'Access, "Expected OP_INVERT to raise an error.");
   end;
 
   -----------------
   -- Test_OP_AND --
   -----------------
+  procedure Evaluate_OP_AND is begin Evaluate ((1 => To_Byte (OP_AND))); end;
   procedure Test_OP_AND (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
-    Primary_Stack   :          Stack_Type;
-    Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Assert_Exception (Evaluate_OP_AND'Access, "Expected OP_AND to raise an error.");
   end;
 
   ----------------
   -- Test_OP_OR --
   ----------------
+  procedure Evaluate_OP_OR is begin Evaluate ((1 => To_Byte (OP_OR))); end;
   procedure Test_OP_OR (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
-    Primary_Stack   :          Stack_Type;
-    Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Assert_Exception (Evaluate_OP_OR'Access, "Expected OP_OR to raise an error.");
   end;
 
   -----------------
   -- Test_OP_XOR --
   -----------------
+  procedure Evaluate_OP_XOR is begin Evaluate ((1 => To_Byte (OP_XOR))); end;
   procedure Test_OP_XOR (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
-    Primary_Stack   :          Stack_Type;
-    Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Assert_Exception (Evaluate_OP_XOR'Access, "Expected OP_XOR to raise an error.");
   end;
 
   -------------------
@@ -98,22 +87,18 @@ package body Bitcoin.Script.Bitwise_Logic_Tests is
   -----------------------
   -- Test_OP_RESERVED1 --
   -----------------------
+  procedure Evaluate_OP_RESERVED1 is begin Evaluate ((1 => To_Byte (OP_RESERVED1))); end;
   procedure Test_OP_RESERVED1 (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
-    Primary_Stack   :          Stack_Type;
-    Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Assert_Exception (Evaluate_OP_RESERVED1'Access, "Expected OP_RESERVED1 to raise an error.");
   end;
 
   -----------------------
-  -- Test_OP_RESERVED2 --
+  -- Test_OP_RESERVED1 --
   -----------------------
+  procedure Evaluate_OP_RESERVED2 is begin Evaluate ((1 => To_Byte (OP_RESERVED2))); end;
   procedure Test_OP_RESERVED2 (Test : in out Test_Cases.Test_Case'Class) is
-    SCRIPT          : constant Byte_Array := To_Byte_Array (Script => (1 => OP_INVERT));
-    Primary_Stack   :          Stack_Type;
-    Secondary_Stack :          Stack_Type;
   begin
-    raise Program_Error;
+    Assert_Exception (Evaluate_OP_RESERVED2'Access, "Expected OP_RESERVED2 to raise an error.");
   end;
 end;
