@@ -10,9 +10,9 @@ project Bitcoin_Script is
   -------------
   -- Options --
   -------------
-  Word_Size : Word_Size_Option := external ("Word_Size", "32");
+  Word_Size : Word_Size_Option := external ("Word_Size", "64");
   System    : System_Option    := external ("System",    "windows");
-  Debug     : Boolean_Option   := external ("Debug",     "Yes");
+  Debug     : Boolean_Option   := external ("Debug",     "No");
 
   ---------------
   -- Variables --
