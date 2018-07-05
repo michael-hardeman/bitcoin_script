@@ -3,9 +3,9 @@ project Bitcoin_Script is
   -----------
   -- Types --
   -----------
-  type Word_Size_Option is ("32",   "64");
-  type System_Option    is ("unix", "windows");
-  type Boolean_Option   is ("Yes",  "No");
+  type Word_Size_Option is ("32",    "64");
+  type System_Option    is ("posix", "windows");
+  type Boolean_Option   is ("Yes",   "No");
 
   -------------
   -- Options --
@@ -47,15 +47,11 @@ project Bitcoin_Script is
     "Bitcoin.Script");
 
   case System is
-    when "unix"    => null;
+    when "posix"   => for Library_Options use ( "-lgcov", "-lcrypto");
     when "windows" =>
       case Word_Size is
-        when "32" =>
-          for Library_Options use (
-            "../" & Library_Directory & "/libcrypto-1_1.dll");
-        when "64" =>
-          for Library_Options use (
-            "../" & Library_Directory & "/libcrypto-1_1-x64.dll");
+        when "32" => for Library_Options use ("-lgcov", "../" & Library_Directory & "/libcrypto-1_1.dll");
+        when "64" => for Library_Options use ("-lgcov", "../" & Library_Directory & "/libcrypto-1_1-x64.dll");
       end case;
   end case;
 
@@ -63,7 +59,7 @@ project Bitcoin_Script is
   -- Builder --
   -------------
   package Builder is
-    Switch_Builder := ("-E"); -- Store traceback in exceptions
+    Switch_Builder := (); -- Store traceback in exceptions
 
     case Word_Size is
       when "32" => null;
@@ -77,19 +73,24 @@ project Bitcoin_Script is
   -- Compiler --
   --------------
   package Compiler is
-    Switch_Compiler := ("-gnatW8",    -- Wide character encoding method (?=h/u/s/e/8/b)
-                        "-gnat2012"); -- Ada 2012 mode (default)
+    Default_Switch_Compiler := ("-gnatW8",    -- Wide character encoding method (?=h/u/s/e/8/b)
+                                "-gnat2012"); -- Ada 2012 mode (default)
+    Switch_Compiler := ();
     case Debug is
-      when "No"  => Switch_Compiler := Switch_Compiler & ("-O3",     -- Maximum Optimization
-                                                          "-gnatp"); -- Surpress all checks
-      when "Yes" => Switch_Compiler := Switch_Compiler & ("-O0",     -- Minimize Optimization
-                                                          "-g",      -- Generate debugging information
-                                                          "-gnata",  -- Assertions enabled. Pragma Assert/Debug to be activated
-                                                          "-gnatE",  -- Generate extra information in exception messages
-                                                          "-gnatf",  -- Full errors. Verbose details, all undefined references
-                                                          "-gnato"); -- Enable overflow checking for numerics
+      when "No"  => Default_Switch_Compiler := Default_Switch_Compiler & ("-O3",     -- Maximum Optimization
+                                                                          "-gnatp"); -- Surpress all checks
+      when "Yes" => Default_Switch_Compiler := Default_Switch_Compiler & ("-O0",     -- Minimize Optimization
+                                                                          "-g",      -- Generate debugging information
+                                                                          "-gnata",  -- Assertions enabled. Pragma Assert/Debug to be activated
+                                                                          "-E",      -- Store traceback in exceptions
+                                                                          "-gnatE",  -- Generate extra information in exception messages
+                                                                          "-gnatf",  -- Full errors. Verbose details, all undefined references
+                                                                          "-gnato"); -- Enable overflow checking for numerics
+                    Switch_Compiler := Switch_Compiler & ("-ftest-coverage", -- generate gcov notes files
+                                                          "-fprofile-arcs"); -- cover branching
     end case;
-    for Default_Switches ("Ada") use Switch_Compiler;
+    for Default_Switches ("Ada") use Default_Switch_Compiler;
+    for Switches         ("Ada") use Switch_Compiler;
   end Compiler;
 
 end Bitcoin_Script;
