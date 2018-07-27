@@ -1,8 +1,2 @@
-*.exe
-objects
-*.ali
-*.a
-binaries/windows/32/libbitcoin_script.dll
-binaries/windows/64/libbitcoin_script.dll
 *.adb#
 *.ads#
