@@ -201,48 +201,59 @@ package body Bitcoin.Script is
         -- Stack --
         -----------
         -- Puts the input onto the top of the alt stack. Removes it from the main stack.
+        -- PRIMARY: [1, 2, 3], ALT: [1, 2] => PRIMARY: [1, 2], ALT: [1, 2, 3] 
         when OP_TOALTSTACK =>
           Push (Secondary_Stack, Pop (Primary_Stack));
 
         -- Puts the input onto the top of the main stack. Removes it from the alt stack.
+        -- PRIMARY: [1, 2], ALT: [1, 2, 3] => PRIMARY: [1, 2, 3], ALT: [1, 2] 
         when OP_FROMALTSTACK =>
           Push (Primary_Stack, Pop (Secondary_Stack));
 
         -- Puts the number of stack items onto the stack.
+        -- [1, 2, 3] TOP => [1, 2, 3, 3] TOP
         when OP_DEPTH =>
           Push (Primary_Stack, (1 => Byte (Size (Primary_Stack))));
 
         -- Removes the top stack item.
+        -- [... 1, 2, 3] TOP => [... 1] TOP
         when OP_DROP =>
           Pop (Primary_Stack);
 
         -- Removes the top two stack items.
+        -- [... 1, 2, 3] TOP => [... 1] TOP
         when OP_2DROP =>
           Pop (Primary_Stack); 
           Pop (Primary_Stack);
 
         -- Duplicates the top stack item.
+        -- [... 1] TOP => [... 1, 1] TOP
         when OP_DUP =>
           Push (Primary_Stack, Peek (Primary_Stack));
 
         -- Duplicates the top two stack items.
+        -- [... 1, 2] TOP => [... 1, 2, 1, 2] TOP
         when OP_2DUP =>
           Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
           Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 1));
 
         -- Duplicates the top three stack items.
+        -- [... 1, 2, 3] TOP => [... 1, 2, 3, 1, 2, 3] TOP
         when OP_3DUP =>
           Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
           Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
           Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack) - 2));
 
         -- If the top stack value is not 0, duplicate it.
+        -- [... 1, 2, 0] TOP => [... 1, 2, 0] TOP
+        -- [... 1, 2, 3] TOP => [... 1, 2, 3, 3] TOP
         when OP_IFDUP =>
           if not Is_Zero (Peek (Primary_Stack)) then
             Push (Primary_Stack, Peek (Primary_Stack)); 
           end if;
 
         -- Removes the second-to-top stack item.
+        -- [... 1, 2] TOP => [... 2] TOP
         when OP_NIP =>
           Delete (Primary_Stack, Top_Index (Primary_Stack) - 1);
       
@@ -288,6 +299,7 @@ package body Bitcoin.Script is
           Push (Primary_Stack, Get (Primary_Stack, To_Natural (Pop (Primary_Stack)) - 1));
 
         -- The item n back in the stack is moved to the top.
+        -- [Xn, ... 1, 2, n] TOP => [... 1, 2, Xn] TOP
         when OP_ROLL =>
           declare
             N : Natural := To_Natural (Pop (Primary_Stack)) - 1;
@@ -297,7 +309,7 @@ package body Bitcoin.Script is
           end;
 
         -- The item at the top of the stack is copied and inserted before the second-to-top item.
-        -- 
+        -- [... 1, 2] TOP => [... 2, 1, 2] TOP
         when OP_TUCK => 
           Push (Primary_Stack, Get (Primary_Stack, Top_Index (Primary_Stack)));
           Swap (Primary_Stack, Top_Index (Primary_Stack) - 2, Top_Index (Primary_Stack) - 1);
