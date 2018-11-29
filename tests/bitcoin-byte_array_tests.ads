@@ -21,4 +21,5 @@ package Bitcoin.Byte_Array_Tests is
   procedure Test_Is_Zero             (Test : in out Test_Cases.Test_Case'Class);
   procedure Test_Is_One              (Test : in out Test_Cases.Test_Case'Class);
   procedure Test_To_Natural          (Test : in out Test_Cases.Test_Case'Class);
+  procedure Test_Bignum_Conversion   (Test : in out Test_Cases.Test_Case'Class);
 end;

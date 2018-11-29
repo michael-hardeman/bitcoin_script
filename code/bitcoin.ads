@@ -1,4 +1,6 @@
 with Interfaces; use Interfaces;
+with System.Bignums; use System.Bignums;
+with Ada.Unchecked_Deallocation;
 
 package Bitcoin is
 
@@ -29,12 +31,14 @@ package Bitcoin is
   -- it is a two's compliment negative number which is also a constraint error.
   function To_Natural (Bytes : in Byte_Array) return Natural;
 
-  function "+"   (X, Y : Byte_Array) return Byte_Array;
-  function "-"   (X, Y : Byte_Array) return Byte_Array;
-  function "*"   (X, Y : Byte_Array) return Byte_Array;
-  function "/"   (X, Y : Byte_Array) return Byte_Array;
-  function "mod" (X, Y : Byte_Array) return Byte_Array;
-  function "rem" (X, Y : Byte_Array) return Byte_Array;
-  function "**"  (X : Byte_Array; Exp : Natural) return Byte_Array;
+  -- Will remove leading 0's since the underlying library does not support them.
+  -- Converts the given binary data into a System.Bignums.Bignum
+  -- Requires the Bignum must be deallocated after
+  function To_Bignum (Bytes : in Byte_Array) return Bignum;
+
+  -- Converts a System.Bignums.Bignum into a Byte_Array
+  -- Will remove any leading 0's in the final result
+  function To_Byte_Array (Item : in Bignum) return Byte_Array;
+  procedure Free_Bignum is new Ada.Unchecked_Deallocation (Object => Bignum_Data, Name => Bignum);
 
 end;

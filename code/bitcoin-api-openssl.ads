@@ -93,7 +93,7 @@ package Bitcoin.API.OpenSSL is
   subtype EC_METHOD     is Address;
   subtype EC_GROUP      is Address;
   subtype EC_KEY        is Address;
-  subtype BIGNUM        is Address;
+  subtype SSL_BIGNUM    is Address;
   subtype BN_CTX        is Address;
   subtype EVP_MD        is Address;
   subtype EVP_PKEY      is Address;
@@ -132,12 +132,12 @@ package Bitcoin.API.OpenSSL is
 
   function EC_KEY_get0_private_key (
     key : in EC_KEY)
-    return BIGNUM
+    return SSL_BIGNUM
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_get0_private_key";
 
   function EC_KEY_set_private_key (
     key : in EC_KEY;
-    prv : in BIGNUM)
+    prv : in SSL_BIGNUM)
     return Int
     with Import => True, Convention => StdCall, External_Name => "EC_KEY_set_private_key";
 
@@ -193,9 +193,9 @@ package Bitcoin.API.OpenSSL is
   function EC_POINT_mul (
     group : in EC_GROUP;
     r     : in EC_POINT;
-    n     : in BIGNUM;
+    n     : in SSL_BIGNUM;
     q     : in EC_POINT;
-    m     : in BIGNUM;
+    m     : in SSL_BIGNUM;
     ctx   : in BN_CTX)
     return Int
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_mul";
@@ -204,9 +204,9 @@ package Bitcoin.API.OpenSSL is
     group : in EC_GROUP;
     p     : in EC_POINT;
     form  : in Unsigned;
-    bn    : in BIGNUM;
+    bn    : in SSL_BIGNUM;
     ctx   : in BN_CTX)
-    return BIGNUM
+    return SSL_BIGNUM
     with Import => True, Convention => StdCall, External_Name => "EC_POINT_point2bn";
 
   procedure EC_POINT_clear_free (
@@ -232,25 +232,25 @@ package Bitcoin.API.OpenSSL is
     ctx : in BN_CTX)
     with Import => True, Convention => StdCall, External_Name => "BN_CTX_free";
 
-  ------------
-  -- BIGNUM --
-  ------------
+  ----------------
+  -- SSL_BIGNUM --
+  ----------------
   function BN_new
-    return BIGNUM
+    return SSL_BIGNUM
     with Import => True, Convention => StdCall, External_Name => "BN_new";
 
   -- returns Length of a in bits
   function BN_num_bits (
-    a : in BIGNUM)
+    a : in SSL_BIGNUM)
     return Int
     with Import => True, Convention => StdCall, External_Name => "BN_num_bits";
 
   -- returns Length of a in bytes
-  function BN_num_bytes (a : in BIGNUM) return Int is ((BN_num_bits (a)+7)/8);
+  function BN_num_bytes (a : in SSL_BIGNUM) return Int is ((BN_num_bits (a)+7)/8);
 
   -- returns the number of bytes written in the to parameter
   function BN_bn2bin (
-    a  : in BIGNUM;
+    a  : in SSL_BIGNUM;
     to : in Byte_Access)
     return Int
     with Import => True, Convention => StdCall, External_Name => "BN_bn2bin";
@@ -258,12 +258,12 @@ package Bitcoin.API.OpenSSL is
   function BN_bin2bn (
     s   : in Byte_Access;
     len : in Int;
-    ret : in BIGNUM)
-    return BIGNUM
+    ret : in SSL_BIGNUM)
+    return SSL_BIGNUM
     with Import => True, Convention => StdCall, External_Name => "BN_bin2bn";
 
   procedure BN_clear_free (
-    a : in BIGNUM)
+    a : in SSL_BIGNUM)
     with Import => True, Convention => StdCall, External_Name => "BN_clear_free";
 
   ------------

@@ -26,17 +26,17 @@ package body Bitcoin.Crypto is
   -------------------
   -- To_Byte_Array --
   -------------------
-  function To_Byte_Array (Item : in BIGNUM) return Byte_Array is
+  function To_Byte_Array (Item : in SSL_BIGNUM) return Byte_Array is
     Output : Byte_Array (1 .. Positive (BN_num_bytes (Item))) := (others => 0);
   begin
     Ignore (BN_bn2bin (Item, Output (Output'First)'Unchecked_Access));
     return Output;
   end;
 
-  ---------------
-  -- To_BIGNUM --
-  ---------------
-  function To_BIGNUM (Item : in out Byte_Array) return BIGNUM is
+  -------------------
+  -- To_SSL_BIGNUM --
+  -------------------
+  function To_SSL_BIGNUM (Item : in out Byte_Array) return SSL_BIGNUM is
     (BN_bin2bn (Item (Item'First)'Unchecked_Access, Item'Length, NULL_ADDRESS));
 
   ----------
@@ -80,9 +80,9 @@ package body Bitcoin.Crypto is
     Key_Pair    : in out Key_Pair_Type;
     Private_Key : in out Byte_Array)
   is
-    Private_BIGNUM  : BIGNUM   := To_BIGNUM (Private_Key);
-    Group           : EC_GROUP := EC_KEY_get0_group (Key_Pair.Low_Level_Ptr);
-    Public_EC_POINT : EC_POINT := EC_POINT_new (Group);
+    Private_BIGNUM  : SSL_BIGNUM := To_SSL_BIGNUM (Private_Key);
+    Group           : EC_GROUP   := EC_KEY_get0_group (Key_Pair.Low_Level_Ptr);
+    Public_EC_POINT : EC_POINT   := EC_POINT_new (Group);
   begin
     Allocate (Key_Pair, BIGNUM_Kind, Private_BIGNUM);
     Allocate (Key_Pair, EC_POINT_Kind, Public_EC_POINT);
@@ -163,7 +163,7 @@ package body Bitcoin.Crypto is
     Format   : in Point_Format_Kind)
   return Byte_Array is
     Context       : Big_Number_Context;
-    Public_BIGNUM : BIGNUM := EC_POINT_point2bn (
+    Public_BIGNUM : SSL_BIGNUM := EC_POINT_point2bn (
       EC_KEY_get0_group (Key_Pair.Low_Level_Ptr),
       EC_KEY_get0_public_key (Key_Pair.Low_Level_Ptr),
       To_Unsigned (Format),

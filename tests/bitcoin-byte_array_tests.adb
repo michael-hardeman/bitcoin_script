@@ -26,6 +26,7 @@ package body Bitcoin.Byte_Array_Tests is
                                                        16#20#, 16#71#, 16#75#, 16#61#, 16#72#,
                                                        16#74#, 16#7a#);
 
+
   ZERO_SHORT_IMAGE       : constant String := "( 0 )";
   ZERO_LONG_IMAGE        : constant String := "( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )";
   ONE_SHORT_IMAGE        : constant String := "( 1 )";
@@ -68,6 +69,7 @@ package body Bitcoin.Byte_Array_Tests is
     Register_Routine (T, Test_Is_Zero'Access,             "Is_Zero");
     Register_Routine (T, Test_Is_One'Access,              "Is_One");
     Register_Routine (T, Test_To_Natural'Access,          "To_Natural");
+    Register_Routine (T, Test_Bignum_Conversion'Access,   "Bignum_Conversion");
   end Register_Tests;
 
   ----------------
@@ -157,9 +159,9 @@ package body Bitcoin.Byte_Array_Tests is
   procedure To_Natural_Natural_Max_Successor is Ignore : Natural; begin Ignore := To_Natural (NATURAL_MAX_SUCC); end;
   procedure To_Natural_Pangram               is Ignore : Natural; begin Ignore := To_Natural (PANGRAM);          end;
 
-  ----------------
-  -- Test_Image --
-  ----------------
+  ---------------------
+  -- Test_To_Natural --
+  ---------------------
   procedure Test_To_Natural (Test : in out Test_Cases.Test_Case'Class) is begin
     Assert_Naturals_Equal (ZERO_SHORT_NATURAL,  To_Natural (ZERO_SHORT));
     Assert_Naturals_Equal (ZERO_LONG_NATURAL,   To_Natural (ZERO_LONG));
@@ -169,6 +171,103 @@ package body Bitcoin.Byte_Array_Tests is
 
     Assert_Exception      (To_Natural_Natural_Max_Successor'Access, "Expected Natural'Last + 1 to throw an error.");
     Assert_Exception      (To_Natural_Pangram'Access,               "Expected the Jackdaws pangram to throw an error.");
+  end;
+
+  --------------
+  -- Test_Add --
+  --------------
+  procedure Test_Add (A : in Byte_Array; B : in Byte_Array; Expected : in Byte_Array) is
+    A_Bignum : Bignum := To_Bignum (A);
+    B_Bignum : Bignum := To_Bignum (B);
+    Sum      : Bignum := Big_Add (A_Bignum, B_Bignum);
+  begin
+    Free_Bignum (A_Bignum);
+    Free_Bignum (B_Bignum);
+
+    Assert_Byte_Arrays_Equal (Expected => Expected, Actual => To_Byte_Array (Sum));
+  end;
+
+  ----------------------------
+  -- Test_Bignum_Conversion --
+  ----------------------------
+  procedure Test_Bignum_Conversion (Test : in out Test_Cases.Test_Case'Class) is begin
+    -- No Bytes
+    Test_Add (
+      A        => ZERO_SHORT,
+      B        => ZERO_SHORT,
+      Expected => ZERO_SHORT);
+
+    -- Add 4 bytes
+    Test_Add (
+      A        => Byte_Array'(16#AA#, 16#AA#, 16#AA#, 16#AA#),
+      B        => Byte_Array'(16#55#, 16#55#, 16#55#, 16#55#),
+      Expected => Byte_Array'(16#FF#, 16#FF#, 16#FF#, 16#FF#));
+
+    -- One Leading Zero
+    Test_Add (
+      A        => Byte_Array'(16#00#, 16#AA#),
+      B        => Byte_Array'(16#00#, 16#55#),
+      Expected => Byte_Array'(1 => 16#FF#));
+
+    -- Two Leading Zeros
+    Test_Add (
+      A        => Byte_Array'(16#00#, 16#00#, 16#AA#),
+      B        => Byte_Array'(16#00#, 16#00#, 16#55#),
+      Expected => Byte_Array'(1 => 16#FF#));
+
+    -- Three Leading Zeros
+    Test_Add (
+      A        => Byte_Array'(16#00#, 16#00#, 16#00#, 16#AA#),
+      B        => Byte_Array'(16#00#, 16#00#, 16#00#, 16#55#),
+      Expected => Byte_Array'(1 => 16#FF#));
+
+    -- Four Leading Zeros
+    Test_Add (
+      A        => Byte_Array'(16#00#, 16#00#, 16#00#, 16#00#, 16#AA#),
+      B        => Byte_Array'(16#00#, 16#00#, 16#00#, 16#00#, 16#55#),
+      Expected => Byte_Array'(1 => 16#FF#));
+
+    -- Add Five Bytes
+    Test_Add (
+      A        => Byte_Array'(16#AA#, 16#00#, 16#00#, 16#00#, 16#AA#),
+      B        => Byte_Array'(16#55#, 16#00#, 16#00#, 16#00#, 16#55#),
+      Expected => Byte_Array'(16#FF#, 16#00#, 16#00#, 16#00#, 16#FF#));
+
+    -- Carry test, just testing if bignum works. not really nessisary.
+    Test_Add (
+      A        => Byte_Array'(16#AA#, 16#AA#, 16#AA#, 16#AA#),
+      B        => Byte_Array'(16#55#, 16#55#, 16#55#, 16#56#),
+      Expected => Byte_Array'(16#01#, 16#00#, 16#00#, 16#00#, 16#00#));
+
+    -- Carry test, just testing if bignum works. not really nessisary.
+    Test_Add (
+      A        => Byte_Array'(16#AA#, 16#AA#, 16#AA#, 16#AA#, 16#AA#),
+      B        => Byte_Array'(16#55#, 16#55#, 16#55#, 16#55#, 16#56#),
+      Expected => Byte_Array'(16#01#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#));
+
+    -- Just because I can now.
+    Test_Add (
+      A => Byte_Array'(16#AA#, 16#AA#, 16#AA#, 16#AA#, 16#AA#,
+                       16#AA#, 16#AA#, 16#AA#, 16#AA#, 16#AA#,
+                       16#AA#, 16#AA#, 16#AA#, 16#AA#, 16#AA#,
+                       16#AA#, 16#AA#, 16#AA#, 16#AA#, 16#AA#,
+                       16#AA#, 16#AA#, 16#AA#, 16#AA#, 16#AA#,
+                       16#AA#, 16#AA#, 16#AA#, 16#AA#, 16#AA#),
+
+      B => Byte_Array'(16#55#, 16#55#, 16#55#, 16#55#, 16#55#,
+                       16#55#, 16#55#, 16#55#, 16#55#, 16#55#,
+                       16#55#, 16#55#, 16#55#, 16#55#, 16#55#,
+                       16#55#, 16#55#, 16#55#, 16#55#, 16#55#,
+                       16#55#, 16#55#, 16#55#, 16#55#, 16#55#,
+                       16#55#, 16#55#, 16#55#, 16#55#, 16#56#),
+
+      Expected => Byte_Array'(16#01#,
+                              16#00#, 16#00#, 16#00#, 16#00#, 16#00#,
+                              16#00#, 16#00#, 16#00#, 16#00#, 16#00#,
+                              16#00#, 16#00#, 16#00#, 16#00#, 16#00#,
+                              16#00#, 16#00#, 16#00#, 16#00#, 16#00#,
+                              16#00#, 16#00#, 16#00#, 16#00#, 16#00#,
+                              16#00#, 16#00#, 16#00#, 16#00#, 16#00#));
   end;
 
 end;

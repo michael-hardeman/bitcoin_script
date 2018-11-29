@@ -88,67 +88,80 @@ package body Bitcoin is
     return Output;
   end;
 
-  -------
-  -- + --
-  -------
-  function "+"   (X, Y : Byte_Array) return Byte_Array is
-    Output : Byte_Array (1 .. 1) := (others => Byte'First);
+  ---------------
+  -- To_Bignum --
+  ---------------
+  -- Will remove leading 0's since the underlying library does not support them.
+  -- Converts the given binary data into a System.Bignums.Bignum
+  -- Requires the Bignum must be deallocated after
+
+  function To_Bignum (Bytes : in Byte_Array) return Bignum
+  is
+    Trimmed        : Byte_Array := Trim_Leading_Zeros (Bytes);
+    Whole_Words    : Natural    := Trimmed'Length / 4;
+    Hanging_Bytes  : Natural    := Trimmed'Length rem 4;
+    Trimmed_Offset : Positive   := 1;
+    Output         : Bignum     := new Bignum_Data'(Len => Whole_Words + (if Hanging_Bytes = 0 then 0 else 1),
+                                                    Neg => False,
+                                                    D   => (others => 0));
   begin
+
+    -- goes through the byte array backwards, combining all groups of 4 bytes into an Unsigned_32.
+
+    for I in 0 .. Whole_Words - 1 loop
+      Trimmed_Offset := Trimmed'Last - 4 * I;
+
+      Output.D (Output.D'Last - I) :=             SD (Trimmed (Trimmed_Offset    ))
+                                    + Shift_Left (SD (Trimmed (Trimmed_Offset - 1)),  8)
+                                    + Shift_Left (SD (Trimmed (Trimmed_Offset - 2)), 16)
+                                    + Shift_Left (SD (Trimmed (Trimmed_Offset - 3)), 24);
+    end loop;
+
+    -- Handles any leftover bytes, combining what's left into an Unsigned_32.
+
+    if Hanging_Bytes = 0 then return Output; end if;
+
+    Trimmed_Offset := Trimmed'Last - 4 * Whole_Words;
+
+    if Hanging_Bytes >= 1 then
+      Output.D (Output.D'First) := Output.D (Output.D'First) + SD (Trimmed (Trimmed_Offset));
+    end if;
+
+    if Hanging_Bytes >= 2 then
+      Output.D (Output.D'First) := Output.D (Output.D'First) + Shift_Left (SD (Trimmed (Trimmed_Offset - 1)), 8);
+    end if;
+
+    if Hanging_Bytes  = 3 then
+      Output.D (Output.D'First) := Output.D (Output.D'First) + Shift_Left (SD (Trimmed (Trimmed_Offset - 2)),  16);
+    end if;
+
     return Output;
   end;
 
-  -------
-  -- - --
-  -------
-  function "-"   (X, Y : Byte_Array) return Byte_Array is
-    Output : Byte_Array (1 .. 1) := (others => Byte'First);
-  begin
-    return Output;
-  end;
 
-  -------
-  -- * --
-  -------
-  function "*"   (X, Y : Byte_Array) return Byte_Array is
-    Output : Byte_Array (1 .. 1) := (others => Byte'First);
-  begin
-    return Output;
-  end;
+  -------------------
+  -- To_Byte_Array --
+  -------------------
+  -- Converts a System.Bignums.Bignum into a Byte_Array
+  -- Will remove any leading 0's in the final result
 
-  -------
-  -- / --
-  -------
-  function "/"   (X, Y : Byte_Array) return Byte_Array is
-    Output : Byte_Array (1 .. 1) := (others => Byte'First);
+  function To_Byte_Array (Item : in Bignum) return Byte_Array is
+    Bytes        : Byte_Array(1 .. Item.D'Length * 4) := (others => 0);
+    Bytes_Offset : Natural;
   begin
-    return Output;
-  end;
 
-  ---------
-  -- mod --
-  ---------
-  function "mod" (X, Y : Byte_Array) return Byte_Array is
-    Output : Byte_Array (1 .. 1) := (others => Byte'First);
-  begin
-    return Output;
-  end;
+    for I in 0 .. Item.D'Length - 1 loop
+      Bytes_Offset := Bytes'First + 4 * I;
 
-  ---------
-  -- rem --
-  ---------
-  function "rem" (X, Y : Byte_Array) return Byte_Array is
-    Output : Byte_Array (1 .. 1) := (others => Byte'First);
-  begin
-    return Output;
-  end;
+      Bytes (Bytes_Offset    ) := Byte (Shift_Right (Item.D (Item.D'First + I), 24)           );
+      Bytes (Bytes_Offset + 1) := Byte (Shift_Right (Item.D (Item.D'First + I), 16) and 16#FF#);
+      Bytes (Bytes_Offset + 2) := Byte (Shift_Right (Item.D (Item.D'First + I), 8)  and 16#FF#);
+      Bytes (Bytes_Offset + 3) := Byte (             Item.D (Item.D'First + I)      and 16#FF#);
+    end loop;
 
-  --------
-  -- ** --
-  --------
-  function "**"  (X : Byte_Array; Exp : Natural) return Byte_Array is
-    Output : Byte_Array (1 .. 1) := (others => Byte'First);
-  begin
-    return Output;
+    if Bytes'Length = 0 then return Byte_Array'(1 => 16#00#); end if;
+
+    return Trim_Leading_Zeros (Bytes);
   end;
 
 end;
